@@ -277,3 +277,5 @@ markets/media/
 .venv
 
 db_schema.txt
+cred.txt
+api.http

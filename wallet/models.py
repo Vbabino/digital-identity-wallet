@@ -22,43 +22,25 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     def __str__(self):
-        return f'User: {self.email}'
+        return f"User: {self.email}"
+
 
 class PrivacyMetadata(models.Model):
     """Model definition for PrivacyMetadata."""
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     visibility = models.CharField(max_length=50)
-    disclosure = models.CharField(max_length=50)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         """Meta definition for PrivacyMetadata."""
 
         verbose_name = "Privacy Metadata"
-        verbose_name_plural = "Privacy Metadata"
+        verbose_name_plural = "Privacy Metadata Records"
 
     def __str__(self):
         """Unicode representation of Privacy Metadata."""
-        return f'Visibility: {self.visibility}, Disclosure: {self.disclosure}'
-
-
-class ContextType(models.Model):
-    """Model definition for ContextType."""
-
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    context_type = models.CharField(max_length=150)
-    description = models.TextField()
-
-    class Meta:
-        """Meta definition for ContextType."""
-
-        verbose_name = "Context Type"
-        verbose_name_plural = "Context Types"
-
-    def __str__(self):
-        """Unicode representation of Context Type."""
-        return f"{self.context_type} - {self.description}"
+        return f"Visibility: {self.visibility}"
 
 
 class Age(models.Model):
@@ -68,10 +50,7 @@ class Age(models.Model):
     user = models.OneToOneField(
         CustomUser, on_delete=models.CASCADE, related_name="age"
     )
-    context_type = models.ForeignKey(
-        ContextType, on_delete=models.CASCADE, related_name="ages"
-    )
-    privacy_metadata = models.OneToOneField(
+    privacy_metadata = models.ForeignKey(
         PrivacyMetadata, on_delete=models.CASCADE, related_name="ages"
     )
     birth_date = models.DateField(
@@ -96,10 +75,7 @@ class PlaceOfBirth(models.Model):
     user = models.OneToOneField(
         CustomUser, on_delete=models.CASCADE, related_name="place_of_birth"
     )
-    context_type = models.ForeignKey(
-        ContextType, on_delete=models.CASCADE, related_name="place_of_birth"
-    )
-    privacy_metadata = models.OneToOneField(
+    privacy_metadata = models.ForeignKey(
         PrivacyMetadata, on_delete=models.CASCADE, related_name="place_of_birth"
     )
     birth_country = CountryField()
@@ -110,6 +86,7 @@ class PlaceOfBirth(models.Model):
         """Meta definition for Place of Birth."""
 
         verbose_name = "Place of Birth"
+        verbose_name_plural = "Places of Birth"
 
     def __str__(self):
         """Unicode representation of PlaceOfBirth."""
@@ -123,11 +100,8 @@ class Address(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="addresses"
     )
-    context_type = models.ForeignKey(
-        ContextType, on_delete=models.CASCADE, related_name="address"
-    )
-    privacy_metadata = models.OneToOneField(
-        PrivacyMetadata, on_delete=models.CASCADE, related_name="address"
+    privacy_metadata = models.ForeignKey(
+        PrivacyMetadata, on_delete=models.CASCADE, related_name="addresses"
     )
     address_type = models.CharField(max_length=50)
     resident_country = CountryField()
@@ -155,13 +129,10 @@ class Gender(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="genders"
     )
-    context_type = models.ForeignKey(
-        ContextType, on_delete=models.CASCADE, related_name="gender"
+    privacy_metadata = models.ForeignKey(
+        PrivacyMetadata, on_delete=models.CASCADE, related_name="genders"
     )
-    privacy_metadata = models.OneToOneField(
-        PrivacyMetadata, on_delete=models.CASCADE, related_name="gender"
-    )
-    
+
     gender = models.CharField(max_length=255)
 
     class Meta:
@@ -174,6 +145,7 @@ class Gender(models.Model):
         """Unicode representation of Gender."""
         return f"{self.gender}"
 
+
 class Nationality(models.Model):
     """Model definition for Nationality."""
 
@@ -181,11 +153,8 @@ class Nationality(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="nationalities"
     )
-    context_type = models.ForeignKey(
-        ContextType, on_delete=models.CASCADE, related_name="nationality"
-    )
-    privacy_metadata = models.OneToOneField(
-        PrivacyMetadata, on_delete=models.CASCADE, related_name="nationality"
+    privacy_metadata = models.ForeignKey(
+        PrivacyMetadata, on_delete=models.CASCADE, related_name="nationalities"
     )
     nationality = CountryField()
 
@@ -207,7 +176,6 @@ class AccessLog(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="access_logs"
     )
-    context_type = models.CharField(max_length=150)
     relying_party = models.CharField(max_length=255)
     access_time = models.DateTimeField(auto_now_add=True)
 
@@ -219,7 +187,7 @@ class AccessLog(models.Model):
 
     def __str__(self):
         """Unicode representation of AccessLog."""
-        return f"Access by {self.relying_party} to {self.context_type} at {self.access_time}"
+        return f"Access by {self.relying_party} at {self.access_time}"
 
 
 class Credential(models.Model):
@@ -229,10 +197,7 @@ class Credential(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="credentials"
     )
-    context_type = models.ForeignKey(
-        ContextType, on_delete=models.CASCADE, related_name="credentials"
-    )
-    privacy_metadata = models.OneToOneField(
+    privacy_metadata = models.ForeignKey(
         PrivacyMetadata, on_delete=models.CASCADE, related_name="credentials"
     )
     credential_name = models.CharField(max_length=255)
@@ -252,7 +217,7 @@ class Credential(models.Model):
 
     def __str__(self):
         """Unicode representation of Credential."""
-        return f"Credential for {self.context_type} issued at {self.issuance_date}"
+        return f"Credential for {self.user} issued at {self.issuance_date}"
 
 
 class LegalIdentity(models.Model):
@@ -262,11 +227,8 @@ class LegalIdentity(models.Model):
     user = models.OneToOneField(
         CustomUser, on_delete=models.CASCADE, related_name="legal_identity"
     )
-    context_type = models.ForeignKey(
-        ContextType, on_delete=models.CASCADE, related_name="legal_identity"
-    )
-    privacy_metadata = models.OneToOneField(
-        PrivacyMetadata, on_delete=models.CASCADE, related_name="legal_identity"
+    privacy_metadata = models.ForeignKey(
+        PrivacyMetadata, on_delete=models.CASCADE, related_name="legal_identities"
     )
     family_name = models.CharField(max_length=255, blank=False, null=False)
     middle_name = models.CharField(max_length=255, blank=True, null=True)
@@ -292,11 +254,10 @@ class ProfessionalIdentity(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="professional_identities"
     )
-    context_type = models.ForeignKey(
-        ContextType, on_delete=models.CASCADE, related_name="professional_identities"
-    )
-    privacy_metadata = models.OneToOneField(
-        PrivacyMetadata, on_delete=models.CASCADE, related_name="professional_identities"
+    privacy_metadata = models.ForeignKey(
+        PrivacyMetadata,
+        on_delete=models.CASCADE,
+        related_name="professional_identities",
     )
     job_title = models.CharField(max_length=255)
     role_description = models.TextField(blank=True, null=True)
@@ -320,10 +281,7 @@ class OnlineProfile(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="online_profiles"
     )
-    context_type = models.ForeignKey(
-        ContextType, on_delete=models.CASCADE, related_name="online_profiles"
-    )
-    privacy_metadata = models.OneToOneField(
+    privacy_metadata = models.ForeignKey(
         PrivacyMetadata, on_delete=models.CASCADE, related_name="online_profiles"
     )
     platform = models.CharField(max_length=255)
@@ -349,10 +307,7 @@ class Pseudonym(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="pseudonyms"
     )
-    context_type = models.ForeignKey(
-        ContextType, on_delete=models.CASCADE, related_name="pseudonyms"
-    )
-    privacy_metadata = models.OneToOneField(
+    privacy_metadata = models.ForeignKey(
         PrivacyMetadata, on_delete=models.CASCADE, related_name="pseudonyms"
     )
     relying_party = models.CharField(max_length=255)
@@ -379,10 +334,7 @@ class DailyUse(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="daily_uses"
     )
-    context_type = models.ForeignKey(
-        ContextType, on_delete=models.CASCADE, related_name="daily_uses"
-    )
-    privacy_metadata = models.OneToOneField(
+    privacy_metadata = models.ForeignKey(
         PrivacyMetadata, on_delete=models.CASCADE, related_name="daily_uses"
     )
     preferred_name = models.CharField(max_length=255, blank=True, null=True)
@@ -406,10 +358,8 @@ class CustomObject(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="custom_objects"
     )
-    context_type = models.ForeignKey(
-        ContextType, on_delete=models.CASCADE, related_name="custom_objects"
-    )
-    privacy_metadata = models.OneToOneField(
+
+    privacy_metadata = models.ForeignKey(
         PrivacyMetadata, on_delete=models.CASCADE, related_name="custom_objects"
     )
 
@@ -423,9 +373,7 @@ class CustomObject(models.Model):
 
     def __str__(self):
         """Unicode representation of CustomObject."""
-        return (
-            f"Custom Object for {self.context_type} with attributes {self.attributes}"
-        )
+        return f"Custom Object for {self.user} with attributes {self.attributes}"
 
 
 class NameHistory(models.Model):
@@ -435,10 +383,7 @@ class NameHistory(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="name_histories"
     )
-    context_type = models.ForeignKey(
-        ContextType, on_delete=models.CASCADE, related_name="name_histories"
-    )
-    privacy_metadata = models.OneToOneField(
+    privacy_metadata = models.ForeignKey(
         PrivacyMetadata, on_delete=models.CASCADE, related_name="name_histories"
     )
     family_name = models.CharField(max_length=255, blank=False, null=False)
