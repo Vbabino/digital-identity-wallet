@@ -87,7 +87,23 @@ class CustomOAuth2Validator(OAuth2Validator):
 
     def get_userinfo_claims(self, request):
         claims = super().get_userinfo_claims(request)
-        return self._add_custom_claims(request, claims)
+        self._add_custom_claims(request, claims)
+        self._log_access(request)
+        return claims
+
+    def _log_access(self, request):
+        from wallet.models import AccessLog
+
+        try:
+            app = getattr(request, "client", None)
+            AccessLog.objects.create(
+                user=request.user,
+                relying_party=app.name if app else "unknown",
+                application=app,
+                scopes_accessed=list(request.scopes) if request.scopes else [],
+            )
+        except Exception:
+            logger.exception("Failed to write AccessLog entry")
 
     def _add_custom_claims(self, request, claims):
         for scope, handler in self.SCOPE_HANDLERS.items():

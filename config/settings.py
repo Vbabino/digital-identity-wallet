@@ -137,6 +137,8 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
+
 OAUTH2_PROVIDER = {
     "OAUTH2_VALIDATOR_CLASS": "wallet.oauth_validators.CustomOAuth2Validator",
     "OIDC_ENABLED": True,

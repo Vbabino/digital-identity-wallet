@@ -184,6 +184,14 @@ class AccessLog(models.Model):
         CustomUser, on_delete=models.CASCADE, related_name="access_logs"
     )
     relying_party = models.CharField(max_length=255)
+    application = models.ForeignKey(
+        "oauth2_provider.Application",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="access_logs",
+    )
+    scopes_accessed = models.JSONField(default=list, blank=True)
     access_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
