@@ -9,9 +9,16 @@ class CustomOAuth2Validator(OAuth2Validator):
     SCOPE_HANDLERS = {
         "birthdate": lambda req: str(req.user.age.birth_date),
         "over_18": lambda req: (
-            date.today().year - req.user.age.birth_date.year -
-            ((date.today().month, date.today().day) < (req.user.age.birth_date.month, req.user.age.birth_date.day))
-        ) >= 18,
+            (
+                date.today().year
+                - req.user.age.birth_date.year
+                - (
+                    (date.today().month, date.today().day)
+                    < (req.user.age.birth_date.month, req.user.age.birth_date.day)
+                )
+            )
+            >= 18
+        ),
         "place_of_birth": lambda req: req.user.place_of_birth.birth_city,
         "address": lambda req: [
             {
@@ -25,12 +32,9 @@ class CustomOAuth2Validator(OAuth2Validator):
             }
             for address in req.user.addresses.all()
         ],
-        "gender": lambda req: [
-            gender.gender for gender in req.user.genders.all()
-        ],
+        "gender": lambda req: [gender.gender for gender in req.user.genders.all()],
         "nationality": lambda req: [
-            str(nationality.nationality)
-            for nationality in req.user.nationalities.all()
+            str(nationality.nationality) for nationality in req.user.nationalities.all()
         ],
         "credentials": lambda req: [
             {
@@ -66,8 +70,7 @@ class CustomOAuth2Validator(OAuth2Validator):
             for profile in req.user.online_profiles.all()
         ],
         "pseudonym": lambda req: [
-            pseudonym.pseudonym_value
-            for pseudonym in req.user.pseudonyms.all()
+            pseudonym.pseudonym_value for pseudonym in req.user.pseudonyms.all()
         ],
         "daily_use": lambda req: [
             {
@@ -75,12 +78,6 @@ class CustomOAuth2Validator(OAuth2Validator):
                 "preferred_name": daily_use.preferred_name,
             }
             for daily_use in req.user.daily_uses.all()
-        ],
-        "custom_objects": lambda req: [
-            {
-                "attributes": obj.attributes,
-            }
-            for obj in req.user.custom_objects.all()
         ],
     }
 
@@ -100,5 +97,18 @@ class CustomOAuth2Validator(OAuth2Validator):
                 except AttributeError:
                     logger.warning(
                         f"User '{request.user.email}' requested '{scope}' scope but has no associated data."
+                    )
+        for scope in request.scopes:
+            if scope.startswith("custom_name:"):
+                name_type = scope.split(":", 1)[1]
+                try:
+                    match = request.user.custom_objects.filter(
+                        name_type=name_type
+                    ).first()
+                    if match:
+                        claims[scope] = match.name_value
+                except AttributeError:
+                    logger.warning(
+                        f"User '{request.user.email}' requested '{scope}' scope but has no associated custom object of type '{name_type}'."
                     )
         return claims

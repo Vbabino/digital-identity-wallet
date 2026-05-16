@@ -1,8 +1,15 @@
+import re
 import uuid
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.core.exceptions import ValidationError
 from django.db import models
 from .managers import CustomUserManager
 from django_countries.fields import CountryField
+
+
+def validate_scope_name(value):
+    if not re.match(r'^[a-zA-Z0-9_]+$', value):
+        raise ValidationError("Must contain only letters, digits, and underscores.")
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
@@ -363,7 +370,8 @@ class CustomObject(models.Model):
         PrivacyMetadata, on_delete=models.CASCADE, related_name="custom_objects"
     )
 
-    attributes = models.JSONField(blank=True, null=True)
+    name_type = models.CharField(max_length=255, validators=[validate_scope_name])
+    name_value = models.CharField(max_length=255)
 
     class Meta:
         """Meta definition for CustomObject."""
@@ -373,7 +381,7 @@ class CustomObject(models.Model):
 
     def __str__(self):
         """Unicode representation of CustomObject."""
-        return f"Custom Object for {self.user} with attributes {self.attributes}"
+        return f"Custom Object for {self.user} with attribute {self.name_type}"
 
 
 class NameHistory(models.Model):

@@ -173,13 +173,15 @@ class CustomObjectFactory(DjangoModelFactory):
 
     user = factory.SubFactory(CustomUserFactory)
     privacy_metadata = factory.SubFactory(PrivacyMetadataFactory)
-    attributes = factory.LazyFunction(
-        lambda: {
-            "tags": ["sample", "seeded"],
-            "score": random.randint(1, 100),
-            "enabled": random.choice([True, False]),
-        }
-    )
+    name_type = factory.Iterator(["employee_id", "student_number", "membership_id"])
+    name_value = factory.Sequence(lambda n: f"VAL-{n:08d}")
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        obj = model_class(*args, **kwargs)
+        obj.full_clean()
+        obj.save()
+        return obj
 
 
 class NameHistoryFactory(DjangoModelFactory):

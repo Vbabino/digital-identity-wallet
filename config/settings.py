@@ -21,8 +21,6 @@ load_dotenv()  # Load environment variables from .env file
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -143,22 +141,7 @@ OAUTH2_PROVIDER = {
     "OAUTH2_VALIDATOR_CLASS": "wallet.oauth_validators.CustomOAuth2Validator",
     "OIDC_ENABLED": True,
     "OIDC_RSA_PRIVATE_KEY": os.getenv("OIDC_RSA_PRIVATE_KEY"),
-    "SCOPES": {
-        "openid": "OpenID Connect scope",
-        "birthdate": "Access to user's birthdate",
-        "over_18": "Access to user's over 18 status",
-        "place_of_birth": "Access to user's place of birth",
-        "address": "Access to user's address",
-        "gender": "Access to user's gender",
-        "nationality": "Access to user's nationality",
-        "credentials": "Access to user's credentials",
-        "legal_name": "Access to user's legal name",
-        "professional_identity": "Access to user's professional identity",
-        "online_profile": "Access to user's online profile",
-        "pseudonym": "Access to user's pseudonym",
-        "daily_use": "Access to user's daily use names",
-        "custom_objects": "Access to user's custom objects",
-    },
+    "SCOPES_BACKEND_CLASS": "wallet.scopes_backend.DynamicScopesBackend",
 }
 
 LOGIN_URL = "/accounts/login/"
