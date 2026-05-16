@@ -35,8 +35,20 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class PrivacyMetadata(models.Model):
     """Model definition for PrivacyMetadata."""
 
+    PUBLIC = "public"
+    PRIVATE = "private"
+
+    VISIBILITY_CHOICES = [
+        (PUBLIC, "Public"),
+        (PRIVATE, "Private"),
+    ]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    visibility = models.CharField(max_length=50)
+    visibility = models.CharField(
+        max_length=10,
+        choices=VISIBILITY_CHOICES,
+        default=PUBLIC,
+    )
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -48,6 +60,10 @@ class PrivacyMetadata(models.Model):
     def __str__(self):
         """Unicode representation of Privacy Metadata."""
         return f"Visibility: {self.visibility}"
+
+    @property
+    def is_public(self):
+        return self.visibility == self.PUBLIC
 
 
 class Age(models.Model):
@@ -192,6 +208,7 @@ class AccessLog(models.Model):
         related_name="access_logs",
     )
     scopes_accessed = models.JSONField(default=list, blank=True)
+    claims_returned = models.JSONField(default=list, blank=True)
     access_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:

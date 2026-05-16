@@ -28,7 +28,7 @@ class PrivacyMetadataFactory(DjangoModelFactory):
     class Meta:
         model = models.PrivacyMetadata
 
-    visibility = factory.Iterator(["public", "private", "restricted"])
+    visibility = factory.Iterator(["public", "private"])
 
 
 class AgeFactory(DjangoModelFactory):
