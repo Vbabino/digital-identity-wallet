@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+from datetime import timedelta
 import os
 
 from pathlib import Path
@@ -26,6 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
@@ -47,6 +51,13 @@ INSTALLED_APPS = [
     "wallet",
     "drf_spectacular",
     "oauth2_provider",
+    "allauth",
+    "allauth.account",
+    "auth_kit",
+    "auth_kit.mfa",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "auth_kit.social",
 ]
 
 MIDDLEWARE = [
@@ -55,18 +66,29 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "auth_kit.authentication.JWTCookieAuthentication",
+        "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+}
+
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
 
 AUTH_USER_MODEL = "wallet.CustomUser"
 
@@ -147,3 +169,27 @@ OAUTH2_PROVIDER = {
 }
 
 LOGIN_URL = "/accounts/login/"
+
+AUTH_KIT = {
+    "AUTH_TYPE": "jwt",
+    "USE_AUTH_COOKIE": True,
+    "USE_MFA": False,  # Enables MFA authentication flow
+    "SOCIAL_LOGIN_AUTH_TYPE": "code",
+}
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": ["email"],
+        "AUTH_PARAMS": {"access_type": "online"},
+        "OAUTH_PKCE_ENABLED": True,  # Disable for manual testing; re-enable with a proper frontend
+        "FETCH_USERINFO": False,
+        "APP": {
+            "client_id": GOOGLE_CLIENT_ID,
+            "secret": GOOGLE_CLIENT_SECRET,
+            "key": "",
+        },
+    },
+}
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # For development
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"  # For production

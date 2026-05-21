@@ -8,7 +8,7 @@ from django_countries.fields import CountryField
 
 
 def validate_scope_name(value):
-    if not re.match(r'^[a-zA-Z0-9_]+$', value):
+    if not re.match(r"^[a-zA-Z0-9_]+$", value):
         raise ValidationError("Must contain only letters, digits, and underscores.")
 
 
