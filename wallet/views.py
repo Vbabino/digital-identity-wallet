@@ -2,11 +2,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from .models import (
     Age,
-    PrivacyMetadata,
     PlaceOfBirth,
     LegalIdentity,
     Address,
@@ -39,179 +38,95 @@ from .serializers import (
 )
 
 
-class DateOfBirthView(APIView):
+class UserSingletonAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    model_class = None
+    serializer_class = None
+    related_name = None
+    display_name = None
 
-    def _get_date_of_birth(self, user):
+    def _get_instance(self, user):
         try:
-            return user.age
-        except Age.DoesNotExist:
+            return getattr(user, self.related_name)
+        except self.model_class.DoesNotExist:
             return None
 
-    @extend_schema(responses=DateOfBirthSerializer)
     def get(self, request):
-        date_of_birth = self._get_date_of_birth(request.user)
-        if date_of_birth is None:
+        instance = self._get_instance(request.user)
+        if instance is None:
             return Response(
-                {"detail": "Date of Birth record not found."},
+                {"detail": f"{self.display_name} record not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        return Response(DateOfBirthSerializer(date_of_birth).data)
+        return Response(self.serializer_class(instance).data)
 
-    @extend_schema(request=DateOfBirthSerializer, responses=DateOfBirthSerializer)
     def post(self, request):
-        if self._get_date_of_birth(request.user) is not None:
+        if self._get_instance(request.user) is not None:
             return Response(
-                {"detail": "Date of Birth record already exists. Use PATCH to update."},
+                {"detail": f"{self.display_name} record already exists. Use PATCH to update."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = DateOfBirthSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        privacy = PrivacyMetadata.objects.create(
-            visibility=request.data.get("visibility", PrivacyMetadata.PUBLIC)
-        )
-        serializer.save(user=request.user, privacy_metadata=privacy)
+        serializer.save(user=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @extend_schema(request=DateOfBirthSerializer, responses=DateOfBirthSerializer)
     def put(self, request):
         return self._update(request, partial=False)
 
-    @extend_schema(request=DateOfBirthSerializer, responses=DateOfBirthSerializer)
     def patch(self, request):
         return self._update(request, partial=True)
 
     def _update(self, request, partial):
-        date_of_birth = self._get_date_of_birth(request.user)
-        if date_of_birth is None:
+        instance = self._get_instance(request.user)
+        if instance is None:
             return Response(
-                {"detail": "Date of Birth record not found."},
+                {"detail": f"{self.display_name} record not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        serializer = DateOfBirthSerializer(
-            date_of_birth, data=request.data, partial=partial
-        )
+        serializer = self.serializer_class(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
 
-class PlaceOfBirthView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def _get_place_of_birth(self, user):
-        try:
-            return user.place_of_birth
-        except PlaceOfBirth.DoesNotExist:
-            return None
-
-    @extend_schema(responses=PlaceOfBirthSerializer)
-    def get(self, request):
-        place_of_birth = self._get_place_of_birth(request.user)
-        if place_of_birth is None:
-            return Response(
-                {"detail": "Place of Birth record not found."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        return Response(PlaceOfBirthSerializer(place_of_birth).data)
-
-    @extend_schema(request=PlaceOfBirthSerializer, responses=PlaceOfBirthSerializer)
-    def post(self, request):
-        if self._get_place_of_birth(request.user) is not None:
-            return Response(
-                {
-                    "detail": "Place of Birth record already exists. Use PATCH to update."
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        serializer = PlaceOfBirthSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        privacy = PrivacyMetadata.objects.create(
-            visibility=request.data.get("visibility", PrivacyMetadata.PUBLIC)
-        )
-        serializer.save(user=request.user, privacy_metadata=privacy)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    @extend_schema(request=PlaceOfBirthSerializer, responses=PlaceOfBirthSerializer)
-    def put(self, request):
-        return self._update(request, partial=False)
-
-    @extend_schema(request=PlaceOfBirthSerializer, responses=PlaceOfBirthSerializer)
-    def patch(self, request):
-        return self._update(request, partial=True)
-
-    def _update(self, request, partial):
-        place_of_birth = self._get_place_of_birth(request.user)
-        if place_of_birth is None:
-            return Response(
-                {"detail": "Place of Birth record not found."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        serializer = PlaceOfBirthSerializer(
-            place_of_birth, data=request.data, partial=partial
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+@extend_schema_view(
+    get=extend_schema(responses=DateOfBirthSerializer),
+    post=extend_schema(request=DateOfBirthSerializer, responses=DateOfBirthSerializer),
+    put=extend_schema(request=DateOfBirthSerializer, responses=DateOfBirthSerializer),
+    patch=extend_schema(request=DateOfBirthSerializer, responses=DateOfBirthSerializer),
+)
+class DateOfBirthView(UserSingletonAPIView):
+    model_class = Age
+    serializer_class = DateOfBirthSerializer
+    related_name = "age"
+    display_name = "Date of Birth"
 
 
-class LegalIdentityView(APIView):
-    permission_classes = [IsAuthenticated]
+@extend_schema_view(
+    get=extend_schema(responses=PlaceOfBirthSerializer),
+    post=extend_schema(request=PlaceOfBirthSerializer, responses=PlaceOfBirthSerializer),
+    put=extend_schema(request=PlaceOfBirthSerializer, responses=PlaceOfBirthSerializer),
+    patch=extend_schema(request=PlaceOfBirthSerializer, responses=PlaceOfBirthSerializer),
+)
+class PlaceOfBirthView(UserSingletonAPIView):
+    model_class = PlaceOfBirth
+    serializer_class = PlaceOfBirthSerializer
+    related_name = "place_of_birth"
+    display_name = "Place of Birth"
 
-    def _get_legal_identity(self, user):
-        try:
-            return user.legal_identity
-        except LegalIdentity.DoesNotExist:
-            return None
 
-    @extend_schema(responses=LegalIdentitySerializer)
-    def get(self, request):
-        legal_identity = self._get_legal_identity(request.user)
-        if legal_identity is None:
-            return Response(
-                {"detail": "Legal Identity record not found."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        return Response(LegalIdentitySerializer(legal_identity).data)
-
-    @extend_schema(request=LegalIdentitySerializer, responses=LegalIdentitySerializer)
-    def post(self, request):
-        if self._get_legal_identity(request.user) is not None:
-            return Response(
-                {
-                    "detail": "Legal Identity record already exists. Use PATCH to update."
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        serializer = LegalIdentitySerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        privacy = PrivacyMetadata.objects.create(
-            visibility=request.data.get("visibility", PrivacyMetadata.PUBLIC)
-        )
-        serializer.save(user=request.user, privacy_metadata=privacy)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    @extend_schema(request=LegalIdentitySerializer, responses=LegalIdentitySerializer)
-    def put(self, request):
-        return self._update(request, partial=False)
-
-    @extend_schema(request=LegalIdentitySerializer, responses=LegalIdentitySerializer)
-    def patch(self, request):
-        return self._update(request, partial=True)
-
-    def _update(self, request, partial):
-        legal_identity = self._get_legal_identity(request.user)
-        if legal_identity is None:
-            return Response(
-                {"detail": "Legal Identity record not found."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        serializer = LegalIdentitySerializer(
-            legal_identity, data=request.data, partial=partial
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+@extend_schema_view(
+    get=extend_schema(responses=LegalIdentitySerializer),
+    post=extend_schema(request=LegalIdentitySerializer, responses=LegalIdentitySerializer),
+    put=extend_schema(request=LegalIdentitySerializer, responses=LegalIdentitySerializer),
+    patch=extend_schema(request=LegalIdentitySerializer, responses=LegalIdentitySerializer),
+)
+class LegalIdentityView(UserSingletonAPIView):
+    model_class = LegalIdentity
+    serializer_class = LegalIdentitySerializer
+    related_name = "legal_identity"
+    display_name = "Legal Identity"
 
 
 class UserScopedModelViewSet(viewsets.ModelViewSet):

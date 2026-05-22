@@ -80,8 +80,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=30),
 }
 
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
@@ -191,5 +191,4 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 }
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # For development
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"  # For production
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")

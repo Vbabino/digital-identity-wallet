@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 from .models import (
     Age,
@@ -27,12 +28,13 @@ class PrivacyMetadataMixin(serializers.ModelSerializer):
     def create(self, validated_data):
         privacy_data = validated_data.pop("privacy_metadata", {})
         visibility = privacy_data.get("visibility", PrivacyMetadata.PUBLIC)
-        privacy = PrivacyMetadata.objects.create(visibility=visibility)
-        return super().create({"privacy_metadata": privacy, **validated_data})
+        with transaction.atomic():
+            privacy = PrivacyMetadata.objects.create(visibility=visibility)
+            return super().create({"privacy_metadata": privacy, **validated_data})
 
     def update(self, instance, validated_data):
         privacy_data = validated_data.pop("privacy_metadata", {})
-        if "visibility" in privacy_data:
+        if "visibility" in privacy_data and instance.privacy_metadata is not None:
             instance.privacy_metadata.visibility = privacy_data["visibility"]
             instance.privacy_metadata.save()
         return super().update(instance, validated_data)

@@ -102,8 +102,8 @@ class PlaceOfBirth(models.Model):
         PrivacyMetadata, on_delete=models.CASCADE, related_name="place_of_birth"
     )
     birth_country = CountryField()
-    birth_state = models.CharField(max_length=255)
-    birth_city = models.CharField(max_length=255)
+    birth_state = models.CharField(max_length=255, blank=True, null=True)
+    birth_city = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         """Meta definition for Place of Birth."""
@@ -234,7 +234,7 @@ class Credential(models.Model):
     )
     credential_name = models.CharField(max_length=255)
     credential_type = models.CharField(max_length=255)
-    credential_description = models.TextField()
+    credential_description = models.TextField(blank=True, null=True)
     credential_id = models.CharField(max_length=255)
     issuing_authority = models.CharField(max_length=255)
     issuance_date = models.DateField(auto_now=False, auto_now_add=False)
