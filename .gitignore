@@ -280,6 +280,7 @@ markets/media/
 db_schema.txt
 cred.txt
 api.http
+schema.yaml
 
 ===
 
@@ -436,3 +437,8 @@ psd
 thumb
 sketch
 
+/node_modules/
+
+# React Router
+/.react-router/
+/build/
