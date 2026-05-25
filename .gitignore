@@ -442,3 +442,7 @@ sketch
 # React Router
 /.react-router/
 /build/
+.react-router/
+.vscode/
+Frontend/.react-router/types/+future.ts
+.react-router/
