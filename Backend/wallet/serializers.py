@@ -117,6 +117,11 @@ class CredentialSerializer(PrivacyMetadataMixin):
         ]
         read_only_fields = ["user"]
 
+    def validate_credential_url(self, value):
+        if value and not value.startswith("https://"):
+            raise serializers.ValidationError("Only HTTPS URLs are allowed.")
+        return value
+
 
 class ProfessionalIdentitySerializer(PrivacyMetadataMixin):
     class Meta:

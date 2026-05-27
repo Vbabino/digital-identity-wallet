@@ -58,11 +58,13 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "auth_kit.social",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -88,6 +90,16 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+# Auto-connect is intentionally disabled: connecting a social account to an
+# existing password account based solely on email match is an account-takeover
+# vector if the social provider does not enforce email verification at the app
+# layer (FETCH_USERINFO is False, so email_verified is not independently checked).
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = False
+# "optional" still lets Google users sign up, but an unverified social email
+# will not silently inherit an existing verified account.
+SOCIALACCOUNT_EMAIL_VERIFICATION = "optional"
 
 
 AUTH_USER_MODEL = "wallet.CustomUser"
@@ -173,15 +185,17 @@ LOGIN_URL = "/accounts/login/"
 AUTH_KIT = {
     "AUTH_TYPE": "jwt",
     "USE_AUTH_COOKIE": True,
-    "USE_MFA": False,  # Enables MFA authentication flow
+    "USE_MFA": False,
     "SOCIAL_LOGIN_AUTH_TYPE": "code",
+    "SOCIAL_LOGIN_CALLBACK_BASE_URL": "http://localhost:5173/auth/callback",
+    "SOCIAL_LOGIN_SERIALIZER_FACTORY": "wallet.social_serializers.get_pkce_social_login_serializer",
 }
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": ["email"],
         "AUTH_PARAMS": {"access_type": "online"},
-        "OAUTH_PKCE_ENABLED": True,  # Disable for manual testing; re-enable with a proper frontend
+        "OAUTH_PKCE_ENABLED": True,
         "FETCH_USERINFO": False,
         "APP": {
             "client_id": GOOGLE_CLIENT_ID,
@@ -192,3 +206,21 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+
+# CORS and Session Configuration
+# Set CORS_ALLOWED_ORIGINS / CSRF_TRUSTED_ORIGINS as comma-separated URLs in
+# the environment file. Defaults cover local dev only.
+CORS_ALLOW_CREDENTIALS = True
+_cors_default = "http://localhost:5173,http://127.0.0.1:5173"
+CORS_ALLOWED_ORIGINS = [
+    o.strip()
+    for o in os.getenv("CORS_ALLOWED_ORIGINS", _cors_default).split(",")
+    if o.strip()
+]
+CSRF_TRUSTED_ORIGINS = [
+    o.strip()
+    for o in os.getenv("CSRF_TRUSTED_ORIGINS", _cors_default).split(",")
+    if o.strip()
+]
+CSRF_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "Lax"
