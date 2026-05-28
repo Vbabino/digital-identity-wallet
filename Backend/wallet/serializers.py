@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 from django.db import transaction
 from rest_framework import serializers
 from .models import (
@@ -118,8 +120,19 @@ class CredentialSerializer(PrivacyMetadataMixin):
         read_only_fields = ["user"]
 
     def validate_credential_url(self, value):
-        if value and not value.startswith("https://"):
+        if not value:
+            return value
+        parsed = urlparse(value)
+        if parsed.scheme != "https":
             raise serializers.ValidationError("Only HTTPS URLs are allowed.")
+        if not parsed.netloc:
+            raise serializers.ValidationError("URL must have a valid host.")
+        hostname = (parsed.hostname or "").lower()
+        _private_prefixes = ("10.", "172.", "192.168.")
+        if hostname in ("localhost", "127.0.0.1", "::1") or any(
+            hostname.startswith(p) for p in _private_prefixes
+        ):
+            raise serializers.ValidationError("URL must point to an external host.")
         return value
 
 
