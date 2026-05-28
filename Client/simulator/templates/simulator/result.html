@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Identity Data Result — OAuth2 Client Simulator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f5f7;
+      margin: 0;
+      padding: 40px 20px;
+      color: #1d1d1f;
+    }
+    .card {
+      max-width: 680px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 36px 40px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    h1 { font-size: 1.5rem; margin: 0 0 6px; }
+    .subtitle { color: #6e6e73; margin: 0 0 28px; font-size: 0.95rem; }
+
+    /* Error state */
+    .error-box {
+      background: #fff2f2;
+      border: 1px solid #ffb3b3;
+      border-radius: 8px;
+      padding: 16px 20px;
+      color: #c0392b;
+      margin-bottom: 24px;
+    }
+    .error-box strong { display: block; margin-bottom: 4px; }
+
+    /* Scopes granted */
+    .scopes-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+    .scope-chip {
+      font-size: 0.78rem;
+      font-family: monospace;
+      background: #e8f4ff;
+      color: #0055aa;
+      border-radius: 4px;
+      padding: 3px 8px;
+    }
+    .label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6e6e73;
+      margin-bottom: 8px;
+    }
+
+    /* JSON block */
+    pre {
+      background: #f4f4f8;
+      border: 1px solid #e0e0e8;
+      border-radius: 8px;
+      padding: 20px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      margin: 0 0 24px;
+      overflow-x: auto;
+    }
+
+    .actions { display: flex; gap: 12px; }
+    a.btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #0071e3;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    a.btn:hover { background: #0077ed; }
+    a.btn.secondary {
+      background: #f0f0f5;
+      color: #1d1d1f;
+    }
+    a.btn.secondary:hover { background: #e5e5ea; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Identity Data Result</h1>
+    <p class="subtitle">Response from the Digital ID Wallet userinfo endpoint.</p>
+
+    {% if error %}
+      <div class="error-box">
+        <strong>Error</strong>
+        {{ error }}
+      </div>
+    {% else %}
+      {% if scopes_granted %}
+        <p class="label">Scopes Granted</p>
+        <div class="scopes-row">
+          {% for scope in scopes_granted.split %}
+            <span class="scope-chip">{{ scope }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <p class="label">Userinfo Response</p>
+      <pre>{{ userinfo }}</pre>
+    {% endif %}
+
+    <div class="actions">
+      <a class="btn" href="{% url 'home' %}">New Request</a>
+    </div>
+  </div>
+</body>
+</html>

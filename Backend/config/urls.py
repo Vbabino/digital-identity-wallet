@@ -12,7 +12,7 @@ urlpatterns = [
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
-    path("accounts/", include("django.contrib.auth.urls")),
+    path("accounts/", include("allauth.urls")),
     path("o/", include(oauth2_urls)),
     path("api/auth/", include("auth_kit.urls")),
     path("api/auth/social/", include("auth_kit.social.urls")),
