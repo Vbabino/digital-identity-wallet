@@ -36,8 +36,29 @@ def _compute_code_challenge(verifier):
     return base64.urlsafe_b64encode(digest).rstrip(b"=").decode("ascii")
 
 
+def _fetch_dynamic_scopes():
+    try:
+        response = http_requests.get(
+            f"{settings.WALLET_BASE_URL}/o/.well-known/openid-configuration/",
+            timeout=5,
+        )
+        response.raise_for_status()
+        scopes_supported = response.json().get("scopes_supported", [])
+    except (http_requests.RequestException, ValueError):
+        return []
+
+    dynamic_scopes = []
+    for scope_id in scopes_supported:
+        if not scope_id.startswith("custom_name:"):
+            continue
+        name_type = scope_id.removeprefix("custom_name:")
+        label = f"Custom: {name_type.replace('_', ' ').title()}"
+        dynamic_scopes.append((scope_id, label))
+    return dynamic_scopes
+
+
 def home(request):
-    return render(request, "simulator/home.html", {"scopes": SCOPES})
+    return render(request, "simulator/home.html", {"scopes": SCOPES + _fetch_dynamic_scopes()})
 
 
 def authorize(request):
