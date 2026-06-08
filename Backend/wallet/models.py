@@ -47,7 +47,7 @@ class PrivacyMetadata(models.Model):
     visibility = models.CharField(
         max_length=10,
         choices=VISIBILITY_CHOICES,
-        default=PUBLIC,
+        default=PRIVATE, # Default to private to be in line with GDPR Art.25 and privacy best practices
     )
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -64,6 +64,10 @@ class PrivacyMetadata(models.Model):
     @property
     def is_public(self):
         return self.visibility == self.PUBLIC
+
+    @property
+    def is_private(self):
+        return self.visibility == self.PRIVATE
 
 
 class Age(models.Model):

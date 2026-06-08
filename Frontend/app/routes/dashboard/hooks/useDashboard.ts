@@ -80,13 +80,13 @@ export function useDashboard(initialData: DashboardLoaderData) {
     family_name: "",
     given_name_birth: "",
     family_name_birth: "",
-    visibility: "public",
+    visibility: "private",
   })
 
   const [isEditingAge, setIsEditingAge] = useState(false)
   const [editAgeForm, setEditAgeForm] = useState<Age>({
     birth_date: "",
-    visibility: "public",
+    visibility: "private",
   })
 
   const [isEditingBirthPlace, setIsEditingBirthPlace] = useState(false)
@@ -94,7 +94,7 @@ export function useDashboard(initialData: DashboardLoaderData) {
     birth_city: "",
     birth_state: "",
     birth_country: "US",
-    visibility: "public",
+    visibility: "private",
   })
 
   // --- MODAL STATE ---
@@ -114,32 +114,32 @@ export function useDashboard(initialData: DashboardLoaderData) {
     resident_state: "",
     resident_postal_code: "",
     resident_country: "US",
-    visibility: "public",
+    visibility: "private",
   })
   const [nationalityForm, setNationalityForm] = useState<NationalityForm>({
     nationality: "US",
-    visibility: "public",
+    visibility: "private",
   })
   const [genderForm, setGenderForm] = useState<GenderForm>({
     gender: "male",
-    visibility: "public",
+    visibility: "private",
   })
   const [professionalForm, setProfessionalForm] = useState<ProfessionalForm>({
     job_title: "",
     role_description: "",
     employee_number: "",
-    visibility: "public",
+    visibility: "private",
   })
   const [onlineForm, setOnlineForm] = useState<OnlineForm>({
     platform: "github",
     username: "",
     display_name: "",
-    visibility: "public",
+    visibility: "private",
   })
   const [dailyForm, setDailyForm] = useState<DailyForm>({
     preferred_name: "",
     nickname: "",
-    visibility: "public",
+    visibility: "private",
   })
   const [credentialForm, setCredentialForm] = useState<CredentialForm>({
     credential_id: "",
@@ -150,12 +150,12 @@ export function useDashboard(initialData: DashboardLoaderData) {
     issuance_date: "",
     expiry_date: "",
     credential_url: "",
-    visibility: "public",
+    visibility: "private",
   })
   const [customForm, setCustomForm] = useState<CustomForm>({
     name_type: "",
     name_value: "",
-    visibility: "public",
+    visibility: "private",
   })
 
   // --- DATA FETCHING (manual refresh only — initial data comes from clientLoader) ---
@@ -340,15 +340,15 @@ export function useDashboard(initialData: DashboardLoaderData) {
             resident_state: "",
             resident_postal_code: "",
             resident_country: "US",
-            visibility: "public",
+            visibility: "private",
           })
-        if (type === "nationality") setNationalityForm({ nationality: "US", visibility: "public" })
-        if (type === "gender") setGenderForm({ gender: "male", visibility: "public" })
+        if (type === "nationality") setNationalityForm({ nationality: "US", visibility: "private" })
+        if (type === "gender") setGenderForm({ gender: "male", visibility: "private" })
         if (type === "professional")
-          setProfessionalForm({ job_title: "", role_description: "", employee_number: "", visibility: "public" })
+          setProfessionalForm({ job_title: "", role_description: "", employee_number: "", visibility: "private" })
         if (type === "online")
-          setOnlineForm({ platform: "github", username: "", display_name: "", visibility: "public" })
-        if (type === "daily") setDailyForm({ preferred_name: "", nickname: "", visibility: "public" })
+          setOnlineForm({ platform: "github", username: "", display_name: "", visibility: "private" })
+        if (type === "daily") setDailyForm({ preferred_name: "", nickname: "", visibility: "private" })
         if (type === "credential")
           setCredentialForm({
             credential_id: "",
@@ -359,9 +359,9 @@ export function useDashboard(initialData: DashboardLoaderData) {
             issuance_date: "",
             expiry_date: "",
             credential_url: "",
-            visibility: "public",
+            visibility: "private",
           })
-        if (type === "custom") setCustomForm({ name_type: "", name_value: "", visibility: "public" })
+        if (type === "custom") setCustomForm({ name_type: "", name_value: "", visibility: "private" })
       }
     },
     []

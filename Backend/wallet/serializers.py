@@ -29,7 +29,7 @@ class PrivacyMetadataMixin(serializers.ModelSerializer):
 
     def create(self, validated_data):
         privacy_data = validated_data.pop("privacy_metadata", {})
-        visibility = privacy_data.get("visibility", PrivacyMetadata.PUBLIC)
+        visibility = privacy_data.get("visibility", PrivacyMetadata.PRIVATE)
         with transaction.atomic():
             privacy = PrivacyMetadata.objects.create(visibility=visibility)
             return super().create({"privacy_metadata": privacy, **validated_data})
