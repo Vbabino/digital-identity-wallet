@@ -9,6 +9,7 @@ import {
   ActivityIcon,
   Logout01Icon,
   LockIcon,
+  LockPasswordIcon,
   Menu01Icon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "~/components/ui/button"
@@ -21,6 +22,7 @@ const sidebarTabs = [
   { id: "professional", label: "Professional & Social", icon: Briefcase02Icon },
   { id: "credentials", label: "Verified Credentials", icon: ShieldIcon },
   { id: "logs", label: "Security Logs", icon: ActivityIcon },
+  { id: "security", label: "Security", icon: LockPasswordIcon },
 ]
 
 interface SidebarProps {

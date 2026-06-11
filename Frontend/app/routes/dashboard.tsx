@@ -14,6 +14,7 @@ import { ContactTab } from "./dashboard/tabs/ContactTab"
 import { ProfessionalTab } from "./dashboard/tabs/ProfessionalTab"
 import { CredentialsTab } from "./dashboard/tabs/CredentialsTab"
 import { LogsTab } from "./dashboard/tabs/LogsTab"
+import { SecurityTab } from "./dashboard/tabs/SecurityTab"
 import type { DashboardLoaderData } from "./dashboard/types"
 
 export async function clientLoader(): Promise<DashboardLoaderData> {
@@ -93,6 +94,10 @@ const tabHeaders: Record<string, { title: string; subtitle: string }> = {
     title: "Identity Security Access Log",
     subtitle: "Read-only historic log of scopes/claims requested by Relying Party apps.",
   },
+  security: {
+    title: "Security",
+    subtitle: "Manage your account password.",
+  },
 }
 
 export default function Dashboard() {
@@ -152,6 +157,7 @@ export default function Dashboard() {
           {activeTab === "professional" && <ProfessionalTab dashboard={dashboard} />}
           {activeTab === "credentials" && <CredentialsTab dashboard={dashboard} />}
           {activeTab === "logs" && <LogsTab dashboard={dashboard} />}
+          {activeTab === "security" && <SecurityTab />}
         </div>
       </main>
 

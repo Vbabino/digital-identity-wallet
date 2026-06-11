@@ -187,10 +187,30 @@ LOGIN_URL = "/accounts/login/"
 AUTH_KIT = {
     "AUTH_TYPE": "jwt",
     "USE_AUTH_COOKIE": True,
-    "USE_MFA": False,
+    "USE_MFA": True,
     "SOCIAL_LOGIN_AUTH_TYPE": "code",
     "SOCIAL_LOGIN_CALLBACK_BASE_URL": "http://localhost:5173/auth/callback",
     "SOCIAL_LOGIN_SERIALIZER_FACTORY": "wallet.social_serializers.get_pkce_social_login_serializer",
+    # Frontend URL configuration for email links
+    "FRONTEND_BASE_URL": "http://localhost:5173",
+    "REGISTER_EMAIL_CONFIRM_PATH": "/auth/verify-email",
+    "PASSWORD_RESET_CONFIRM_PATH": "/auth/reset-password",
+    # TOTP Configuration
+    "MFA_TOTP_DEFAULT_INTERVAL": 30,  # Code validity (seconds)
+    "MFA_TOTP_DEFAULT_VALID_WINDOW": 0,  # Clock skew tolerance
+    # Backup Codes
+    "NUM_OF_BACKUP_CODES": 5,  # Number of backup codes
+    "BACKUP_CODE_LENGTH": 12,  # Backup code length
+    "BACKUP_CODE_SECURE_HASH": True,  # Secure storage
+    # Token Expiry
+    "MFA_EPHEMERAL_TOKEN_EXPIRY": 900,  # 15 minutes
+    # App Settings
+    "MFA_APPLICATION_NAME": "TrustVault",  # Shown in authenticator apps
+    # Security Constraints
+    "MFA_PREVENT_DELETE_ACTIVE_METHOD": False,
+    "MFA_PREVENT_DELETE_PRIMARY_METHOD": False,
+    "MFA_DELETE_ACTIVE_METHOD_REQUIRE_CODE": False,
+
 }
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -208,6 +228,19 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+# EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+# EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
+# EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
+# EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+# DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+
+EMAIL_HOST = "0.0.0.0"
+EMAIL_PORT = 1025
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+
 
 # CORS and Session Configuration
 # Set CORS_ALLOWED_ORIGINS / CSRF_TRUSTED_ORIGINS as comma-separated URLs in

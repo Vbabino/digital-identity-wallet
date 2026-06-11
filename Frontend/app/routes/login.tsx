@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useNavigate } from "react-router"
+import { Link, useLocation, useNavigate } from "react-router"
 import { api } from "~/services/api"
 import { Button } from "~/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -59,6 +59,8 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
+  const location = useLocation()
+  const notice = (location.state as { notice?: string } | null)?.notice
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -194,6 +196,11 @@ export default function Login() {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
+            {notice && (
+              <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs text-emerald-400">
+                {notice}
+              </div>
+            )}
             {error && (
               <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-xs text-red-400">
                 {error}
@@ -220,6 +227,12 @@ export default function Login() {
                 <label className="block text-xs font-semibold tracking-wider text-zinc-400 uppercase">
                   Password
                 </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-xs font-medium text-zinc-400 transition hover:text-zinc-200"
+                >
+                  Forgot password?
+                </Link>
               </div>
               <input
                 type="password"
@@ -257,6 +270,13 @@ export default function Login() {
               </Button>
             </div>
           </form>
+
+          <p className="mt-6 text-center text-xs text-zinc-500">
+            New here?{" "}
+            <Link to="/register" className="font-medium text-zinc-300 transition hover:text-white">
+              Create an account
+            </Link>
+          </p>
         </div>
       </div>
     </div>
