@@ -89,7 +89,7 @@ function NavContent({
       <div className="space-y-4">
         <div className="flex items-center justify-center gap-2 rounded-xl border border-zinc-800/50 bg-zinc-950/20 p-3.5 text-center text-xs text-zinc-500">
           <HugeiconsIcon icon={LockIcon} className="h-4 w-4 text-zinc-500" />
-          Hardware Encrypted Vault
+          Encrypted Vault
         </div>
         <Button
           variant="dark-action"

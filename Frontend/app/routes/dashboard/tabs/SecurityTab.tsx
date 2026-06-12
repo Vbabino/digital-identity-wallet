@@ -3,14 +3,9 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { LockPasswordIcon } from "@hugeicons/core-free-icons"
 import { Button } from "~/components/ui/button"
 import { SectionCard } from "../components/SectionCard"
+import { MfaManager } from "../components/MfaManager"
 import { api } from "~/services/api"
-
-function extractErrors(err: any): string {
-  const data = err?.response?.data
-  if (!data) return "Password change failed. Please try again."
-  const messages = Object.values(data).flat() as string[]
-  return messages.join(" ") || "Password change failed. Please try again."
-}
+import { extractApiError } from "~/lib/errors"
 
 export function SecurityTab() {
   const [oldPassword, setOldPassword] = useState("")
@@ -41,9 +36,9 @@ export function SecurityTab() {
       setOldPassword("")
       setNewPassword1("")
       setNewPassword2("")
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (import.meta.env.DEV) console.error(err)
-      setError(extractErrors(err))
+      setError(extractApiError(err, "Password change failed. Please try again."))
     } finally {
       setIsLoading(false)
     }
@@ -51,6 +46,7 @@ export function SecurityTab() {
 
   return (
     <div className="space-y-8">
+      <MfaManager />
       <SectionCard
         icon={LockPasswordIcon}
         title="Change Password"

@@ -79,6 +79,14 @@ REST_FRAMEWORK = {
         "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "30/minute",
+        "user": "300/minute",
+    },
 }
 
 SIMPLE_JWT = {
@@ -197,7 +205,7 @@ AUTH_KIT = {
     "PASSWORD_RESET_CONFIRM_PATH": "/auth/reset-password",
     # TOTP Configuration
     "MFA_TOTP_DEFAULT_INTERVAL": 30,  # Code validity (seconds)
-    "MFA_TOTP_DEFAULT_VALID_WINDOW": 0,  # Clock skew tolerance
+    "MFA_TOTP_DEFAULT_VALID_WINDOW": 1,  # Clock skew tolerance (±1 window = 3 codes checked)
     # Backup Codes
     "NUM_OF_BACKUP_CODES": 5,  # Number of backup codes
     "BACKUP_CODE_LENGTH": 12,  # Backup code length
@@ -208,8 +216,8 @@ AUTH_KIT = {
     "MFA_APPLICATION_NAME": "TrustVault",  # Shown in authenticator apps
     # Security Constraints
     "MFA_PREVENT_DELETE_ACTIVE_METHOD": False,
-    "MFA_PREVENT_DELETE_PRIMARY_METHOD": False,
-    "MFA_DELETE_ACTIVE_METHOD_REQUIRE_CODE": False,
+    "MFA_PREVENT_DELETE_PRIMARY_METHOD": True,
+    "MFA_DELETE_ACTIVE_METHOD_REQUIRE_CODE": True,
 
 }
 

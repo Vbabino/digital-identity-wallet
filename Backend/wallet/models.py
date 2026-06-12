@@ -28,6 +28,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
+    # MFA app handler (pyotp) expects user.username for the TOTP account label.
+    @property
+    def username(self):
+        return self.email
+
     def __str__(self):
         return f"User: {self.email}"
 

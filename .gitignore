@@ -16,7 +16,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+/lib/
 lib64/
 parts/
 sdist/
@@ -159,7 +159,7 @@ typings/
 # Local History for devcontainer
 .devcontainer/bash_history
 
-
+staged_changes.txt
 
 
 ### Windows template
