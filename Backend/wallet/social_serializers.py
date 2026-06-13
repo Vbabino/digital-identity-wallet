@@ -1,13 +1,15 @@
 """
-PKCE-enabled social login serializer.
+PKCE-enabled social login and connect serializers.
 
-Extends auth-kit's SocialLoginWithCodeRequestSerializer to accept a
-code_verifier from the frontend and forward it to the OAuth token exchange,
-implementing the full PKCE S256 flow for frontend-initiated OAuth.
+Extends auth-kit's serializers to accept a code_verifier from the frontend
+and forward it to the OAuth token exchange, implementing the full PKCE S256
+flow for frontend-initiated OAuth (both login and account-connect flows).
 """
 
 from typing import Any, cast
 
+from django.db import transaction
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.request import Request
 
@@ -17,25 +19,25 @@ from auth_kit.allauth_enhanced import OpenIDConnectOAuth2Adapter
 from auth_kit.app_settings import auth_kit_settings
 from auth_kit.serializer_fields import UnquoteStringField
 from auth_kit.serializers.login_factors import get_login_response_serializer
+from auth_kit.social.serializers.connect import SocialConnectSerializer
 from auth_kit.social.serializers.login import SocialLoginWithCodeRequestSerializer
+from auth_kit.social.views import SocialConnectView
 
 
-class PKCESocialLoginWithCodeSerializer(SocialLoginWithCodeRequestSerializer):
+class _PKCECodeExchangeMixin:
     """
-    Extends the standard authorization-code serializer with PKCE support.
+    Shared PKCE OAuth code exchange logic for login and connect serializers.
 
-    Accepts an optional `code_verifier` from the client and forwards it to
-    the provider's token endpoint so Google can verify the S256 challenge
-    that was attached to the original authorization request.
+    Handles adapter resolution, OAuth2Client construction, code exchange,
+    and token parsing. Subclasses call _exchange_code() and handle their
+    own return value.
     """
 
-    code_verifier = UnquoteStringField(required=False, allow_blank=True, write_only=True)
-
-    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+    def _exchange_code(self, attrs: dict[str, Any]) -> None:
         from auth_kit.social.views import SocialLoginView  # local import avoids circular
 
-        view = cast(SocialLoginView, self.context.get("view"))
-        request = cast(Request, self.context.get("request"))
+        view = cast(SocialLoginView, self.context.get("view"))  # type: ignore[attr-defined]
+        request = cast(Request, self.context.get("request"))  # type: ignore[attr-defined]
 
         adapter_class = view.adapter_class
 
@@ -51,7 +53,7 @@ class PKCESocialLoginWithCodeSerializer(SocialLoginWithCodeRequestSerializer):
         code = attrs.get("code")
         code_verifier = attrs.get("code_verifier") or None
 
-        callback_url = self.get_callback_url(request, view, app)
+        callback_url = self.get_callback_url(request, view, app)  # type: ignore[attr-defined]
         client_class = getattr(view, "client_class", OAuth2Client)
 
         client = client_class(
@@ -80,11 +82,60 @@ class PKCESocialLoginWithCodeSerializer(SocialLoginWithCodeRequestSerializer):
             if key in token:
                 tokens_to_parse[key] = token[key]
 
-        login = self.get_login_from_token(tokens_to_parse)
-        self.post_signup(login, attrs)
-        self.context["user"] = login.account.user
+        try:
+            with transaction.atomic():
+                login = self.get_login_from_token(tokens_to_parse)  # type: ignore[attr-defined]
+                self.post_signup(login, attrs)  # type: ignore[attr-defined]
+                self.context["user"] = login.account.user  # type: ignore[attr-defined]
+        except (OAuth2Error, serializers.ValidationError):
+            raise
+        except Exception as e:
+            raise serializers.ValidationError("Authentication processing failed") from e
 
+
+class PKCESocialLoginWithCodeSerializer(
+    _PKCECodeExchangeMixin, SocialLoginWithCodeRequestSerializer
+):
+    """
+    Extends the standard authorization-code serializer with PKCE support.
+
+    Accepts an optional `code_verifier` from the client and forwards it to
+    the provider's token endpoint so Google can verify the S256 challenge
+    that was attached to the original authorization request.
+    """
+
+    code_verifier = UnquoteStringField(required=False, allow_blank=True, write_only=True)
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        self._exchange_code(attrs)
         return attrs
+
+
+class PKCESocialConnectSerializer(_PKCECodeExchangeMixin, SocialConnectSerializer):
+    """
+    Extends SocialConnectSerializer with PKCE support.
+
+    Accepts an optional `code_verifier` from the client and forwards it to
+    the provider's token endpoint so Google can verify the S256 challenge.
+    The connect-specific hooks (email-match check, user assignment) are
+    inherited from SocialConnectSerializer via post_signup().
+    """
+
+    code_verifier = UnquoteStringField(required=False, allow_blank=True, write_only=True)
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        self._exchange_code(attrs)
+        return {"detail": _("Connected")}
+
+
+class PKCESocialConnectView(SocialConnectView):
+    """
+    Replacement for auth_kit's SocialConnectView that uses the PKCE-enabled
+    serializer. Set AUTH_KIT["SOCIAL_CONNECT_VIEW"] to this class path.
+    """
+
+    def get_serializer_class(self) -> type[PKCESocialConnectSerializer]:
+        return PKCESocialConnectSerializer
 
 
 def get_pkce_social_login_serializer(

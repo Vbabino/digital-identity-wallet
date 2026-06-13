@@ -4,6 +4,7 @@ import { LockPasswordIcon } from "@hugeicons/core-free-icons"
 import { Button } from "~/components/ui/button"
 import { SectionCard } from "../components/SectionCard"
 import { MfaManager } from "../components/MfaManager"
+import { SocialAccountsManager } from "../components/SocialAccountsManager"
 import { api } from "~/services/api"
 import { extractApiError } from "~/lib/errors"
 
@@ -47,6 +48,7 @@ export function SecurityTab() {
   return (
     <div className="space-y-8">
       <MfaManager />
+      <SocialAccountsManager />
       <SectionCard
         icon={LockPasswordIcon}
         title="Change Password"

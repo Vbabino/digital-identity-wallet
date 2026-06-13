@@ -159,7 +159,7 @@ typings/
 # Local History for devcontainer
 .devcontainer/bash_history
 
-staged_changes.txt
+sc.txt
 
 
 ### Windows template

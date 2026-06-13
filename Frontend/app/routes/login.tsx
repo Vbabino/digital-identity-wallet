@@ -4,6 +4,8 @@ import { api } from "~/services/api"
 import { Button } from "~/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { LockIcon, ActivityIcon, SmartPhone01Icon, Mail01Icon } from "@hugeicons/core-free-icons"
+import { buildGoogleOAuthUrl } from "~/lib/pkce"
+import { GoogleIcon } from "~/components/icons/GoogleIcon"
 
 // OAuth credentials and endpoints are loaded from environment variables so
 // they can differ between local dev, staging, and production without a code
@@ -20,37 +22,6 @@ if (import.meta.env.PROD && (DEMO_EMAIL || DEMO_PASSWORD)) {
   console.warn(
     "[security] Demo credentials are set in a production build. Remove VITE_DEMO_EMAIL and VITE_DEMO_PASSWORD from your production environment."
   )
-}
-
-/** Generates a cryptographically random hex string used as the OAuth state token. */
-function generateOAuthState(): string {
-  const arr = new Uint8Array(16)
-  crypto.getRandomValues(arr)
-  return Array.from(arr, (b) => b.toString(16).padStart(2, "0")).join("")
-}
-
-/** Base64url encode (no padding) — required by RFC 7636 for PKCE. */
-function base64urlEncode(buffer: ArrayBuffer): string {
-  return btoa(String.fromCharCode(...new Uint8Array(buffer)))
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "")
-}
-
-/**
- * Generates a PKCE code_verifier (32 random bytes, base64url) and its
- * corresponding code_challenge (SHA-256 of the verifier, base64url).
- */
-async function generatePKCE(): Promise<{ verifier: string; challenge: string }> {
-  const verifierBytes = new Uint8Array(32)
-  crypto.getRandomValues(verifierBytes)
-  const verifier = base64urlEncode(verifierBytes.buffer)
-  const challengeBytes = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(verifier)
-  )
-  const challenge = base64urlEncode(challengeBytes)
-  return { verifier, challenge }
 }
 
 type LoginStep = "credentials" | "mfa"
@@ -221,29 +192,7 @@ export default function Login() {
       return
     }
 
-    // Generate an anti-CSRF state token and a PKCE verifier+challenge pair.
-    // The verifier is kept in sessionStorage so auth-callback.tsx can send it
-    // to the backend, which forwards it to Google's token endpoint to complete
-    // the S256 PKCE verification (RFC 7636).
-    const state = generateOAuthState()
-    const { verifier, challenge } = await generatePKCE()
-    sessionStorage.setItem("oauth_state", state)
-    sessionStorage.setItem("pkce_verifier", verifier)
-
-    const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth")
-    authUrl.searchParams.set("client_id", GOOGLE_CLIENT_ID)
-    authUrl.searchParams.set("redirect_uri", REDIRECT_URI)
-    authUrl.searchParams.set("response_type", "code")
-    authUrl.searchParams.set("scope", "email")
-    // "online" matches the backend's AUTH_PARAMS configuration; the backend
-    // handles sessions directly so a refresh token is not needed here.
-    authUrl.searchParams.set("access_type", "online")
-    authUrl.searchParams.set("prompt", "consent")
-    authUrl.searchParams.set("state", state)
-    authUrl.searchParams.set("code_challenge", challenge)
-    authUrl.searchParams.set("code_challenge_method", "S256")
-
-    window.location.href = authUrl.toString()
+    window.location.href = await buildGoogleOAuthUrl(GOOGLE_CLIENT_ID, REDIRECT_URI, "login")
   }
 
   const methodLabel =
@@ -365,12 +314,7 @@ export default function Login() {
                     onClick={handleGoogleLogin}
                     className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-950 py-3 font-semibold text-zinc-300 transition duration-300 hover:bg-zinc-900"
                   >
-                    <svg className="h-5 w-5" viewBox="0 0 24 24">
-                      <path
-                        fill="#EA4335"
-                        d="M12.24 10.285V14.4h6.887c-.275 1.565-1.88 4.604-6.887 4.604-4.33 0-7.859-3.578-7.859-8s3.53-8 7.859-8c2.46 0 4.105 1.025 5.047 1.926l3.227-3.111C18.281 1.09 15.547 0 12.24 0 5.58 0 0 5.37 0 12s5.58 12 12.24 12c6.96 0 11.57-4.89 11.57-11.79 0-.795-.085-1.4-.19-1.925H12.24z"
-                      />
-                    </svg>
+                    <GoogleIcon className="h-5 w-5" />
                     Sign In with Google
                   </Button>
                 </div>

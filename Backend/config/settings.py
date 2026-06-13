@@ -199,6 +199,10 @@ AUTH_KIT = {
     "SOCIAL_LOGIN_AUTH_TYPE": "code",
     "SOCIAL_LOGIN_CALLBACK_BASE_URL": "http://localhost:5173/auth/callback",
     "SOCIAL_LOGIN_SERIALIZER_FACTORY": "wallet.social_serializers.get_pkce_social_login_serializer",
+    "SOCIAL_CONNECT_CALLBACK_BASE_URL": "http://localhost:5173/auth/callback",
+    "SOCIAL_CONNECT_VIEW": "wallet.social_serializers.PKCESocialConnectView",
+    # Default True: social account email must match the authenticated user's email.
+    # "SOCIAL_CONNECT_REQUIRE_EMAIL_MATCH": True,
     # Frontend URL configuration for email links
     "FRONTEND_BASE_URL": "http://localhost:5173",
     "REGISTER_EMAIL_CONFIRM_PATH": "/auth/verify-email",

@@ -1,6 +1,7 @@
 import { redirect, useLoaderData, useNavigate } from "react-router"
 import type { ClientLoaderFunctionArgs } from "react-router"
 import { api } from "~/services/api"
+import { extractApiError } from "~/lib/errors"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { AlertCircleIcon, ArrowLeftIcon } from "@hugeicons/core-free-icons"
 import { Button } from "~/components/ui/button"
@@ -12,8 +13,14 @@ export async function clientLoader({ request }: ClientLoaderFunctionArgs) {
 
   const expectedState = sessionStorage.getItem("oauth_state")
   const pkceVerifier = sessionStorage.getItem("pkce_verifier")
+  const intent = sessionStorage.getItem("oauth_intent")
   sessionStorage.removeItem("oauth_state")
   sessionStorage.removeItem("pkce_verifier")
+  sessionStorage.removeItem("oauth_intent")
+
+  if (!intent) {
+    return { error: "OAuth session data is missing. Please start the process again." }
+  }
 
   if (!returnedState || returnedState !== expectedState) {
     return {
@@ -27,25 +34,36 @@ export async function clientLoader({ request }: ClientLoaderFunctionArgs) {
     return { error: "Authorization code is missing from the callback URL." }
   }
 
+  const endpoint =
+    intent === "connect" ? "/api/auth/social/google/connect/" : "/api/auth/social/google/"
+
   try {
-    await api.post("/api/auth/social/google/", {
+    await api.post(endpoint, {
       code,
       ...(pkceVerifier ? { code_verifier: pkceVerifier } : {}),
     })
-  } catch (err: any) {
+  } catch (err: unknown) {
+    if (import.meta.env.DEV) console.error(err)
+    const detail = extractApiError(err, "")
+    if (intent === "connect") {
+      return {
+        error: detail || "Failed to connect your Google account. Please try again.",
+        backTo: "/dashboard",
+        backLabel: "Back to Dashboard",
+      }
+    }
     return {
-      error:
-        err.response?.data?.detail ||
-        "Failed to complete authentication with Google. Please ensure your credentials are valid.",
+      error: detail || "Failed to complete authentication with Google. Please ensure your credentials are valid.",
     }
   }
 
+  if (intent === "connect") return redirect("/dashboard?social_connected=google")
   return redirect("/dashboard")
 }
 
 // Only renders when the loader returns an error (success path always redirects)
 export default function AuthCallback() {
-  const { error } = useLoaderData<typeof clientLoader>()
+  const { error, backTo, backLabel } = useLoaderData<typeof clientLoader>()
   const navigate = useNavigate()
 
   return (
@@ -61,17 +79,17 @@ export default function AuthCallback() {
             </div>
             <div className="space-y-2">
               <h1 className="font-heading text-2xl font-bold tracking-tight text-red-500">
-                Authentication Failed
+                {backTo ? "Connection Failed" : "Authentication Failed"}
               </h1>
               <p className="text-sm leading-relaxed text-zinc-400">{error}</p>
             </div>
             <Button
               variant="dark-action"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate(backTo ?? "/login")}
               className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3 font-semibold"
             >
               <HugeiconsIcon icon={ArrowLeftIcon} className="h-4 w-4" />
-              Back to Sign In
+              {backLabel ?? "Back to Sign In"}
             </Button>
           </div>
         </div>
