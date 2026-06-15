@@ -19,7 +19,7 @@ export default function ForgotPassword() {
     try {
       await api.post("/api/auth/password/reset/", { email })
       setSubmitted(true)
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (import.meta.env.DEV) console.error(err)
       // Surface error only for unexpected failures; a 200 with wrong email is
       // intentionally ambiguous to prevent user enumeration.

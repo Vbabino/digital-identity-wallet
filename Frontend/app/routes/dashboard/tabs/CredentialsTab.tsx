@@ -6,6 +6,7 @@ import { SectionCard } from "../components/SectionCard"
 import { EmptyState } from "../components/EmptyState"
 import { PrivacyBadge } from "../components/PrivacyBadge"
 import type { DashboardState } from "../hooks/useDashboard"
+import type { Credential } from "../types"
 
 interface CredentialsTabProps {
   dashboard: DashboardState
@@ -84,7 +85,7 @@ export const CredentialsTab = memo(function CredentialsTab({ dashboard }: Creden
                       size="sm"
                       onClick={() =>
                         toggleVisibility("credentials", cred.id, cred.visibility, (updated) => {
-                          setCredentials(credentials.map((c) => (c.id === cred.id ? updated : c)))
+                          setCredentials(credentials.map((c) => (c.id === cred.id ? updated as Credential : c)))
                         })
                       }
                     />
@@ -110,7 +111,7 @@ export const CredentialsTab = memo(function CredentialsTab({ dashboard }: Creden
                   </button>
                   <span className="text-zinc-800">|</span>
                   <button
-                    onClick={() => handleDeleteRecord("credentials", cred.id, setCredentials, credentials)}
+                    onClick={() => handleDeleteRecord("credentials", cred.id, () => setCredentials(prev => prev.filter(c => c.id !== cred.id)))}
                     className="flex cursor-pointer items-center gap-0.5 text-xs font-semibold text-red-400/80 hover:text-red-400"
                   >
                     <HugeiconsIcon icon={Delete02Icon} className="h-3 w-3" /> Revoke Document

@@ -15,6 +15,8 @@ import type {
   CustomObject,
   AccessLog,
   ModalType,
+  MultiRecord,
+  FormPayload,
   DeleteConfirmState,
   AddressForm,
   NationalityForm,
@@ -203,8 +205,8 @@ export function useDashboard(initialData: DashboardLoaderData) {
       setCredentials(credRes.data)
       setCustomObjects(customRes.data)
       setAccessLogs(logsRes.data)
-    } catch (error: any) {
-      if (error.response?.status === 401) {
+    } catch (error: unknown) {
+      if ((error as { response?: { status?: number } }).response?.status === 401) {
         showToast("Session expired. Please sign in again.", "error")
         navigate("/login")
       } else {
@@ -296,7 +298,7 @@ export function useDashboard(initialData: DashboardLoaderData) {
       endpoint: string,
       id: string | undefined,
       currentVisibility: "public" | "private",
-      stateSetter: (updated: any) => void,
+      stateSetter: (updated: unknown) => void,
       isSingleton = false
     ) => {
       const newVisibility = currentVisibility === "public" ? "private" : "public"
@@ -316,19 +318,19 @@ export function useDashboard(initialData: DashboardLoaderData) {
 
   // --- MODAL HANDLERS ---
   const openModal = useCallback(
-    (type: ModalType, action: "create" | "edit", item?: any) => {
+    (type: ModalType, action: "create" | "edit", item?: MultiRecord) => {
       setModalType(type)
       setModalAction(action)
       if (action === "edit" && item) {
         setActiveItemId(item.id)
-        if (type === "address") setAddressForm({ ...item })
-        if (type === "nationality") setNationalityForm({ ...item })
-        if (type === "gender") setGenderForm({ ...item })
-        if (type === "professional") setProfessionalForm({ ...item })
-        if (type === "online") setOnlineForm({ ...item })
-        if (type === "daily") setDailyForm({ ...item })
-        if (type === "credential") setCredentialForm({ ...item })
-        if (type === "custom") setCustomForm({ ...item })
+        if (type === "address") setAddressForm({ ...(item as Address) })
+        if (type === "nationality") setNationalityForm({ ...(item as Nationality) })
+        if (type === "gender") setGenderForm({ ...(item as Gender) })
+        if (type === "professional") setProfessionalForm({ ...(item as ProfessionalIdentity) })
+        if (type === "online") setOnlineForm({ ...(item as OnlineProfile) })
+        if (type === "daily") setDailyForm({ ...(item as DailyUse) })
+        if (type === "credential") setCredentialForm({ ...(item as Credential) })
+        if (type === "custom") setCustomForm({ ...(item as CustomObject) })
       } else {
         setActiveItemId(null)
         if (type === "address")
@@ -377,26 +379,26 @@ export function useDashboard(initialData: DashboardLoaderData) {
     async (e: React.FormEvent) => {
       e.preventDefault()
       let endpoint = ""
-      let payload: any = {}
-      let listSetter: React.Dispatch<React.SetStateAction<any[]>> | null = null
-      let listData: any[] = []
+      let payload!: FormPayload
+      let listSetter: React.Dispatch<React.SetStateAction<MultiRecord[]>> | null = null
+      let listData: MultiRecord[] = []
 
       if (modalType === "address") {
-        endpoint = "addresses"; payload = addressForm; listSetter = setAddresses; listData = addresses
+        endpoint = "addresses"; payload = addressForm; listSetter = setAddresses as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = addresses
       } else if (modalType === "nationality") {
-        endpoint = "nationalities"; payload = nationalityForm; listSetter = setNationalities; listData = nationalities
+        endpoint = "nationalities"; payload = nationalityForm; listSetter = setNationalities as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = nationalities
       } else if (modalType === "gender") {
-        endpoint = "gender"; payload = genderForm; listSetter = setGenders; listData = genders
+        endpoint = "gender"; payload = genderForm; listSetter = setGenders as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = genders
       } else if (modalType === "professional") {
-        endpoint = "professionals"; payload = professionalForm; listSetter = setProfessionals; listData = professionals
+        endpoint = "professionals"; payload = professionalForm; listSetter = setProfessionals as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = professionals
       } else if (modalType === "online") {
-        endpoint = "online-profiles"; payload = onlineForm; listSetter = setOnlineProfiles; listData = onlineProfiles
+        endpoint = "online-profiles"; payload = onlineForm; listSetter = setOnlineProfiles as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = onlineProfiles
       } else if (modalType === "daily") {
-        endpoint = "daily-uses"; payload = dailyForm; listSetter = setDailyUses; listData = dailyUses
+        endpoint = "daily-uses"; payload = dailyForm; listSetter = setDailyUses as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = dailyUses
       } else if (modalType === "credential") {
-        endpoint = "credentials"; payload = credentialForm; listSetter = setCredentials; listData = credentials
+        endpoint = "credentials"; payload = credentialForm; listSetter = setCredentials as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = credentials
       } else if (modalType === "custom") {
-        endpoint = "custom-objects"; payload = customForm; listSetter = setCustomObjects; listData = customObjects
+        endpoint = "custom-objects"; payload = customForm; listSetter = setCustomObjects as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = customObjects
       }
 
       if (!listSetter) return
@@ -404,16 +406,17 @@ export function useDashboard(initialData: DashboardLoaderData) {
       try {
         if (modalAction === "create") {
           const res = await api.post(`/api/wallet/${endpoint}/`, payload)
-          listSetter([res.data, ...listData])
+          listSetter([res.data as MultiRecord, ...listData])
           showToast("Record added successfully!")
         } else {
           const res = await api.patch(`/api/wallet/${endpoint}/${activeItemId}/`, payload)
-          listSetter(listData.map((item) => (item.id === activeItemId ? res.data : item)))
+          listSetter(listData.map((item) => (item.id === activeItemId ? res.data as MultiRecord : item)))
           showToast("Record updated successfully!")
         }
         closeModal()
-      } catch (err: any) {
-        showToast(err.response?.data?.detail || "Failed to save record.", "error")
+      } catch (err: unknown) {
+        const detail = (err as { response?: { data?: { detail?: string } } }).response?.data?.detail
+        showToast(detail || "Failed to save record.", "error")
       }
     },
     [
@@ -428,24 +431,19 @@ export function useDashboard(initialData: DashboardLoaderData) {
 
   // --- DELETE HANDLERS ---
   const handleDeleteRecord = useCallback(
-    (
-      endpoint: string,
-      id: string,
-      listSetter: React.Dispatch<React.SetStateAction<any[]>>,
-      listData: any[]
-    ) => {
-      setDeleteConfirm({ endpoint, id, listSetter, listData })
+    (endpoint: string, id: string, onSuccess: () => void) => {
+      setDeleteConfirm({ endpoint, id, onSuccess })
     },
     []
   )
 
   const confirmDelete = useCallback(async () => {
     if (!deleteConfirm) return
-    const { endpoint, id, listSetter, listData } = deleteConfirm
+    const { endpoint, id, onSuccess } = deleteConfirm
     setDeleteConfirm(null)
     try {
       await api.delete(`/api/wallet/${endpoint}/${id}/`)
-      listSetter(listData.filter((item: any) => item.id !== id))
+      onSuccess()
       showToast("Record deleted successfully!")
     } catch {
       showToast("Failed to delete record.", "error")

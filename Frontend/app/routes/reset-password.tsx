@@ -5,10 +5,13 @@ import { Button } from "~/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { LockIcon, Alert01Icon } from "@hugeicons/core-free-icons"
 
-function extractErrors(err: any): string {
-  const data = err?.response?.data
-  if (!data) return "Password reset failed. Please try again."
-  const messages = Object.values(data).flat() as string[]
+function extractErrors(err: unknown): string {
+  const data = (err as { response?: { data?: unknown } })?.response?.data
+  if (!data || typeof data !== "object") return "Password reset failed. Please try again."
+  const messages = Object.values(data)
+    .filter((v): v is unknown[] => Array.isArray(v))
+    .flat()
+    .filter((m): m is string => typeof m === "string")
   return messages.join(" ") || "Password reset failed. Please try again."
 }
 
@@ -43,7 +46,7 @@ export default function ResetPassword() {
         new_password2: newPassword2,
       })
       navigate("/login", { state: { notice: "Password updated. You can now sign in." } })
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (import.meta.env.DEV) console.error(err)
       setError(extractErrors(err))
     } finally {

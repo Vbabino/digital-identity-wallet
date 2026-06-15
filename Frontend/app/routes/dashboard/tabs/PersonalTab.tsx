@@ -1,6 +1,7 @@
 import React, { memo } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { UserIcon, UserCircleIcon, PencilEdit01Icon, Delete02Icon, Add01Icon } from "@hugeicons/core-free-icons"
+import type { LegalIdentity, CustomObject } from "../types"
 import { Button } from "~/components/ui/button"
 import { SectionCard } from "../components/SectionCard"
 import { EmptyState } from "../components/EmptyState"
@@ -40,7 +41,7 @@ export const PersonalTab = memo(function PersonalTab({ dashboard }: PersonalTabP
               <PrivacyBadge
                 visibility={legalIdentity.visibility}
                 onClick={() =>
-                  toggleVisibility("legal-identities", undefined, legalIdentity.visibility, setLegalIdentity, true)
+                  toggleVisibility("legal-identities", undefined, legalIdentity.visibility, (updated) => setLegalIdentity(updated as LegalIdentity), true)
                 }
               />
               <Button
@@ -203,7 +204,7 @@ export const PersonalTab = memo(function PersonalTab({ dashboard }: PersonalTabP
                     size="sm"
                     onClick={() =>
                       toggleVisibility("custom-objects", attr.id, attr.visibility, (updated) => {
-                        setCustomObjects(customObjects.map((o) => (o.id === attr.id ? updated : o)))
+                        setCustomObjects(customObjects.map((o) => (o.id === attr.id ? updated as CustomObject : o)))
                       })
                     }
                   />
@@ -217,7 +218,7 @@ export const PersonalTab = memo(function PersonalTab({ dashboard }: PersonalTabP
                   </button>
                   <span className="text-zinc-700">|</span>
                   <button
-                    onClick={() => handleDeleteRecord("custom-objects", attr.id, setCustomObjects, customObjects)}
+                    onClick={() => handleDeleteRecord("custom-objects", attr.id, () => setCustomObjects(prev => prev.filter(o => o.id !== attr.id)))}
                     className="flex cursor-pointer items-center gap-0.5 text-xs font-medium text-red-400/80 hover:text-red-400"
                   >
                     <HugeiconsIcon icon={Delete02Icon} className="h-3 w-3" /> Remove

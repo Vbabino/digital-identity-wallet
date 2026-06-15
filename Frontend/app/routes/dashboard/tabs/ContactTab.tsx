@@ -13,6 +13,7 @@ import { SectionCard } from "../components/SectionCard"
 import { EmptyState } from "../components/EmptyState"
 import { PrivacyBadge } from "../components/PrivacyBadge"
 import { getCountryName } from "../types"
+import type { Address, Nationality, Gender } from "../types"
 import type { DashboardState } from "../hooks/useDashboard"
 
 interface ContactTabProps {
@@ -78,7 +79,7 @@ export const ContactTab = memo(function ContactTab({ dashboard }: ContactTabProp
                     size="sm"
                     onClick={() =>
                       toggleVisibility("addresses", addr.id, addr.visibility, (updated) => {
-                        setAddresses(addresses.map((a) => (a.id === addr.id ? updated : a)))
+                        setAddresses(addresses.map((a) => (a.id === addr.id ? updated as Address : a)))
                       })
                     }
                   />
@@ -90,7 +91,7 @@ export const ContactTab = memo(function ContactTab({ dashboard }: ContactTabProp
                   </button>
                   <span className="hidden text-zinc-700 sm:inline">|</span>
                   <button
-                    onClick={() => handleDeleteRecord("addresses", addr.id, setAddresses, addresses)}
+                    onClick={() => handleDeleteRecord("addresses", addr.id, () => setAddresses(prev => prev.filter(a => a.id !== addr.id)))}
                     className="flex cursor-pointer items-center gap-0.5 text-xs font-medium text-red-400/80 hover:text-red-400"
                   >
                     <HugeiconsIcon icon={Delete02Icon} className="h-3 w-3" /> Delete
@@ -133,12 +134,12 @@ export const ContactTab = memo(function ContactTab({ dashboard }: ContactTabProp
                       size="sm"
                       onClick={() =>
                         toggleVisibility("nationalities", nat.id, nat.visibility, (updated) => {
-                          setNationalities(nationalities.map((n) => (n.id === nat.id ? updated : n)))
+                          setNationalities(nationalities.map((n) => (n.id === nat.id ? updated as Nationality : n)))
                         })
                       }
                     />
                     <button
-                      onClick={() => handleDeleteRecord("nationalities", nat.id, setNationalities, nationalities)}
+                      onClick={() => handleDeleteRecord("nationalities", nat.id, () => setNationalities(prev => prev.filter(n => n.id !== nat.id)))}
                       className="cursor-pointer text-xs font-medium text-red-400/80 hover:text-red-400"
                     >
                       ✕
@@ -179,12 +180,12 @@ export const ContactTab = memo(function ContactTab({ dashboard }: ContactTabProp
                       size="sm"
                       onClick={() =>
                         toggleVisibility("gender", gen.id, gen.visibility, (updated) => {
-                          setGenders(genders.map((g) => (g.id === gen.id ? updated : g)))
+                          setGenders(genders.map((g) => (g.id === gen.id ? updated as Gender : g)))
                         })
                       }
                     />
                     <button
-                      onClick={() => handleDeleteRecord("gender", gen.id, setGenders, genders)}
+                      onClick={() => handleDeleteRecord("gender", gen.id, () => setGenders(prev => prev.filter(g => g.id !== gen.id)))}
                       className="cursor-pointer text-xs font-medium text-red-400/80 hover:text-red-400"
                     >
                       ✕

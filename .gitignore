@@ -448,3 +448,6 @@ Frontend/.react-router/types/+future.ts
 .react-router/
 e.txt
 /.drf-auth-kit
+.scannerwork
+eslint.txt
+trivy.txt

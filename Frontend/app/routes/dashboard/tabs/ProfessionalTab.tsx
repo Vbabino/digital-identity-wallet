@@ -13,6 +13,7 @@ import { SectionCard } from "../components/SectionCard"
 import { EmptyState } from "../components/EmptyState"
 import { PrivacyBadge } from "../components/PrivacyBadge"
 import type { DashboardState } from "../hooks/useDashboard"
+import type { ProfessionalIdentity, OnlineProfile, DailyUse } from "../types"
 
 interface ProfessionalTabProps {
   dashboard: DashboardState
@@ -72,7 +73,7 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
                     size="sm"
                     onClick={() =>
                       toggleVisibility("professionals", prof.id, prof.visibility, (updated) => {
-                        setProfessionals(professionals.map((p) => (p.id === prof.id ? updated : p)))
+                        setProfessionals(professionals.map((p) => (p.id === prof.id ? updated as ProfessionalIdentity : p)))
                       })
                     }
                   />
@@ -84,7 +85,7 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
                   </button>
                   <span className="hidden text-zinc-700 sm:inline">|</span>
                   <button
-                    onClick={() => handleDeleteRecord("professionals", prof.id, setProfessionals, professionals)}
+                    onClick={() => handleDeleteRecord("professionals", prof.id, () => setProfessionals(prev => prev.filter(p => p.id !== prof.id)))}
                     className="flex cursor-pointer items-center gap-0.5 text-xs font-medium text-red-400/80 hover:text-red-400"
                   >
                     <HugeiconsIcon icon={Delete02Icon} className="h-3 w-3" /> Delete
@@ -133,7 +134,7 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
                       size="sm"
                       onClick={() =>
                         toggleVisibility("online-profiles", p.id, p.visibility, (updated) => {
-                          setOnlineProfiles(onlineProfiles.map((item) => (item.id === p.id ? updated : item)))
+                          setOnlineProfiles(onlineProfiles.map((item) => (item.id === p.id ? updated as OnlineProfile : item)))
                         })
                       }
                     />
@@ -147,7 +148,7 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
                     </button>
                     <span className="text-zinc-800">|</span>
                     <button
-                      onClick={() => handleDeleteRecord("online-profiles", p.id, setOnlineProfiles, onlineProfiles)}
+                      onClick={() => handleDeleteRecord("online-profiles", p.id, () => setOnlineProfiles(prev => prev.filter(item => item.id !== p.id)))}
                       className="flex cursor-pointer items-center gap-0.5 text-[10px] font-semibold text-red-400/80 hover:text-red-400"
                     >
                       <HugeiconsIcon icon={Delete02Icon} className="h-2.5 w-2.5" /> Delete
@@ -193,7 +194,7 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
                       size="sm"
                       onClick={() =>
                         toggleVisibility("daily-uses", d.id, d.visibility, (updated) => {
-                          setDailyUses(dailyUses.map((item) => (item.id === d.id ? updated : item)))
+                          setDailyUses(dailyUses.map((item) => (item.id === d.id ? updated as DailyUse : item)))
                         })
                       }
                     />
@@ -207,7 +208,7 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
                     </button>
                     <span className="text-zinc-800">|</span>
                     <button
-                      onClick={() => handleDeleteRecord("daily-uses", d.id, setDailyUses, dailyUses)}
+                      onClick={() => handleDeleteRecord("daily-uses", d.id, () => setDailyUses(prev => prev.filter(item => item.id !== d.id)))}
                       className="flex cursor-pointer items-center gap-0.5 text-[10px] font-semibold text-red-400/80 hover:text-red-400"
                     >
                       <HugeiconsIcon icon={Delete02Icon} className="h-2.5 w-2.5" /> Delete

@@ -1,8 +1,8 @@
 import { HugeiconsIcon } from "@hugeicons/react"
-import type { ReactNode } from "react"
+import type { ReactNode, ComponentProps } from "react"
 
 interface SectionCardProps {
-  icon: any
+  icon: ComponentProps<typeof HugeiconsIcon>["icon"]
   title: string
   subtitle?: string
   action?: ReactNode

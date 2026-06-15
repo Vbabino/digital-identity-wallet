@@ -11,7 +11,7 @@ export default function Home() {
         await api.get("/api/auth/user/")
         // If successful, user is logged in
         navigate("/dashboard", { replace: true })
-      } catch (error) {
+      } catch {
         // If it fails, user is not logged in
         navigate("/login", { replace: true })
       }

@@ -1,0 +1,10 @@
+scan:
+  skip-dirs:
+    - .venv
+    - venv
+    - ENV
+  skip-files:
+    - api.http
+    - Backend/.env
+    - Backend/api.http
+    - Client/.env

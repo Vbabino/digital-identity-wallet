@@ -115,6 +115,26 @@ export const getCountryName = (code: string) => {
   return c ? `${c.flag} ${c.name}` : code
 }
 
+export type MultiRecord =
+  | Address
+  | Nationality
+  | Gender
+  | ProfessionalIdentity
+  | OnlineProfile
+  | DailyUse
+  | Credential
+  | CustomObject
+
+export type FormPayload =
+  | AddressForm
+  | NationalityForm
+  | GenderForm
+  | ProfessionalForm
+  | OnlineForm
+  | DailyForm
+  | CredentialForm
+  | CustomForm
+
 export type ModalType =
   | "address"
   | "nationality"
@@ -128,8 +148,7 @@ export type ModalType =
 export interface DeleteConfirmState {
   endpoint: string
   id: string
-  listSetter: React.Dispatch<React.SetStateAction<any[]>>
-  listData: any[]
+  onSuccess: () => void
 }
 
 export interface AddressForm {

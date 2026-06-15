@@ -5,11 +5,13 @@ import { Button } from "~/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { LockIcon, Mail01Icon } from "@hugeicons/core-free-icons"
 
-function extractErrors(err: any): string {
-  const data = err?.response?.data
-  if (!data) return "Registration failed. Please try again."
-  // drf-auth-kit returns field errors as arrays
-  const messages = Object.values(data).flat() as string[]
+function extractErrors(err: unknown): string {
+  const data = (err as { response?: { data?: unknown } })?.response?.data
+  if (!data || typeof data !== "object") return "Registration failed. Please try again."
+  const messages = Object.values(data)
+    .filter((v): v is unknown[] => Array.isArray(v))
+    .flat()
+    .filter((m): m is string => typeof m === "string")
   return messages.join(" ") || "Registration failed. Please try again."
 }
 
@@ -34,7 +36,7 @@ export default function Register() {
     try {
       await api.post("/api/auth/registration/", { email, password1, password2 })
       setSubmitted(true)
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (import.meta.env.DEV) console.error(err)
       setError(extractErrors(err))
     } finally {

@@ -57,7 +57,7 @@ export function SocialAccountsManager() {
       setSearchParams(next, { replace: true })
       setRefreshKey((k) => k + 1)
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     setLoading(true)

@@ -5,6 +5,7 @@ import { Button } from "~/components/ui/button"
 import { SectionCard } from "../components/SectionCard"
 import { PrivacyBadge } from "../components/PrivacyBadge"
 import { countries, getCountryName } from "../types"
+import type { Age, PlaceOfBirth } from "../types"
 import type { DashboardState } from "../hooks/useDashboard"
 
 interface BirthTabProps {
@@ -42,7 +43,7 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
             <div className="flex items-center space-x-3">
               <PrivacyBadge
                 visibility={age.visibility}
-                onClick={() => toggleVisibility("date-of-birth", undefined, age.visibility, setAge, true)}
+                onClick={() => toggleVisibility("date-of-birth", undefined, age.visibility, (updated) => setAge(updated as Age), true)}
               />
               <Button
                 onClick={() => {
@@ -127,7 +128,7 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
               <PrivacyBadge
                 visibility={placeOfBirth.visibility}
                 onClick={() =>
-                  toggleVisibility("place-of-birth", undefined, placeOfBirth.visibility, setPlaceOfBirth, true)
+                  toggleVisibility("place-of-birth", undefined, placeOfBirth.visibility, (updated) => setPlaceOfBirth(updated as PlaceOfBirth), true)
                 }
               />
               <Button

@@ -21,9 +21,9 @@ export default function VerifyEmail() {
     api
       .post("/api/auth/registration/verify-email/", { key })
       .then(() => setStatus("success"))
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         if (import.meta.env.DEV) console.error(err)
-        const data = err?.response?.data
+        const data = (err as { response?: { data?: { key?: string[]; detail?: string } } })?.response?.data
         const msg =
           (Array.isArray(data?.key) ? data.key[0] : null) ||
           data?.detail ||
