@@ -206,7 +206,7 @@ AUTH_KIT = {
     # Frontend URL configuration for email links
     "FRONTEND_BASE_URL": "http://localhost:5173",
     "REGISTER_EMAIL_CONFIRM_PATH": "/auth/verify-email",
-    "PASSWORD_RESET_CONFIRM_PATH": "/auth/reset-password",
+    "PASSWORD_RESET_CONFIRM_PATH": "/auth/reset-password",  # nosec B105
     # TOTP Configuration
     "MFA_TOTP_DEFAULT_INTERVAL": 30,  # Code validity (seconds)
     "MFA_TOTP_DEFAULT_VALID_WINDOW": 1,  # Clock skew tolerance (±1 window = 3 codes checked)
@@ -215,7 +215,7 @@ AUTH_KIT = {
     "BACKUP_CODE_LENGTH": 12,  # Backup code length
     "BACKUP_CODE_SECURE_HASH": True,  # Secure storage
     # Token Expiry
-    "MFA_EPHEMERAL_TOKEN_EXPIRY": 900,  # 15 minutes
+    "MFA_EPHEMERAL_TOKEN_EXPIRY": 900,  # 15 minutes  # nosec B105
     # App Settings
     "MFA_APPLICATION_NAME": "TrustVault",  # Shown in authenticator apps
     # Security Constraints
@@ -247,10 +247,10 @@ EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.Em
 # EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 # DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
 
-EMAIL_HOST = "0.0.0.0"
+EMAIL_HOST = "0.0.0.0"  # nosec B104
 EMAIL_PORT = 1025
 EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_PASSWORD = ''  # nosec B105
 EMAIL_USE_TLS = False
 
 

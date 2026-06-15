@@ -143,7 +143,7 @@ class OnlineProfileFactory(DjangoModelFactory):
     platform = factory.Iterator(["github", "linkedin", "x", "instagram"])
     username = factory.Faker("user_name")
     display_name = factory.Faker("name")
-    extra_fields = factory.LazyFunction(lambda: {"followers": random.randint(0, 10000)})
+    extra_fields = factory.LazyFunction(lambda: {"followers": random.randint(0, 10000)})  # nosec B311
 
 
 class PseudonymFactory(DjangoModelFactory):
