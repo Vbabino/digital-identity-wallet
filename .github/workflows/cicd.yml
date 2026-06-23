@@ -49,6 +49,7 @@ jobs:
         with:
           scan-type: fs
           scan-ref: .
+          scanners: vuln
           severity: HIGH,CRITICAL
           exit-code: '0'
           ignore-unfixed: true
@@ -59,6 +60,7 @@ jobs:
         with:
           scan-type: fs
           scan-ref: .
+          scanners: vuln
           severity: HIGH,CRITICAL
           exit-code: '1'
           ignore-unfixed: true
