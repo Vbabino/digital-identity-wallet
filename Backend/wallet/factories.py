@@ -90,6 +90,8 @@ class AccessLogFactory(DjangoModelFactory):
 
     user = factory.SubFactory(CustomUserFactory)
     relying_party = factory.Faker("company")
+    scopes_accessed = factory.LazyFunction(list)
+    claims_returned = factory.LazyFunction(list)
 
 
 class CredentialFactory(DjangoModelFactory):

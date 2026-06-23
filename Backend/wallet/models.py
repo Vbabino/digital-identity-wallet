@@ -122,7 +122,9 @@ class PlaceOfBirth(models.Model):
 
     def __str__(self):
         """Unicode representation of PlaceOfBirth."""
-        return f"{self.birth_city}, {self.birth_state}"
+        if self.birth_state:
+            return f"{self.birth_city}, {self.birth_state}"
+        return self.birth_city
 
 
 class Address(models.Model):
