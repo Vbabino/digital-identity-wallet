@@ -225,7 +225,6 @@ AUTH_KIT = {
     "MFA_PREVENT_DELETE_ACTIVE_METHOD": False,
     "MFA_PREVENT_DELETE_PRIMARY_METHOD": True,
     "MFA_DELETE_ACTIVE_METHOD_REQUIRE_CODE": True,
-
 }
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -242,7 +241,9 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 }
 
-EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_BACKEND = os.getenv(
+    "EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend"
+)
 # EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
 # EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
 # EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
@@ -252,8 +253,8 @@ EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.Em
 
 EMAIL_HOST = "0.0.0.0"  # nosec B104
 EMAIL_PORT = 1025
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''  # nosec B105
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""  # nosec B105
 EMAIL_USE_TLS = False
 
 

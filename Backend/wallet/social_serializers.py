@@ -34,7 +34,9 @@ class _PKCECodeExchangeMixin:
     """
 
     def _exchange_code(self, attrs: dict[str, Any]) -> None:
-        from auth_kit.social.views import SocialLoginView  # local import avoids circular
+        from auth_kit.social.views import (
+            SocialLoginView,
+        )  # local import avoids circular
 
         view = cast(SocialLoginView, self.context.get("view"))  # type: ignore[attr-defined]
         request = cast(Request, self.context.get("request"))  # type: ignore[attr-defined]
@@ -104,7 +106,9 @@ class PKCESocialLoginWithCodeSerializer(
     that was attached to the original authorization request.
     """
 
-    code_verifier = UnquoteStringField(required=False, allow_blank=True, write_only=True)
+    code_verifier = UnquoteStringField(
+        required=False, allow_blank=True, write_only=True
+    )
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         self._exchange_code(attrs)
@@ -121,7 +125,9 @@ class PKCESocialConnectSerializer(_PKCECodeExchangeMixin, SocialConnectSerialize
     inherited from SocialConnectSerializer via post_signup().
     """
 
-    code_verifier = UnquoteStringField(required=False, allow_blank=True, write_only=True)
+    code_verifier = UnquoteStringField(
+        required=False, allow_blank=True, write_only=True
+    )
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         self._exchange_code(attrs)

@@ -4,69 +4,68 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wallet', '0001_initial'),
+        ("wallet", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='legalidentity',
-            name='context_type',
+            model_name="legalidentity",
+            name="context_type",
         ),
         migrations.RemoveField(
-            model_name='nationality',
-            name='context_type',
+            model_name="nationality",
+            name="context_type",
         ),
         migrations.RemoveField(
-            model_name='placeofbirth',
-            name='context_type',
+            model_name="placeofbirth",
+            name="context_type",
         ),
         migrations.RemoveField(
-            model_name='age',
-            name='context_type',
+            model_name="age",
+            name="context_type",
         ),
         migrations.RemoveField(
-            model_name='pseudonym',
-            name='context_type',
+            model_name="pseudonym",
+            name="context_type",
         ),
         migrations.RemoveField(
-            model_name='dailyuse',
-            name='context_type',
+            model_name="dailyuse",
+            name="context_type",
         ),
         migrations.RemoveField(
-            model_name='credential',
-            name='context_type',
+            model_name="credential",
+            name="context_type",
         ),
         migrations.RemoveField(
-            model_name='namehistory',
-            name='context_type',
+            model_name="namehistory",
+            name="context_type",
         ),
         migrations.RemoveField(
-            model_name='onlineprofile',
-            name='context_type',
+            model_name="onlineprofile",
+            name="context_type",
         ),
         migrations.RemoveField(
-            model_name='address',
-            name='context_type',
+            model_name="address",
+            name="context_type",
         ),
         migrations.RemoveField(
-            model_name='gender',
-            name='context_type',
+            model_name="gender",
+            name="context_type",
         ),
         migrations.RemoveField(
-            model_name='customobject',
-            name='context_type',
+            model_name="customobject",
+            name="context_type",
         ),
         migrations.RemoveField(
-            model_name='professionalidentity',
-            name='context_type',
+            model_name="professionalidentity",
+            name="context_type",
         ),
         migrations.RemoveField(
-            model_name='accesslog',
-            name='context_type',
+            model_name="accesslog",
+            name="context_type",
         ),
         migrations.DeleteModel(
-            name='ContextType',
+            name="ContextType",
         ),
     ]

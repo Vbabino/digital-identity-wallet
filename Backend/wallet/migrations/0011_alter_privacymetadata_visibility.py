@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wallet', '0010_alter_credential_credential_description_and_more'),
+        ("wallet", "0010_alter_credential_credential_description_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='privacymetadata',
-            name='visibility',
-            field=models.CharField(choices=[('public', 'Public'), ('private', 'Private')], default='private', max_length=10),
+            model_name="privacymetadata",
+            name="visibility",
+            field=models.CharField(
+                choices=[("public", "Public"), ("private", "Private")],
+                default="private",
+                max_length=10,
+            ),
         ),
     ]

@@ -52,7 +52,7 @@ class PrivacyMetadata(models.Model):
     visibility = models.CharField(
         max_length=10,
         choices=VISIBILITY_CHOICES,
-        default=PRIVATE, # Default to private to be in line with GDPR Art.25 and privacy best practices
+        default=PRIVATE,  # Default to private to be in line with GDPR Art.25 and privacy best practices
     )
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -247,7 +247,9 @@ class Credential(models.Model):
     credential_id = models.CharField(max_length=255)
     issuing_authority = models.CharField(max_length=255)
     issuance_date = models.DateField(auto_now=False, auto_now_add=False)
-    expiry_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
+    expiry_date = models.DateField(
+        auto_now=False, auto_now_add=False, blank=True, null=True
+    )
     credential_url = models.URLField(max_length=500, blank=True, null=True)
 
     class Meta:

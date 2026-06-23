@@ -10,7 +10,6 @@ def convert_to_valid_values(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("wallet", "0007_accesslog_application_accesslog_scopes_accessed"),
     ]

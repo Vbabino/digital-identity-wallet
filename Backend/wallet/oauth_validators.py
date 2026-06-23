@@ -14,8 +14,9 @@ logger = logging.getLogger(__name__)
 # Handlers for many/FK relations filter to public records at the DB level.
 # ---------------------------------------------------------------------------
 
+
 def _get_birthdate(request):
-    if not hasattr(request.user, 'age'):
+    if not hasattr(request.user, "age"):
         return None
     age = request.user.age
     if not age.privacy_metadata.is_public:
@@ -24,20 +25,22 @@ def _get_birthdate(request):
 
 
 def _get_over_18(request):
-    if not hasattr(request.user, 'age'):
+    if not hasattr(request.user, "age"):
         return None
     age = request.user.age
     if not age.privacy_metadata.is_public:
         return None
     today = date.today()
-    years = today.year - age.birth_date.year - (
-        (today.month, today.day) < (age.birth_date.month, age.birth_date.day)
+    years = (
+        today.year
+        - age.birth_date.year
+        - ((today.month, today.day) < (age.birth_date.month, age.birth_date.day))
     )
     return years >= 18
 
 
 def _get_place_of_birth(request):
-    if not hasattr(request.user, 'place_of_birth'):
+    if not hasattr(request.user, "place_of_birth"):
         return None
     pob = request.user.place_of_birth
     if not pob.privacy_metadata.is_public:
@@ -99,7 +102,7 @@ def _get_credentials(request):
 
 
 def _get_legal_name(request):
-    if not hasattr(request.user, 'legal_identity'):
+    if not hasattr(request.user, "legal_identity"):
         return None
     li = request.user.legal_identity
     if not li.privacy_metadata.is_public:
@@ -217,10 +220,14 @@ class CustomOAuth2Validator(OAuth2Validator):
             if scope.startswith("custom_name:"):
                 name_type = scope.split(":", 1)[1]
                 try:
-                    match = request.user.custom_objects.filter(
-                        name_type=name_type,
-                        privacy_metadata__visibility=PrivacyMetadata.PUBLIC,
-                    ).order_by("id").first()
+                    match = (
+                        request.user.custom_objects.filter(
+                            name_type=name_type,
+                            privacy_metadata__visibility=PrivacyMetadata.PUBLIC,
+                        )
+                        .order_by("id")
+                        .first()
+                    )
                     if match:
                         claims[scope] = match.name_value
                 except AttributeError:

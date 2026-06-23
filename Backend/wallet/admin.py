@@ -34,14 +34,25 @@ class CustomUserAdmin(UserAdmin):
     # Fieldsets for the user detail page (change form)
     fieldsets = (
         (None, {"fields": ("email", "password")}),
-        ("Permissions", {"fields": ("is_staff", "is_active", "is_superuser", "groups", "user_permissions")}),
+        (
+            "Permissions",
+            {
+                "fields": (
+                    "is_staff",
+                    "is_active",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                )
+            },
+        ),
         ("Important dates", {"fields": ("last_login", "created_at", "updated_at")}),
     )
     # Fieldsets for the user creation page (add form)
     add_fieldsets = (
         (None, {"classes": ("wide",), "fields": ("email", "password1", "password2")}),
     )
-    readonly_fields = ('last_login', 'created_at', 'updated_at')
+    readonly_fields = ("last_login", "created_at", "updated_at")
 
 
 # Register your models here

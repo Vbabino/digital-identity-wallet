@@ -6,7 +6,9 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "client-dev-insecure-key-change-in-production")
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY", "client-dev-insecure-key-change-in-production"
+)
 DEBUG = True
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
@@ -55,7 +57,9 @@ SESSION_COOKIE_NAME = "simulator_sessionid"
 WALLET_CLIENT_ID = os.getenv("CLIENT_ID")
 WALLET_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 WALLET_BASE_URL = os.getenv("WALLET_BASE_URL", "http://localhost:8000")
-CLIENT_REDIRECT_URI = os.getenv("CLIENT_REDIRECT_URI", "http://localhost:8001/callback/")
+CLIENT_REDIRECT_URI = os.getenv(
+    "CLIENT_REDIRECT_URI", "http://localhost:8001/callback/"
+)
 
 STATIC_URL = "/static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

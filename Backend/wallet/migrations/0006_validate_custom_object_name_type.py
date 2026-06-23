@@ -5,15 +5,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wallet', '0005_rename_attribute_name_customobject_name_type_and_more'),
+        ("wallet", "0005_rename_attribute_name_customobject_name_type_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='customobject',
-            name='name_type',
-            field=models.CharField(max_length=255, validators=[wallet.models.validate_scope_name]),
+            model_name="customobject",
+            name="name_type",
+            field=models.CharField(
+                max_length=255, validators=[wallet.models.validate_scope_name]
+            ),
         ),
     ]

@@ -6,21 +6,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wallet', '0006_validate_custom_object_name_type'),
+        ("wallet", "0006_validate_custom_object_name_type"),
         migrations.swappable_dependency(settings.OAUTH2_PROVIDER_APPLICATION_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='accesslog',
-            name='application',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='access_logs', to=settings.OAUTH2_PROVIDER_APPLICATION_MODEL),
+            model_name="accesslog",
+            name="application",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="access_logs",
+                to=settings.OAUTH2_PROVIDER_APPLICATION_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='accesslog',
-            name='scopes_accessed',
+            model_name="accesslog",
+            name="scopes_accessed",
             field=models.JSONField(blank=True, default=list),
         ),
     ]

@@ -5,24 +5,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wallet', '0004_alter_privacymetadata_options_and_more'),
+        ("wallet", "0004_alter_privacymetadata_options_and_more"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='customobject',
-            old_name='attribute_name',
-            new_name='name_type',
+            model_name="customobject",
+            old_name="attribute_name",
+            new_name="name_type",
         ),
         migrations.RemoveField(
-            model_name='customobject',
-            name='attribute_value',
+            model_name="customobject",
+            name="attribute_value",
         ),
         migrations.AddField(
-            model_name='customobject',
-            name='name_value',
+            model_name="customobject",
+            name="name_value",
             field=models.CharField(default=django.utils.timezone.now, max_length=255),
             preserve_default=False,
         ),

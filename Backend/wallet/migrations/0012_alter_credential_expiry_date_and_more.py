@@ -4,21 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wallet', '0011_alter_privacymetadata_visibility'),
+        ("wallet", "0011_alter_privacymetadata_visibility"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='credential',
-            name='expiry_date',
+            model_name="credential",
+            name="expiry_date",
             field=models.DateField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='placeofbirth',
-            name='birth_city',
-            field=models.CharField(default='Metropolis', max_length=255),
+            model_name="placeofbirth",
+            name="birth_city",
+            field=models.CharField(default="Metropolis", max_length=255),
             preserve_default=False,
         ),
     ]

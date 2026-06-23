@@ -4,25 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wallet', '0009_accesslog_claims_returned'),
+        ("wallet", "0009_accesslog_claims_returned"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='credential',
-            name='credential_description',
+            model_name="credential",
+            name="credential_description",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='placeofbirth',
-            name='birth_city',
+            model_name="placeofbirth",
+            name="birth_city",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AlterField(
-            model_name='placeofbirth',
-            name='birth_state',
+            model_name="placeofbirth",
+            name="birth_state",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
     ]

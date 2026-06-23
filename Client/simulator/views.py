@@ -58,7 +58,9 @@ def _fetch_dynamic_scopes():
 
 
 def home(request):
-    return render(request, "simulator/home.html", {"scopes": SCOPES + _fetch_dynamic_scopes()})
+    return render(
+        request, "simulator/home.html", {"scopes": SCOPES + _fetch_dynamic_scopes()}
+    )
 
 
 def authorize(request):
@@ -95,26 +97,36 @@ def callback(request):
     returned_state = request.GET.get("state")
     stored_state = request.session.pop("oauth_state", None)
     if not returned_state or returned_state != stored_state:
-        return render(request, "simulator/result.html", {
-            "error": "State mismatch — possible CSRF attack or session expired."
-        })
+        return render(
+            request,
+            "simulator/result.html",
+            {"error": "State mismatch — possible CSRF attack or session expired."},
+        )
 
     error = request.GET.get("error")
     if error:
         description = request.GET.get("error_description", "")
-        return render(request, "simulator/result.html", {
-            "error": f"Authorization denied: {error}. {description}".strip()
-        })
+        return render(
+            request,
+            "simulator/result.html",
+            {"error": f"Authorization denied: {error}. {description}".strip()},
+        )
 
     code = request.GET.get("code")
     if not code:
-        return render(request, "simulator/result.html", {"error": "No authorization code received."})
+        return render(
+            request,
+            "simulator/result.html",
+            {"error": "No authorization code received."},
+        )
 
     code_verifier = request.session.pop("pkce_code_verifier", None)
     if not code_verifier:
-        return render(request, "simulator/result.html", {
-            "error": "Session expired — code_verifier not found. Please start again."
-        })
+        return render(
+            request,
+            "simulator/result.html",
+            {"error": "Session expired — code_verifier not found. Please start again."},
+        )
 
     # Exchange authorization code for access token
     try:
@@ -131,12 +143,18 @@ def callback(request):
             timeout=10,
         )
     except http_requests.RequestException as exc:
-        return render(request, "simulator/result.html", {"error": f"Token request failed: {exc}"})
+        return render(
+            request, "simulator/result.html", {"error": f"Token request failed: {exc}"}
+        )
 
     if token_response.status_code != 200:
-        return render(request, "simulator/result.html", {
-            "error": f"Token exchange failed ({token_response.status_code}): {token_response.text}"
-        })
+        return render(
+            request,
+            "simulator/result.html",
+            {
+                "error": f"Token exchange failed ({token_response.status_code}): {token_response.text}"
+            },
+        )
 
     token_data = token_response.json()
     access_token = token_data.get("access_token")
@@ -149,12 +167,20 @@ def callback(request):
             timeout=10,
         )
     except http_requests.RequestException as exc:
-        return render(request, "simulator/result.html", {"error": f"Userinfo request failed: {exc}"})
+        return render(
+            request,
+            "simulator/result.html",
+            {"error": f"Userinfo request failed: {exc}"},
+        )
 
     if userinfo_response.status_code != 200:
-        return render(request, "simulator/result.html", {
-            "error": f"Userinfo call failed ({userinfo_response.status_code}): {userinfo_response.text}"
-        })
+        return render(
+            request,
+            "simulator/result.html",
+            {
+                "error": f"Userinfo call failed ({userinfo_response.status_code}): {userinfo_response.text}"
+            },
+        )
 
     request.session["userinfo"] = userinfo_response.json()
     request.session["scopes_granted"] = token_data.get("scope", "")
@@ -166,7 +192,11 @@ def result(request):
     scopes_granted = request.session.pop("scopes_granted", "")
     if userinfo is None:
         return redirect("home")
-    return render(request, "simulator/result.html", {
-        "userinfo": json.dumps(userinfo, indent=2),
-        "scopes_granted": scopes_granted,
-    })
+    return render(
+        request,
+        "simulator/result.html",
+        {
+            "userinfo": json.dumps(userinfo, indent=2),
+            "scopes_granted": scopes_granted,
+        },
+    )

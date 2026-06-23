@@ -63,7 +63,9 @@ class UserSingletonAPIView(APIView):
     def post(self, request):
         if self._get_instance(request.user) is not None:
             return Response(
-                {"detail": f"{self.display_name} record already exists. Use PATCH to update."},
+                {
+                    "detail": f"{self.display_name} record already exists. Use PATCH to update."
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
         serializer = self.serializer_class(data=request.data)
@@ -105,9 +107,13 @@ class DateOfBirthView(UserSingletonAPIView):
 
 @extend_schema_view(
     get=extend_schema(responses=PlaceOfBirthSerializer),
-    post=extend_schema(request=PlaceOfBirthSerializer, responses=PlaceOfBirthSerializer),
+    post=extend_schema(
+        request=PlaceOfBirthSerializer, responses=PlaceOfBirthSerializer
+    ),
     put=extend_schema(request=PlaceOfBirthSerializer, responses=PlaceOfBirthSerializer),
-    patch=extend_schema(request=PlaceOfBirthSerializer, responses=PlaceOfBirthSerializer),
+    patch=extend_schema(
+        request=PlaceOfBirthSerializer, responses=PlaceOfBirthSerializer
+    ),
 )
 class PlaceOfBirthView(UserSingletonAPIView):
     model_class = PlaceOfBirth
@@ -118,9 +124,15 @@ class PlaceOfBirthView(UserSingletonAPIView):
 
 @extend_schema_view(
     get=extend_schema(responses=LegalIdentitySerializer),
-    post=extend_schema(request=LegalIdentitySerializer, responses=LegalIdentitySerializer),
-    put=extend_schema(request=LegalIdentitySerializer, responses=LegalIdentitySerializer),
-    patch=extend_schema(request=LegalIdentitySerializer, responses=LegalIdentitySerializer),
+    post=extend_schema(
+        request=LegalIdentitySerializer, responses=LegalIdentitySerializer
+    ),
+    put=extend_schema(
+        request=LegalIdentitySerializer, responses=LegalIdentitySerializer
+    ),
+    patch=extend_schema(
+        request=LegalIdentitySerializer, responses=LegalIdentitySerializer
+    ),
 )
 class LegalIdentityView(UserSingletonAPIView):
     model_class = LegalIdentity
