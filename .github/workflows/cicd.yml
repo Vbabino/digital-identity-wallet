@@ -17,6 +17,8 @@ jobs:
     defaults:
       run:
         working-directory: Backend
+    env:
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
     steps:
       - uses: actions/checkout@v4
 
