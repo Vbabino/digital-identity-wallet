@@ -15,6 +15,7 @@ import secrets
 from urllib.parse import parse_qs, urlparse
 
 import pytest
+from django.http import HttpResponse
 from django.test import Client
 from oauth2_provider.models import Application
 
@@ -79,61 +80,59 @@ def pkce_code(db):
     return code, code_verifier, app, raw_secret
 
 
+def _exchange_token(app, raw_secret, code, code_verifier=None) -> HttpResponse:
+    payload = {
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": REDIRECT_URI,
+        "client_id": app.client_id,
+        "client_secret": raw_secret,
+    }
+    if code_verifier is not None:
+        payload["code_verifier"] = code_verifier
+    return Client().post("/o/token/", payload)
+
+
 def test_pkce_missing_verifier_rejected(pkce_code):
     """Token exchange without code_verifier must be rejected (400) when PKCE was used during authorization."""
     code, _, app, raw_secret = pkce_code
-
-    response = Client().post(
-        "/o/token/",
-        {
-            "grant_type": "authorization_code",
-            "code": code,
-            "redirect_uri": REDIRECT_URI,
-            "client_id": app.client_id,
-            "client_secret": raw_secret,
-        },
-    )
-
+    response = _exchange_token(app, raw_secret, code)
     assert response.status_code == 400
-    assert "error" in response.json()
+    assert response.json()["error"] == "invalid_request"
 
 
 def test_pkce_wrong_verifier_rejected(pkce_code):
     """Token exchange with a mismatched code_verifier must be rejected (400)."""
     code, _, app, raw_secret = pkce_code
-    wrong_verifier = secrets.token_urlsafe(64)
-
-    response = Client().post(
-        "/o/token/",
-        {
-            "grant_type": "authorization_code",
-            "code": code,
-            "redirect_uri": REDIRECT_URI,
-            "client_id": app.client_id,
-            "client_secret": raw_secret,
-            "code_verifier": wrong_verifier,
-        },
+    response = _exchange_token(
+        app, raw_secret, code, code_verifier=secrets.token_urlsafe(64)
     )
-
     assert response.status_code == 400
-    assert "error" in response.json()
+    assert response.json()["error"] == "invalid_grant"
+
+
+def test_pkce_empty_verifier_rejected(pkce_code):
+    """Token exchange with an empty code_verifier must be rejected (400)."""
+    code, _, app, raw_secret = pkce_code
+    response = _exchange_token(app, raw_secret, code, code_verifier="")
+    assert response.status_code == 400
+    assert response.json()["error"] == "invalid_grant"
 
 
 def test_pkce_correct_verifier_succeeds(pkce_code):
     """Token exchange with the correct code_verifier must succeed and return an access token."""
     code, code_verifier, app, raw_secret = pkce_code
-
-    response = Client().post(
-        "/o/token/",
-        {
-            "grant_type": "authorization_code",
-            "code": code,
-            "redirect_uri": REDIRECT_URI,
-            "client_id": app.client_id,
-            "client_secret": raw_secret,
-            "code_verifier": code_verifier,
-        },
-    )
-
+    response = _exchange_token(app, raw_secret, code, code_verifier=code_verifier)
     assert response.status_code == 200
-    assert "access_token" in response.json()
+    data = response.json()
+    assert "access_token" in data
+    assert data["token_type"] == "Bearer"
+
+
+def test_pkce_authorization_code_single_use(pkce_code):
+    """Authorization codes must be rejected on a second exchange attempt (RFC 6749 §4.1.2)."""
+    code, code_verifier, app, raw_secret = pkce_code
+    _exchange_token(app, raw_secret, code, code_verifier=code_verifier)
+    replay = _exchange_token(app, raw_secret, code, code_verifier=code_verifier)
+    assert replay.status_code == 400
+    assert replay.json()["error"] == "invalid_grant"
