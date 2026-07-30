@@ -1,13 +1,20 @@
 import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { createMemoryRouter, RouterProvider } from "react-router"
+import { createMemoryRouter, RouterProvider, RouterContextProvider } from "react-router"
 import { http, HttpResponse } from "msw"
 import AuthCallback, { clientLoader } from "~/routes/auth-callback"
 import { server } from "~/test/mocks/server"
 
 // Helper: build the minimal args shape that clientLoader expects
 function makeLoaderArgs(url: string) {
-  return { request: new Request(url), params: {} }
+  return {
+    request: new Request(url),
+    params: {},
+    url: new URL(url),
+    pattern: "/auth/callback/google",
+    context: new RouterContextProvider(),
+    serverLoader: () => Promise.reject(new Error("serverLoader not available in this test")),
+  }
 }
 
 // Helper: render the AuthCallback component with mock loader data

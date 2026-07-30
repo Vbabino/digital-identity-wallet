@@ -1,12 +1,12 @@
 import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { createMemoryRouter, RouterProvider } from "react-router"
+import { createMemoryRouter, RouterProvider, type InitialEntry } from "react-router"
 import { http, HttpResponse } from "msw"
 import { vi } from "vitest"
 import Login from "~/routes/login"
 import { server } from "~/test/mocks/server"
 
-function renderLogin(initialEntries = ["/login"]) {
+function renderLogin(initialEntries: InitialEntry[] = ["/login"]) {
   const router = createMemoryRouter(
     [
       { path: "/login", Component: Login },
@@ -177,7 +177,7 @@ describe("Login page", () => {
   })
 
   it("shows a notice banner when navigated with router state", () => {
-    renderLogin([{ pathname: "/login", search: "", hash: "", state: { notice: "Password updated." } }] as Parameters<typeof createMemoryRouter>[1]["initialEntries"])
+    renderLogin([{ pathname: "/login", search: "", hash: "", state: { notice: "Password updated." } }])
     expect(screen.getByText("Password updated.")).toBeInTheDocument()
   })
 

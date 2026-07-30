@@ -17,8 +17,8 @@
     "@fontsource-variable/noto-sans": "^5.2.10",
     "@hugeicons/core-free-icons": "^4.1.4",
     "@hugeicons/react": "^1.1.6",
-    "@react-router/node": "^7.17.0",
-    "axios": "^1.16.1",
+    "@react-router/node": "^7.18.0",
+    "axios": "^1.18.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "isbot": "^5.1.36",
@@ -26,7 +26,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-qr-code": "^2.2.0",
-    "react-router": "^7.17.0",
+    "react-router": "^7.18.0",
     "shadcn": "^4.8.0",
     "sirv-cli": "^3.0.1",
     "tailwind-merge": "^3.6.0",
@@ -37,7 +37,7 @@
     "form-data": "4.0.6"
   },
   "devDependencies": {
-    "@react-router/dev": "^7.17.0",
+    "@react-router/dev": "^7.18.0",
     "@tailwindcss/vite": "^4.2.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",

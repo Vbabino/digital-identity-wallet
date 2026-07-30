@@ -1,0 +1,6 @@
+# GHSA-qwww-vcr4-c8h2 — React Router RSC Mode CSRF Bypass.
+# Fixed only in react-router@8.3.0 (a breaking major upgrade). Per the advisory,
+# this "only affects your application if you are using the unstable RSC APIs" —
+# this project builds with ssr: false (SPA mode, see Frontend/react-router.config.ts)
+# and never enables the RSC APIs, so the vulnerable code path is not reachable.
+GHSA-qwww-vcr4-c8h2
