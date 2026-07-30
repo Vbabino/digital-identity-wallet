@@ -198,7 +198,7 @@ SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 After a successful first factor (email/password), the backend issues a short-lived ephemeral token (15 minutes) used only to complete the MFA step. It cannot be used to authenticate as the user; it can only be paired with a valid TOTP or email OTP to proceed. An attacker who steals the ephemeral token alone gains nothing.
 
 ```python
-"MFA_EPHEMERAL_TOKEN_EXPIRY": 900,  # 15 minutes
+"MFA_EPHEMERAL_TOKEN_EXPIRY": 300,  # 5 minutes
 ```
 
 ---

@@ -28,10 +28,12 @@ SCOPES = [
 
 
 def _generate_code_verifier():
+    # Generate a secure random code verifier for PKCE (Proof Key for Code Exchange)
     return secrets.token_urlsafe(64)
 
 
 def _compute_code_challenge(verifier):
+    # Compute the code challenge from the code verifier using SHA-256 and base64 URL encoding
     digest = hashlib.sha256(verifier.encode("ascii")).digest()
     return base64.urlsafe_b64encode(digest).rstrip(b"=").decode("ascii")
 

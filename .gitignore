@@ -282,6 +282,16 @@ cred.txt
 api.http
 schema.yaml
 
+# SQLite dev databases (Postgres is used in production; sqlite is dev-only throwaway data)
+Backend/db.sqlite3
+Client/db.sqlite3
+
+# Production secrets (committed .env.production.example files are placeholders only)
+Backend/.env.production
+Client/.env.production
+Frontend/.env.production
+.env.production
+/deploy
 ===
 
 ### Node ###

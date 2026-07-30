@@ -9,8 +9,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY", "client-dev-insecure-key-change-in-production"
 )
-DEBUG = True
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+DEBUG = os.getenv("DEBUG", "True") == "True"
+ALLOWED_HOSTS = [
+    h.strip()
+    for h in os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    if h.strip()
+]
 
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
@@ -43,10 +47,15 @@ TEMPLATES = [
     },
 ]
 
+# SQLITE_DATA_DIR lets docker-compose point the DB file at a named volume
+# (e.g. /app/data) so it survives container recreation; defaults to BASE_DIR
+# for local/dev use where no volume is mounted.
+SQLITE_DATA_DIR = Path(os.getenv("SQLITE_DATA_DIR", BASE_DIR))
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": SQLITE_DATA_DIR / "db.sqlite3",
     }
 }
 
