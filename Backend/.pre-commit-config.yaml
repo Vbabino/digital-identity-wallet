@@ -17,4 +17,11 @@ repos:
         additional_dependencies:
           - eslint@10.5.0
           - eslint-plugin-security@3.0.1  
-          - typescript-eslint@8.24.0 
+          - typescript-eslint@8.24.0
+
+  - repo: https://github.com/cebidhem/pre-commit-trivy
+    rev: v0.2.0  # Use the latest version
+    hooks:
+      - id: trivy-scan
+        # Optional: customize arguments
+        args: ['--severity', 'HIGH,CRITICAL', '--skip-db-update', '--scanners', 'vuln', '--config', 'trivy.yaml']

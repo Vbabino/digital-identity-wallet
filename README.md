@@ -421,7 +421,7 @@ python -m venv .venv
 source .venv/bin/activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip install --require-hashes -r requirements.txt
 
 # Copy and populate environment variables
 cp .env.example .env   # set DJANGO_SECRET_KEY and OIDC_RSA_PRIVATE_KEY
