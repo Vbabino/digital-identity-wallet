@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "auth_kit.social",
     "corsheaders",
+    "anymail",
 ]
 
 MIDDLEWARE = [

@@ -46,16 +46,15 @@ GOOGLE_CLIENT_SECRET = _require_env("GOOGLE_CLIENT_SECRET")
 SOCIALACCOUNT_PROVIDERS["google"]["APP"]["client_id"] = GOOGLE_CLIENT_ID
 SOCIALACCOUNT_PROVIDERS["google"]["APP"]["secret"] = GOOGLE_CLIENT_SECRET
 
-# Transactional SMTP provider (Brevo/Resend/Mailgun/SES/etc — provider-agnostic).
-EMAIL_BACKEND = os.getenv(
-    "EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"
-)
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))  # noqa: PLW1508
-EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")  # nosec B105
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+# Transactional email via Resend's HTTP API (Anymail), not SMTP — DigitalOcean
+# blocks outbound SMTP ports (25/465/587) by default on new droplets/accounts,
+# which made registration/password-reset emails hang until the gunicorn worker
+# timeout, surfaced to clients as a 504. HTTPS (443) isn't blocked.
+EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
+ANYMAIL = {
+    "RESEND_API_KEY": _require_env("RESEND_API_KEY"),
+}
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@gbcode.dev")
 
 # Static files served by WhiteNoise from within the Django/gunicorn process —
 # host Nginx just proxies /static/ like any other backend path, no filesystem

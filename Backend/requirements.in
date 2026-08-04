@@ -16,6 +16,8 @@ jwcrypto==1.5.7
 pyotp==2.9.0
 python-dotenv==1.1.0
 structlog==25.5.0
+tzdata==2026.3
+django-anymail[resend]==15.1
 factory_boy==3.3.3
 Faker==40.15.0
 pytest==9.1.1
