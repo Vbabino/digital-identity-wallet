@@ -255,9 +255,16 @@ jobs:
             # for a just-recreated container's port mapping can lag well
             # behind the app itself being ready, so the window here is
             # generous on purpose rather than a guess at app boot time.
+            # Backend gets curled directly on its loopback-published port,
+            # bypassing the host Nginx that normally sets Host/X-Forwarded-Proto.
+            # DJANGO_ALLOWED_HOSTS is locked to wallet.gbcode.dev in production,
+            # so a bare "curl 127.0.0.1:8000" gets a 400 DisallowedHost forever
+            # — no amount of extra polling time fixes that. Send the headers
+            # Nginx would have sent so the check reflects real app health.
             wait_healthy() {
               local url="$1" name="$2" attempt=0
-              until curl -fsS --max-time 5 "$url" > /dev/null 2>&1; do
+              shift 2
+              until curl -fsS --max-time 5 "$@" "$url" > /dev/null 2>&1; do
                 attempt=$((attempt + 1))
                 if [ "$attempt" -ge 60 ]; then
                   echo "::error::$name did not become healthy within 3m"
@@ -267,7 +274,7 @@ jobs:
               done
               echo "$name healthy"
             }
-            wait_healthy http://127.0.0.1:8000/api/schema/ Backend
+            wait_healthy http://127.0.0.1:8000/api/schema/ Backend -H "Host: wallet.gbcode.dev" -H "X-Forwarded-Proto: https"
             wait_healthy http://127.0.0.1:3000/ Frontend
             echo "Backend and frontend healthy on $NEW_SHA"
 
@@ -314,7 +321,8 @@ jobs:
 
             wait_healthy() {
               local url="$1" name="$2" attempt=0
-              until curl -fsS --max-time 5 "$url" > /dev/null 2>&1; do
+              shift 2
+              until curl -fsS --max-time 5 "$@" "$url" > /dev/null 2>&1; do
                 attempt=$((attempt + 1))
                 if [ "$attempt" -ge 60 ]; then
                   echo "::error::$name did not become healthy within 3m during rollback"
@@ -324,6 +332,6 @@ jobs:
               done
               echo "$name healthy"
             }
-            wait_healthy http://127.0.0.1:8000/api/schema/ Backend
+            wait_healthy http://127.0.0.1:8000/api/schema/ Backend -H "Host: wallet.gbcode.dev" -H "X-Forwarded-Proto: https"
             wait_healthy http://127.0.0.1:3000/ Frontend
             echo "::error::Deploy of ${{ github.sha }} failed and was rolled back — service restored on $LAST_GOOD_SHA"
