@@ -246,9 +246,24 @@ jobs:
             docker compose --env-file .env.production pull
             docker compose --env-file .env.production up -d --remove-orphans
 
-            sleep 5
-            curl -fsS http://127.0.0.1:8000/api/schema/ > /dev/null
-            curl -fsS http://127.0.0.1:3000/ > /dev/null
+            # Containers reporting "Started" doesn't mean the app inside is
+            # ready yet — docker_entrypoint.py runs `migrate` before gunicorn
+            # binds, so a fixed short sleep can race a cold start. Poll
+            # instead of guessing a delay.
+            wait_healthy() {
+              local url="$1" name="$2" attempt=0
+              until curl -fsS "$url" > /dev/null 2>&1; do
+                attempt=$((attempt + 1))
+                if [ "$attempt" -ge 30 ]; then
+                  echo "::error::$name did not become healthy within 60s"
+                  return 1
+                fi
+                sleep 2
+              done
+              echo "$name healthy"
+            }
+            wait_healthy http://127.0.0.1:8000/api/schema/ Backend
+            wait_healthy http://127.0.0.1:3000/ Frontend
             echo "Backend and frontend healthy on $NEW_SHA"
 
             # Only recorded once health checks pass — the rollback step below
@@ -292,7 +307,18 @@ jobs:
             docker compose --env-file .env.production pull
             docker compose --env-file .env.production up -d --remove-orphans
 
-            sleep 5
-            curl -fsS http://127.0.0.1:8000/api/schema/ > /dev/null
-            curl -fsS http://127.0.0.1:3000/ > /dev/null
+            wait_healthy() {
+              local url="$1" name="$2" attempt=0
+              until curl -fsS "$url" > /dev/null 2>&1; do
+                attempt=$((attempt + 1))
+                if [ "$attempt" -ge 30 ]; then
+                  echo "::error::$name did not become healthy within 60s during rollback"
+                  return 1
+                fi
+                sleep 2
+              done
+              echo "$name healthy"
+            }
+            wait_healthy http://127.0.0.1:8000/api/schema/ Backend
+            wait_healthy http://127.0.0.1:3000/ Frontend
             echo "::error::Deploy of ${{ github.sha }} failed and was rolled back — service restored on $LAST_GOOD_SHA"
