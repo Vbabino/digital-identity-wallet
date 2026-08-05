@@ -11,6 +11,7 @@ services:
     networks: [internal]
 
   backend:
+    image: ghcr.io/vbabino/digital-identity-wallet-backend:latest
     build:
       context: ./Backend
     restart: unless-stopped
@@ -21,6 +22,7 @@ services:
     networks: [internal]
 
   frontend:
+    image: ghcr.io/vbabino/digital-identity-wallet-frontend:latest
     build:
       context: ./Frontend
       args:
@@ -32,6 +34,7 @@ services:
     networks: [internal]
 
   client:
+    image: ghcr.io/vbabino/digital-identity-wallet-client:latest
     build:
       context: ./Client
     restart: unless-stopped
