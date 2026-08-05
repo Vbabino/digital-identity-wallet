@@ -11,7 +11,7 @@ services:
     networks: [internal]
 
   backend:
-    image: ghcr.io/vbabino/digital-identity-wallet-backend:latest
+    image: ghcr.io/vbabino/digital-identity-wallet-backend:${IMAGE_TAG:-latest}
     build:
       context: ./Backend
     restart: unless-stopped
@@ -22,7 +22,7 @@ services:
     networks: [internal]
 
   frontend:
-    image: ghcr.io/vbabino/digital-identity-wallet-frontend:latest
+    image: ghcr.io/vbabino/digital-identity-wallet-frontend:${IMAGE_TAG:-latest}
     build:
       context: ./Frontend
       args:
@@ -34,7 +34,7 @@ services:
     networks: [internal]
 
   client:
-    image: ghcr.io/vbabino/digital-identity-wallet-client:latest
+    image: ghcr.io/vbabino/digital-identity-wallet-client:${IMAGE_TAG:-latest}
     build:
       context: ./Client
     restart: unless-stopped

@@ -224,6 +224,46 @@ jobs:
       packages: read
     steps:
       - name: Deploy over SSH
+        id: deploy
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_ACTOR: ${{ github.actor }}
+          NEW_SHA: ${{ github.sha }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          envs: GHCR_TOKEN,GHCR_ACTOR,NEW_SHA
+          script: |
+            set -e
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_ACTOR" --password-stdin
+            cd "${{ secrets.DEPLOY_PATH }}"
+            git pull origin main
+
+            export IMAGE_TAG="$NEW_SHA"
+            docker compose --env-file .env.production pull
+            docker compose --env-file .env.production up -d --remove-orphans
+
+            sleep 5
+            curl -fsS http://127.0.0.1:8000/api/schema/ > /dev/null
+            curl -fsS http://127.0.0.1:3000/ > /dev/null
+            echo "Backend and frontend healthy on $NEW_SHA"
+
+            # Only recorded once health checks pass — the rollback step below
+            # reads this to know the last SHA that was actually verified
+            # working, which may lag behind $NEW_SHA by one or more failed
+            # deploys.
+            echo "$NEW_SHA" > ~/.digital-identity-wallet-last-good-sha
+
+            # Safe to prune now: the marker above already points at the
+            # image(s) currently running, so nothing prune removes here is
+            # still needed for a rollback.
+            docker image prune -af --filter "until=72h"
+
+      - name: Roll back to last known-good deployment
+        if: failure()
         uses: appleboy/ssh-action@v1.2.0
         env:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -236,12 +276,23 @@ jobs:
           envs: GHCR_TOKEN,GHCR_ACTOR
           script: |
             set -e
-            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_ACTOR" --password-stdin
             cd "${{ secrets.DEPLOY_PATH }}"
-            git pull origin main
+
+            if [ ! -f ~/.digital-identity-wallet-last-good-sha ]; then
+              echo "::error::No previous successful deployment recorded — nothing to roll back to. Manual intervention required."
+              exit 1
+            fi
+
+            LAST_GOOD_SHA="$(cat ~/.digital-identity-wallet-last-good-sha)"
+            echo "Deploy failed — rolling back to last known-good SHA: $LAST_GOOD_SHA"
+
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_ACTOR" --password-stdin
+
+            export IMAGE_TAG="$LAST_GOOD_SHA"
             docker compose --env-file .env.production pull
             docker compose --env-file .env.production up -d --remove-orphans
-            docker image prune -af --filter "until=72h"
+
             sleep 5
-            curl -fsS http://127.0.0.1:8000/api/schema/ > /dev/null && echo "Backend healthy"
-            curl -fsS http://127.0.0.1:3000/ > /dev/null && echo "Frontend healthy"
+            curl -fsS http://127.0.0.1:8000/api/schema/ > /dev/null
+            curl -fsS http://127.0.0.1:3000/ > /dev/null
+            echo "::error::Deploy of ${{ github.sha }} failed and was rolled back — service restored on $LAST_GOOD_SHA"
