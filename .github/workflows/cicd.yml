@@ -250,15 +250,20 @@ jobs:
             # ready yet — docker_entrypoint.py runs `migrate` before gunicorn
             # binds, so a fixed short sleep can race a cold start. Poll
             # instead of guessing a delay.
+            # This host runs many other containers under real memory
+            # pressure (swap in active use) — docker-proxy/iptables setup
+            # for a just-recreated container's port mapping can lag well
+            # behind the app itself being ready, so the window here is
+            # generous on purpose rather than a guess at app boot time.
             wait_healthy() {
               local url="$1" name="$2" attempt=0
-              until curl -fsS "$url" > /dev/null 2>&1; do
+              until curl -fsS --max-time 5 "$url" > /dev/null 2>&1; do
                 attempt=$((attempt + 1))
-                if [ "$attempt" -ge 30 ]; then
-                  echo "::error::$name did not become healthy within 60s"
+                if [ "$attempt" -ge 60 ]; then
+                  echo "::error::$name did not become healthy within 3m"
                   return 1
                 fi
-                sleep 2
+                sleep 3
               done
               echo "$name healthy"
             }
@@ -309,13 +314,13 @@ jobs:
 
             wait_healthy() {
               local url="$1" name="$2" attempt=0
-              until curl -fsS "$url" > /dev/null 2>&1; do
+              until curl -fsS --max-time 5 "$url" > /dev/null 2>&1; do
                 attempt=$((attempt + 1))
-                if [ "$attempt" -ge 30 ]; then
-                  echo "::error::$name did not become healthy within 60s during rollback"
+                if [ "$attempt" -ge 60 ]; then
+                  echo "::error::$name did not become healthy within 3m during rollback"
                   return 1
                 fi
-                sleep 2
+                sleep 3
               done
               echo "$name healthy"
             }
