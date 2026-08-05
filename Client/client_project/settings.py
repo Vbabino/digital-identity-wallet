@@ -16,6 +16,15 @@ ALLOWED_HOSTS = [
     if h.strip()
 ]
 
+if not DEBUG:
+    # TLS terminates at the host Nginx reverse proxy, not this container —
+    # trust the X-Forwarded-Proto header it sets so request.is_secure() (and
+    # therefore CSRF's Origin check) reflects the real scheme. Without this,
+    # Django thinks every request is plain HTTP and rejects the browser's
+    # "https://..." Origin header on every POST, e.g. the /authorize/ form
+    # submission on wallet-demo.gbcode.dev, with a CSRF 403.
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
