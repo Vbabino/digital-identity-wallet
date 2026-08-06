@@ -1,9 +1,12 @@
+import json
 from datetime import timedelta
+from unittest.mock import patch
 
 import pytest
 from django.utils import timezone
 from rest_framework import status
 
+from wallet.export_service import WalletExportError
 from wallet.factories import (
     AccessLogFactory,
     AddressFactory,
@@ -54,6 +57,7 @@ _DAILY_USES_URL = "/api/wallet/daily-uses/"
 _CUSTOM_OBJECTS_URL = "/api/wallet/custom-objects/"
 _NAME_HISTORIES_URL = "/api/wallet/name-histories/"
 _ACCESS_LOGS_URL = "/api/wallet/access-logs/"
+_EXPORT_URL = "/api/wallet/export/"
 
 _ADDRESS_PAYLOAD = {
     "address_type": "home",
@@ -724,3 +728,51 @@ class TestNameHistoryView:
         other = NameHistoryFactory()
         response = auth_client.get(f"{_NAME_HISTORIES_URL}{other.pk}/")
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+# WalletExportView
+
+
+@pytest.mark.django_db
+class TestWalletExportView:
+    def test_get_unauthenticated_returns_401(self, api_client):
+        response = api_client.get(_EXPORT_URL)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_get_returns_200_with_valid_json_body(self, auth_client):
+        AddressFactory(user=auth_client.user)
+        response = auth_client.get(_EXPORT_URL)
+        assert response.status_code == status.HTTP_200_OK
+        payload = json.loads(response.content)
+        assert payload["user"]["email"] == auth_client.user.email
+        assert len(payload["addresses"]) == 1
+
+    def test_get_sets_content_disposition_header(self, auth_client):
+        response = auth_client.get(_EXPORT_URL)
+        assert "attachment" in response["Content-Disposition"]
+        assert "wallet_export.json" in response["Content-Disposition"]
+
+    def test_get_empty_wallet_returns_200_with_empty_structure(self, auth_client):
+        response = auth_client.get(_EXPORT_URL)
+        assert response.status_code == status.HTTP_200_OK
+        payload = json.loads(response.content)
+        assert payload["date_of_birth"] is None
+        assert payload["addresses"] == []
+
+    def test_get_only_includes_requesting_users_data(self, auth_client):
+        AddressFactory(user=auth_client.user)
+        AddressFactory()  # different user
+        NameHistoryFactory()  # different user
+        response = auth_client.get(_EXPORT_URL)
+        payload = json.loads(response.content)
+        assert len(payload["addresses"]) == 1
+        assert payload["name_histories"] == []
+
+    def test_get_returns_500_when_export_fails(self, auth_client):
+        with patch(
+            "wallet.views.export_wallet_data_to_json",
+            side_effect=WalletExportError("boom"),
+        ):
+            response = auth_client.get(_EXPORT_URL)
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        assert response.data["detail"] == "boom"

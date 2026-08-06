@@ -1,9 +1,11 @@
+from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
+from .export_service import WalletExportError, export_wallet_data_to_json
 from .models import (
     Age,
     PlaceOfBirth,
@@ -224,3 +226,17 @@ class AccessLogView(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return AccessLog.objects.filter(user=self.request.user).order_by("-access_time")
+
+
+class WalletExportView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(responses={200: {"type": "object"}})
+    def get(self, request):
+        try:
+            json_string = export_wallet_data_to_json(request.user)
+        except WalletExportError as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        response = HttpResponse(json_string, content_type="application/json")
+        response["Content-Disposition"] = 'attachment; filename="wallet_export.json"'
+        return response

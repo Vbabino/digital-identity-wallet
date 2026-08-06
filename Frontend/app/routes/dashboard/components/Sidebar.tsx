@@ -12,6 +12,7 @@ import {
   LockIcon,
   LockPasswordIcon,
   Menu01Icon,
+  Settings05Icon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "~/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet"
@@ -24,6 +25,7 @@ const sidebarTabs = [
   { id: "credentials", label: "Verified Credentials", icon: ShieldIcon },
   { id: "logs", label: "Security Logs", icon: ActivityIcon },
   { id: "security", label: "Security", icon: LockPasswordIcon },
+  { id: "settings", label: "Settings", icon: Settings05Icon },
 ]
 
 interface SidebarProps {

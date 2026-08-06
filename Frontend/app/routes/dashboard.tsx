@@ -15,6 +15,7 @@ import { ProfessionalTab } from "./dashboard/tabs/ProfessionalTab"
 import { CredentialsTab } from "./dashboard/tabs/CredentialsTab"
 import { LogsTab } from "./dashboard/tabs/LogsTab"
 import { SecurityTab } from "./dashboard/tabs/SecurityTab"
+import { SettingsTab } from "./dashboard/tabs/SettingsTab"
 import type { DashboardLoaderData } from "./dashboard/types"
 
 export async function clientLoader(): Promise<DashboardLoaderData> {
@@ -98,6 +99,10 @@ const tabHeaders: Record<string, { title: string; subtitle: string }> = {
     title: "Security",
     subtitle: "Manage your account password.",
   },
+  settings: {
+    title: "Settings",
+    subtitle: "Export your wallet data.",
+  },
 }
 
 export default function Dashboard() {
@@ -158,6 +163,7 @@ export default function Dashboard() {
           {activeTab === "credentials" && <CredentialsTab dashboard={dashboard} />}
           {activeTab === "logs" && <LogsTab dashboard={dashboard} />}
           {activeTab === "security" && <SecurityTab />}
+          {activeTab === "settings" && <SettingsTab />}
         </div>
       </main>
 

@@ -327,4 +327,17 @@ export const handlers = [
   http.get("http://localhost/api/wallet/access-logs/", () =>
     HttpResponse.json([])
   ),
+
+  // ── Wallet export ────────────────────────────────────────────────────────
+  http.get(
+    "http://localhost/api/wallet/export/",
+    () =>
+      new HttpResponse(JSON.stringify({ legal_identity: null }), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Disposition": 'attachment; filename="wallet_export.json"',
+        },
+      })
+  ),
 ]

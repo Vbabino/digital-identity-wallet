@@ -15,6 +15,7 @@ from .views import (
     CustomObjectView,
     NameHistoryView,
     AccessLogView,
+    WalletExportView,
 )
 
 router = routers.SimpleRouter()
@@ -34,4 +35,5 @@ urlpatterns = [
     path("date-of-birth/", DateOfBirthView.as_view(), name="date-of-birth"),
     path("place-of-birth/", PlaceOfBirthView.as_view(), name="place-of-birth"),
     path("legal-identities/", LegalIdentityView.as_view(), name="legal-identity-list"),
+    path("export/", WalletExportView.as_view(), name="wallet-export"),
 ] + router.urls
