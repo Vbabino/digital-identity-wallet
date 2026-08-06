@@ -4,7 +4,7 @@ import { ShieldKeyIcon } from "@hugeicons/core-free-icons"
 
 const LAST_UPDATED = "6 August 2026"
 const CONTACT_URL = "https://www.gbcode.dev/home"
-const CONTACT_LABEL = "github.com/Vbabino"
+const CONTACT_LABEL = "gbcode.dev"
 
 function Section({
   id,
