@@ -7,7 +7,8 @@ import { LockIcon, Mail01Icon } from "@hugeicons/core-free-icons"
 
 function extractErrors(err: unknown): string {
   const data = (err as { response?: { data?: unknown } })?.response?.data
-  if (!data || typeof data !== "object") return "Registration failed. Please try again."
+  if (!data || typeof data !== "object")
+    return "Registration failed. Please try again."
   const messages = Object.values(data)
     .filter((v): v is unknown[] => Array.isArray(v))
     .flat()
@@ -67,13 +68,19 @@ export default function Register() {
             <div className="space-y-6 text-center">
               <div className="flex justify-center">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-500/10 ring-1 ring-blue-500/30">
-                  <HugeiconsIcon icon={Mail01Icon} className="h-7 w-7 text-blue-400" />
+                  <HugeiconsIcon
+                    icon={Mail01Icon}
+                    className="h-7 w-7 text-blue-400"
+                  />
                 </div>
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-zinc-100">Check your inbox</h2>
+                <h2 className="text-lg font-semibold text-zinc-100">
+                  Check your inbox
+                </h2>
                 <p className="mt-2 text-sm text-zinc-400">
-                  We sent a verification link to <span className="font-medium text-zinc-200">{email}</span>.
+                  We sent a verification link to{" "}
+                  <span className="font-medium text-zinc-200">{email}</span>.
                   Click it to activate your account.
                 </p>
               </div>
@@ -153,8 +160,16 @@ export default function Register() {
 
               <p className="mt-6 text-center text-xs text-zinc-500">
                 Already have an account?{" "}
-                <Link to="/login" className="font-medium text-zinc-300 transition hover:text-white">
+                <Link
+                  to="/login"
+                  className="font-medium text-zinc-300 transition hover:text-white"
+                >
                   Sign in
+                </Link>
+              </p>
+              <p className="mt-3 text-center text-xs text-zinc-600">
+                <Link to="/privacy" className="transition hover:text-zinc-400">
+                  Privacy Notice
                 </Link>
               </p>
             </>

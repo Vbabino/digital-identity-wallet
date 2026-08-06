@@ -3,7 +3,12 @@ import { Link, useLocation, useNavigate } from "react-router"
 import { api } from "~/services/api"
 import { Button } from "~/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { LockIcon, ActivityIcon, SmartPhone01Icon, Mail01Icon } from "@hugeicons/core-free-icons"
+import {
+  LockIcon,
+  ActivityIcon,
+  SmartPhone01Icon,
+  Mail01Icon,
+} from "@hugeicons/core-free-icons"
 import { buildGoogleOAuthUrl } from "~/lib/pkce"
 import { GoogleIcon } from "~/components/icons/GoogleIcon"
 
@@ -122,7 +127,9 @@ export default function Login() {
       setMfaCode("")
       // Email method requires an explicit dispatch — fire-and-forget resend.
       if (newMethod === "email") {
-        api.post("/api/auth/login/resend/", { ephemeral_token: newToken }).catch(() => {})
+        api
+          .post("/api/auth/login/resend/", { ephemeral_token: newToken })
+          .catch(() => {})
       }
       codeInputRef.current?.focus()
     } catch (err: unknown) {
@@ -139,7 +146,9 @@ export default function Login() {
     setError(null)
 
     try {
-      await api.post("/api/auth/login/resend/", { ephemeral_token: ephemeralToken })
+      await api.post("/api/auth/login/resend/", {
+        ephemeral_token: ephemeralToken,
+      })
       setResendStatus("Code resent — check your email.")
     } catch (err: unknown) {
       if (import.meta.env.DEV) console.error(err)
@@ -192,7 +201,11 @@ export default function Login() {
       return
     }
 
-    window.location.href = await buildGoogleOAuthUrl(GOOGLE_CLIENT_ID, REDIRECT_URI, "login")
+    window.location.href = await buildGoogleOAuthUrl(
+      GOOGLE_CLIENT_ID,
+      REDIRECT_URI,
+      "login"
+    )
   }
 
   const methodLabel =
@@ -228,7 +241,8 @@ export default function Login() {
                     Demo Testing Environment
                   </p>
                   <p className="mt-1 text-xs text-zinc-400">
-                    Log in instantly using the pre-seeded account `{DEMO_EMAIL}`.
+                    Log in instantly using the pre-seeded account `{DEMO_EMAIL}
+                    `.
                   </p>
                   <Button
                     type="button"
@@ -236,8 +250,8 @@ export default function Login() {
                     onClick={handleDemoLogin}
                     className="mt-3 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 py-2 font-medium text-white shadow-md transition duration-300 hover:from-blue-500 hover:to-violet-500"
                   >
-                    <HugeiconsIcon icon={ActivityIcon} className="h-4 w-4" /> Demo
-                    Auto-Login
+                    <HugeiconsIcon icon={ActivityIcon} className="h-4 w-4" />{" "}
+                    Demo Auto-Login
                   </Button>
                 </div>
               )}
@@ -322,8 +336,16 @@ export default function Login() {
 
               <p className="mt-6 text-center text-xs text-zinc-500">
                 New here?{" "}
-                <Link to="/register" className="font-medium text-zinc-300 transition hover:text-white">
+                <Link
+                  to="/register"
+                  className="font-medium text-zinc-300 transition hover:text-white"
+                >
                   Create an account
+                </Link>
+              </p>
+              <p className="mt-3 text-center text-xs text-zinc-600">
+                <Link to="/privacy" className="transition hover:text-zinc-400">
+                  Privacy Notice
                 </Link>
               </p>
             </>
@@ -337,8 +359,12 @@ export default function Login() {
                     className="h-6 w-6 text-zinc-300"
                   />
                 </div>
-                <h2 className="text-lg font-bold text-white">Two-Factor Authentication</h2>
-                <p className="mt-1 text-xs text-zinc-400">{methodLabel} and enter your code below.</p>
+                <h2 className="text-lg font-bold text-white">
+                  Two-Factor Authentication
+                </h2>
+                <p className="mt-1 text-xs text-zinc-400">
+                  {methodLabel} and enter your code below.
+                </p>
               </div>
 
               {error && (
@@ -365,9 +391,11 @@ export default function Login() {
                   required
                   disabled={isLoading}
                   value={mfaCode}
-                  onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, "").slice(0, 12))}
+                  onChange={(e) =>
+                    setMfaCode(e.target.value.replace(/\D/g, "").slice(0, 12))
+                  }
                   placeholder="000000"
-                  className="mt-2 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-3 text-center text-xl font-mono tracking-[0.4em] text-zinc-100 placeholder-zinc-700 transition outline-none focus:border-blue-500 focus:bg-zinc-950 focus:ring-1 focus:ring-blue-500"
+                  className="mt-2 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-3 text-center font-mono text-xl tracking-[0.4em] text-zinc-100 placeholder-zinc-700 transition outline-none focus:border-blue-500 focus:bg-zinc-950 focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
@@ -400,7 +428,10 @@ export default function Login() {
                         : "border-zinc-800 bg-zinc-950/50 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200"
                     } disabled:cursor-not-allowed`}
                   >
-                    <HugeiconsIcon icon={SmartPhone01Icon} className="h-3.5 w-3.5" />
+                    <HugeiconsIcon
+                      icon={SmartPhone01Icon}
+                      className="h-3.5 w-3.5"
+                    />
                     Authenticator
                   </button>
                 </div>

@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Link } from "react-router"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   UserIcon,
@@ -60,7 +61,9 @@ function NavContent({
               <p className="text-xs font-semibold tracking-wider text-zinc-500 uppercase">
                 Identified As
               </p>
-              <p className="mt-0.5 truncate text-sm font-semibold text-zinc-200">{userEmail}</p>
+              <p className="mt-0.5 truncate text-sm font-semibold text-zinc-200">
+                {userEmail}
+              </p>
             </div>
           </div>
         </div>
@@ -87,23 +90,32 @@ function NavContent({
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center justify-center gap-2 rounded-xl border border-zinc-800/50 bg-zinc-950/20 p-3.5 text-center text-xs text-zinc-500">
-          <HugeiconsIcon icon={LockIcon} className="h-4 w-4 text-zinc-500" />
-          Encrypted Vault
-        </div>
+        <Link
+          to="/privacy"
+          className="flex items-center justify-center gap-2 rounded-xl border border-zinc-800/50 bg-zinc-950/20 p-3.5 text-center text-xs text-zinc-500 transition hover:border-zinc-700 hover:text-zinc-300"
+        >
+          <HugeiconsIcon icon={LockIcon} className="h-4 w-4" />
+          Privacy Notice
+        </Link>
         <Button
           variant="dark-action"
           onClick={onLogout}
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-2.5 text-sm text-zinc-300 transition duration-200 hover:text-red-400"
         >
-          <HugeiconsIcon icon={Logout01Icon} className="h-4 w-4" /> Close Vault Session
+          <HugeiconsIcon icon={Logout01Icon} className="h-4 w-4" /> Close Vault
+          Session
         </Button>
       </div>
     </>
   )
 }
 
-export function Sidebar({ activeTab, userEmail, onTabChange, onLogout }: SidebarProps) {
+export function Sidebar({
+  activeTab,
+  userEmail,
+  onTabChange,
+  onLogout,
+}: SidebarProps) {
   return (
     <aside className="hidden w-80 flex-col justify-between border-r border-zinc-800/80 bg-zinc-900/40 p-6 md:flex">
       <NavContent
@@ -116,7 +128,12 @@ export function Sidebar({ activeTab, userEmail, onTabChange, onLogout }: Sidebar
   )
 }
 
-export function MobileNav({ activeTab, userEmail, onTabChange, onLogout }: SidebarProps) {
+export function MobileNav({
+  activeTab,
+  userEmail,
+  onTabChange,
+  onLogout,
+}: SidebarProps) {
   const [open, setOpen] = useState(false)
 
   return (
