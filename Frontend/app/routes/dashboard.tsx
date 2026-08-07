@@ -36,6 +36,7 @@ export async function clientLoader(): Promise<DashboardLoaderData> {
       profRes,
       onlineRes,
       dailyRes,
+      pseudonymsRes,
       credRes,
       customRes,
       logsRes,
@@ -47,6 +48,7 @@ export async function clientLoader(): Promise<DashboardLoaderData> {
       api.get("/api/wallet/professionals/"),
       api.get("/api/wallet/online-profiles/"),
       api.get("/api/wallet/daily-uses/"),
+      api.get("/api/wallet/pseudonyms/"),
       api.get("/api/wallet/credentials/"),
       api.get("/api/wallet/custom-objects/"),
       api.get("/api/wallet/access-logs/"),
@@ -64,6 +66,7 @@ export async function clientLoader(): Promise<DashboardLoaderData> {
       professionals: profRes.data,
       onlineProfiles: onlineRes.data,
       dailyUses: dailyRes.data,
+      pseudonyms: pseudonymsRes.data,
       credentials: credRes.data,
       customObjects: customRes.data,
       accessLogs: logsRes.data.results,
@@ -199,6 +202,8 @@ export default function Dashboard() {
         setOnlineForm={dashboard.setOnlineForm}
         dailyForm={dashboard.dailyForm}
         setDailyForm={dashboard.setDailyForm}
+        pseudonymForm={dashboard.pseudonymForm}
+        setPseudonymForm={dashboard.setPseudonymForm}
         credentialForm={dashboard.credentialForm}
         setCredentialForm={dashboard.setCredentialForm}
         customForm={dashboard.customForm}

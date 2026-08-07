@@ -30,6 +30,7 @@ const emptyData: DashboardLoaderData = {
   professionals: [],
   onlineProfiles: [],
   dailyUses: [],
+  pseudonyms: [],
   credentials: [],
   customObjects: [],
   accessLogs: [],
@@ -227,6 +228,80 @@ describe("useDashboard — multi-record CRUD", () => {
     })
     expect(onSuccess).toHaveBeenCalledOnce()
     expect(result.current.deleteConfirm).toBeNull()
+  })
+})
+
+describe("useDashboard — pseudonym CRUD", () => {
+  it("POSTs and prepends the new pseudonym when modalAction is 'create'", async () => {
+    const { result } = renderHook(() => useDashboard(emptyData), { wrapper })
+    act(() => result.current.openModal("pseudonym", "create"))
+    await act(async () => {
+      await result.current.handleMultiRecordSubmit(mockEvent())
+    })
+    expect(result.current.pseudonyms[0]).toMatchObject({
+      relying_party: "Acme",
+      pseudonym_value: "shadow_99",
+    })
+    expect(result.current.modalType).toBeNull()
+  })
+
+  it("PATCHes and replaces the pseudonym in the list when modalAction is 'edit'", async () => {
+    const dataWithPseudonym: DashboardLoaderData = {
+      ...emptyData,
+      pseudonyms: [
+        {
+          id: "pseudo-1",
+          relying_party: "Old Party",
+          pseudonym_value: "old_value",
+          is_active: true,
+          visibility: "private",
+        },
+      ],
+    }
+    const { result } = renderHook(() => useDashboard(dataWithPseudonym), { wrapper })
+    act(() =>
+      result.current.openModal("pseudonym", "edit", dataWithPseudonym.pseudonyms[0])
+    )
+    await act(async () => {
+      await result.current.handleMultiRecordSubmit(mockEvent())
+    })
+    expect(result.current.pseudonyms[0]).toMatchObject({
+      relying_party: "Acme Updated",
+      is_active: false,
+    })
+  })
+
+  it("deletes a pseudonym via the delete-confirm flow", async () => {
+    const onSuccess = vi.fn()
+    const { result } = renderHook(() => useDashboard(emptyData), { wrapper })
+    act(() => result.current.handleDeleteRecord("pseudonyms", "pseudo-1", onSuccess))
+    await act(async () => {
+      await result.current.confirmDelete()
+    })
+    expect(onSuccess).toHaveBeenCalledOnce()
+  })
+
+  it("toggleVisibility uses the pseudonyms URL with :id", async () => {
+    let capturedUrl = ""
+    server.use(
+      http.patch("http://localhost/api/wallet/pseudonyms/:id/", ({ request }) => {
+        capturedUrl = request.url
+        return HttpResponse.json({
+          id: "pseudo-1",
+          relying_party: "Acme",
+          pseudonym_value: "shadow_99",
+          is_active: true,
+          visibility: "public",
+        })
+      })
+    )
+    const { result } = renderHook(() => useDashboard(emptyData), { wrapper })
+    const setter = vi.fn()
+    await act(async () => {
+      await result.current.toggleVisibility("pseudonyms", "pseudo-1", "private", setter, false)
+    })
+    expect(capturedUrl).toContain("/pseudonyms/pseudo-1/")
+    expect(setter).toHaveBeenCalledWith(expect.objectContaining({ visibility: "public" }))
   })
 })
 

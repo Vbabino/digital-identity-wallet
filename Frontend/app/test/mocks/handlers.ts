@@ -272,6 +272,31 @@ export const handlers = [
     new HttpResponse(null, { status: 204 })
   ),
 
+  http.get("http://localhost/api/wallet/pseudonyms/", () =>
+    HttpResponse.json([])
+  ),
+  http.post("http://localhost/api/wallet/pseudonyms/", () =>
+    HttpResponse.json({
+      id: "pseudo-1",
+      relying_party: "Acme",
+      pseudonym_value: "shadow_99",
+      is_active: true,
+      visibility: "private",
+    })
+  ),
+  http.patch("http://localhost/api/wallet/pseudonyms/:id/", () =>
+    HttpResponse.json({
+      id: "pseudo-1",
+      relying_party: "Acme Updated",
+      pseudonym_value: "shadow_100",
+      is_active: false,
+      visibility: "private",
+    })
+  ),
+  http.delete("http://localhost/api/wallet/pseudonyms/:id/", () =>
+    new HttpResponse(null, { status: 204 })
+  ),
+
   http.get("http://localhost/api/wallet/credentials/", () =>
     HttpResponse.json([])
   ),

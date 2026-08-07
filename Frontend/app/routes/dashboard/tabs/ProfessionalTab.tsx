@@ -4,6 +4,7 @@ import {
   Briefcase02Icon,
   GlobeIcon,
   UserCircleIcon,
+  MaskIcon,
   PencilEdit01Icon,
   Delete02Icon,
   Add01Icon,
@@ -13,7 +14,7 @@ import { SectionCard } from "../components/SectionCard"
 import { EmptyState } from "../components/EmptyState"
 import { PrivacyBadge } from "../components/PrivacyBadge"
 import type { DashboardState } from "../hooks/useDashboard"
-import type { ProfessionalIdentity, OnlineProfile, DailyUse } from "../types"
+import type { ProfessionalIdentity, OnlineProfile, DailyUse, Pseudonym } from "../types"
 
 interface ProfessionalTabProps {
   dashboard: DashboardState
@@ -27,6 +28,8 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
     setOnlineProfiles,
     dailyUses,
     setDailyUses,
+    pseudonyms,
+    setPseudonyms,
     openModal,
     handleDeleteRecord,
     toggleVisibility,
@@ -220,6 +223,71 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
           )}
         </SectionCard>
       </div>
+
+      {/* Pseudonyms */}
+      <SectionCard
+        icon={MaskIcon}
+        title="Pseudonyms"
+        subtitle="Relying-party-scoped pseudonymous identities."
+        action={
+          <Button
+            variant="gradient-primary"
+            onClick={() => openModal("pseudonym", "create")}
+            className="flex cursor-pointer items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-medium"
+          >
+            <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5" /> Add Pseudonym
+          </Button>
+        }
+      >
+        {pseudonyms.length === 0 ? (
+          <EmptyState message="No pseudonyms registered." />
+        ) : (
+          <div className="grid grid-cols-1 gap-4">
+            {pseudonyms.map((p) => (
+              <div
+                key={p.id}
+                className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-zinc-800 bg-zinc-950/30 p-5 sm:flex-row sm:items-center"
+              >
+                <div className="space-y-1">
+                  <h4 className="text-base font-bold text-zinc-200">{p.relying_party}</h4>
+                  <p className="mt-1 text-sm font-medium text-zinc-500">{p.pseudonym_value}</p>
+                  <p
+                    className={`text-xs font-semibold tracking-wider uppercase ${
+                      p.is_active ? "text-emerald-400" : "text-zinc-600"
+                    }`}
+                  >
+                    {p.is_active ? "Active" : "Inactive"}
+                  </p>
+                </div>
+                <div className="flex w-full items-center justify-end space-x-4 border-t border-zinc-800/40 pt-3 sm:w-auto sm:border-t-0 sm:pt-0">
+                  <PrivacyBadge
+                    visibility={p.visibility}
+                    size="sm"
+                    onClick={() =>
+                      toggleVisibility("pseudonyms", p.id, p.visibility, (updated) => {
+                        setPseudonyms(pseudonyms.map((item) => (item.id === p.id ? updated as Pseudonym : item)))
+                      })
+                    }
+                  />
+                  <button
+                    onClick={() => openModal("pseudonym", "edit", p)}
+                    className="flex cursor-pointer items-center gap-0.5 text-xs font-medium text-zinc-400 hover:text-zinc-200"
+                  >
+                    <HugeiconsIcon icon={PencilEdit01Icon} className="h-3 w-3" /> Edit
+                  </button>
+                  <span className="hidden text-zinc-700 sm:inline">|</span>
+                  <button
+                    onClick={() => handleDeleteRecord("pseudonyms", p.id, () => setPseudonyms(prev => prev.filter(item => item.id !== p.id)))}
+                    className="flex cursor-pointer items-center gap-0.5 text-xs font-medium text-red-400/80 hover:text-red-400"
+                  >
+                    <HugeiconsIcon icon={Delete02Icon} className="h-3 w-3" /> Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </SectionCard>
     </div>
   )
 })

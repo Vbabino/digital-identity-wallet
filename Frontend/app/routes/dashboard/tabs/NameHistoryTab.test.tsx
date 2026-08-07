@@ -18,6 +18,7 @@ const emptyData: DashboardLoaderData = {
   professionals: [],
   onlineProfiles: [],
   dailyUses: [],
+  pseudonyms: [],
   credentials: [],
   customObjects: [],
   accessLogs: [],

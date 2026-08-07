@@ -10,6 +10,7 @@ import type {
   ProfessionalForm,
   OnlineForm,
   DailyForm,
+  PseudonymForm,
   CredentialForm,
   CustomForm,
   NameHistoryForm,
@@ -32,6 +33,8 @@ interface CrudModalProps {
   setOnlineForm: React.Dispatch<React.SetStateAction<OnlineForm>>
   dailyForm: DailyForm
   setDailyForm: React.Dispatch<React.SetStateAction<DailyForm>>
+  pseudonymForm: PseudonymForm
+  setPseudonymForm: React.Dispatch<React.SetStateAction<PseudonymForm>>
   credentialForm: CredentialForm
   setCredentialForm: React.Dispatch<React.SetStateAction<CredentialForm>>
   customForm: CustomForm
@@ -63,6 +66,8 @@ export function CrudModal({
   setOnlineForm,
   dailyForm,
   setDailyForm,
+  pseudonymForm,
+  setPseudonymForm,
   credentialForm,
   setCredentialForm,
   customForm,
@@ -79,6 +84,7 @@ export function CrudModal({
     professional: "Employment Profile",
     online: "Online Profile Platform",
     daily: "Preferred Alias",
+    pseudonym: "Pseudonym Identity",
     credential: "Verified Document",
     custom: "Custom Attribute",
     nameHistory: "Name History Entry",
@@ -377,6 +383,56 @@ export function CrudModal({
                 <select
                   value={dailyForm.visibility}
                   onChange={(e) => setDailyForm({ ...dailyForm, visibility: e.target.value as "public" | "private" })}
+                  className={selectCls}
+                >
+                  <option value="public">Public</option>
+                  <option value="private">Private</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {modalType === "pseudonym" && (
+            <div className="space-y-4">
+              <div>
+                <label className={labelCls}>Relying Party</label>
+                <input
+                  type="text"
+                  required
+                  value={pseudonymForm.relying_party}
+                  onChange={(e) => setPseudonymForm({ ...pseudonymForm, relying_party: e.target.value })}
+                  placeholder="acme-corp.example"
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Pseudonym Value</label>
+                <input
+                  type="text"
+                  required
+                  value={pseudonymForm.pseudonym_value}
+                  onChange={(e) => setPseudonymForm({ ...pseudonymForm, pseudonym_value: e.target.value })}
+                  placeholder="shadow_99"
+                  className={inputCls}
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  id="pseudonym-is-active"
+                  type="checkbox"
+                  checked={pseudonymForm.is_active}
+                  onChange={(e) => setPseudonymForm({ ...pseudonymForm, is_active: e.target.checked })}
+                  className="h-4 w-4 rounded border-zinc-800 bg-zinc-950/50 accent-blue-500"
+                />
+                <label htmlFor="pseudonym-is-active" className={labelCls}>
+                  Active
+                </label>
+              </div>
+              <div>
+                <label className={labelCls}>Visibility</label>
+                <select
+                  value={pseudonymForm.visibility}
+                  onChange={(e) => setPseudonymForm({ ...pseudonymForm, visibility: e.target.value as "public" | "private" })}
                   className={selectCls}
                 >
                   <option value="public">Public</option>

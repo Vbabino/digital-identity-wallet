@@ -69,6 +69,14 @@ export interface DailyUse {
   visibility: "public" | "private"
 }
 
+export interface Pseudonym {
+  id: string
+  relying_party: string
+  pseudonym_value: string
+  is_active: boolean
+  visibility: "public" | "private"
+}
+
 export interface Credential {
   id: string
   credential_id: string
@@ -139,6 +147,7 @@ export type MultiRecord =
   | ProfessionalIdentity
   | OnlineProfile
   | DailyUse
+  | Pseudonym
   | Credential
   | CustomObject
   | NameHistory
@@ -150,6 +159,7 @@ export type FormPayload =
   | ProfessionalForm
   | OnlineForm
   | DailyForm
+  | PseudonymForm
   | CredentialForm
   | CustomForm
   | NameHistoryForm
@@ -161,6 +171,7 @@ export type ModalType =
   | "professional"
   | "online"
   | "daily"
+  | "pseudonym"
   | "credential"
   | "custom"
   | "nameHistory"
@@ -212,6 +223,13 @@ export interface DailyForm {
   visibility: "public" | "private"
 }
 
+export interface PseudonymForm {
+  relying_party: string
+  pseudonym_value: string
+  is_active: boolean
+  visibility: "public" | "private"
+}
+
 export interface CredentialForm {
   credential_id: string
   credential_type: string
@@ -250,6 +268,7 @@ export interface DashboardLoaderData {
   professionals: ProfessionalIdentity[]
   onlineProfiles: OnlineProfile[]
   dailyUses: DailyUse[]
+  pseudonyms: Pseudonym[]
   credentials: Credential[]
   customObjects: CustomObject[]
   accessLogs: AccessLog[]

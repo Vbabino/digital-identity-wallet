@@ -11,6 +11,7 @@ import type {
   ProfessionalIdentity,
   OnlineProfile,
   DailyUse,
+  Pseudonym,
   Credential,
   CustomObject,
   AccessLog,
@@ -25,6 +26,7 @@ import type {
   ProfessionalForm,
   OnlineForm,
   DailyForm,
+  PseudonymForm,
   CredentialForm,
   CustomForm,
   NameHistoryForm,
@@ -72,6 +74,7 @@ export function useDashboard(initialData: DashboardLoaderData) {
   const [professionals, setProfessionals] = useState<ProfessionalIdentity[]>(initialData.professionals)
   const [onlineProfiles, setOnlineProfiles] = useState<OnlineProfile[]>(initialData.onlineProfiles)
   const [dailyUses, setDailyUses] = useState<DailyUse[]>(initialData.dailyUses)
+  const [pseudonyms, setPseudonyms] = useState<Pseudonym[]>(initialData.pseudonyms)
   const [credentials, setCredentials] = useState<Credential[]>(initialData.credentials)
   const [customObjects, setCustomObjects] = useState<CustomObject[]>(initialData.customObjects)
   const [accessLogs, setAccessLogs] = useState<AccessLog[]>(initialData.accessLogs)
@@ -156,6 +159,12 @@ export function useDashboard(initialData: DashboardLoaderData) {
     nickname: "",
     visibility: "private",
   })
+  const [pseudonymForm, setPseudonymForm] = useState<PseudonymForm>({
+    relying_party: "",
+    pseudonym_value: "",
+    is_active: true,
+    visibility: "private",
+  })
   const [credentialForm, setCredentialForm] = useState<CredentialForm>({
     credential_id: "",
     credential_type: "government",
@@ -202,6 +211,7 @@ export function useDashboard(initialData: DashboardLoaderData) {
         profRes,
         onlineRes,
         dailyRes,
+        pseudonymsRes,
         credRes,
         customRes,
         logsRes,
@@ -213,6 +223,7 @@ export function useDashboard(initialData: DashboardLoaderData) {
         api.get("/api/wallet/professionals/"),
         api.get("/api/wallet/online-profiles/"),
         api.get("/api/wallet/daily-uses/"),
+        api.get("/api/wallet/pseudonyms/"),
         api.get("/api/wallet/credentials/"),
         api.get("/api/wallet/custom-objects/"),
         api.get("/api/wallet/access-logs/"),
@@ -225,6 +236,7 @@ export function useDashboard(initialData: DashboardLoaderData) {
       setProfessionals(profRes.data)
       setOnlineProfiles(onlineRes.data)
       setDailyUses(dailyRes.data)
+      setPseudonyms(pseudonymsRes.data)
       setCredentials(credRes.data)
       setCustomObjects(customRes.data)
       setAccessLogs(logsRes.data.results)
@@ -411,6 +423,7 @@ export function useDashboard(initialData: DashboardLoaderData) {
         if (type === "professional") setProfessionalForm({ ...(item as ProfessionalIdentity) })
         if (type === "online") setOnlineForm({ ...(item as OnlineProfile) })
         if (type === "daily") setDailyForm({ ...(item as DailyUse) })
+        if (type === "pseudonym") setPseudonymForm({ ...(item as Pseudonym) })
         if (type === "credential") setCredentialForm({ ...(item as Credential) })
         if (type === "custom") setCustomForm({ ...(item as CustomObject) })
         if (type === "nameHistory") setNameHistoryForm({ ...(item as NameHistory) })
@@ -434,6 +447,13 @@ export function useDashboard(initialData: DashboardLoaderData) {
         if (type === "online")
           setOnlineForm({ platform: "github", username: "", display_name: "", visibility: "private" })
         if (type === "daily") setDailyForm({ preferred_name: "", nickname: "", visibility: "private" })
+        if (type === "pseudonym")
+          setPseudonymForm({
+            relying_party: "",
+            pseudonym_value: "",
+            is_active: true,
+            visibility: "private",
+          })
         if (type === "credential")
           setCredentialForm({
             credential_id: "",
@@ -510,6 +530,8 @@ export function useDashboard(initialData: DashboardLoaderData) {
         endpoint = "online-profiles"; payload = onlineForm; listSetter = setOnlineProfiles as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = onlineProfiles
       } else if (modalType === "daily") {
         endpoint = "daily-uses"; payload = dailyForm; listSetter = setDailyUses as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = dailyUses
+      } else if (modalType === "pseudonym") {
+        endpoint = "pseudonyms"; payload = pseudonymForm; listSetter = setPseudonyms as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = pseudonyms
       } else if (modalType === "credential") {
         endpoint = "credentials"; payload = credentialForm; listSetter = setCredentials as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = credentials
       } else if (modalType === "custom") {
@@ -537,9 +559,9 @@ export function useDashboard(initialData: DashboardLoaderData) {
     [
       modalType, modalAction, activeItemId,
       addressForm, nationalityForm, genderForm, professionalForm,
-      onlineForm, dailyForm, credentialForm, customForm, nameHistoryForm,
+      onlineForm, dailyForm, pseudonymForm, credentialForm, customForm, nameHistoryForm,
       addresses, nationalities, genders, professionals,
-      onlineProfiles, dailyUses, credentials, customObjects,
+      onlineProfiles, dailyUses, pseudonyms, credentials, customObjects,
       nameHistoriesPage, fetchNameHistoriesPage,
       showToast, closeModal,
     ]
@@ -608,6 +630,8 @@ export function useDashboard(initialData: DashboardLoaderData) {
     setOnlineProfiles,
     dailyUses,
     setDailyUses,
+    pseudonyms,
+    setPseudonyms,
     credentials,
     setCredentials,
     customObjects,
@@ -642,6 +666,8 @@ export function useDashboard(initialData: DashboardLoaderData) {
     setOnlineForm,
     dailyForm,
     setDailyForm,
+    pseudonymForm,
+    setPseudonymForm,
     credentialForm,
     setCredentialForm,
     customForm,

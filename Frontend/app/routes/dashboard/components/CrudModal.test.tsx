@@ -10,6 +10,7 @@ import type {
   ProfessionalForm,
   OnlineForm,
   DailyForm,
+  PseudonymForm,
   CredentialForm,
   CustomForm,
   NameHistoryForm,
@@ -40,6 +41,12 @@ const defaultOnlineForm: OnlineForm = {
   visibility: "private",
 }
 const defaultDailyForm: DailyForm = { preferred_name: "", nickname: "", visibility: "private" }
+const defaultPseudonymForm: PseudonymForm = {
+  relying_party: "",
+  pseudonym_value: "",
+  is_active: true,
+  visibility: "private",
+}
 const defaultCredentialForm: CredentialForm = {
   credential_id: "",
   credential_type: "government",
@@ -92,6 +99,8 @@ function renderModal({
       setOnlineForm={vi.fn()}
       dailyForm={defaultDailyForm}
       setDailyForm={vi.fn()}
+      pseudonymForm={defaultPseudonymForm}
+      setPseudonymForm={vi.fn()}
       credentialForm={defaultCredentialForm}
       setCredentialForm={vi.fn()}
       customForm={defaultCustomForm}
@@ -160,6 +169,48 @@ describe("CrudModal", () => {
     expect(screen.getByText("Add New Online Profile Platform")).toBeInTheDocument()
   })
 
+  it("renders the pseudonym form with required fields and an is_active checkbox", () => {
+    renderModal({ modalType: "pseudonym" })
+    expect(screen.getByText("Add New Pseudonym Identity")).toBeInTheDocument()
+    expect(screen.getByPlaceholderText("acme-corp.example")).toBeInTheDocument()
+    expect(screen.getByPlaceholderText("shadow_99")).toBeInTheDocument()
+    expect(screen.getByRole("checkbox", { name: "Active" })).toBeInTheDocument()
+  })
+
+  it("calls setPseudonymForm when the is_active checkbox is toggled", async () => {
+    const setPseudonymForm = vi.fn()
+    render(
+      <CrudModal
+        modalType="pseudonym"
+        modalAction="create"
+        onSubmit={vi.fn()}
+        onClose={vi.fn()}
+        addressForm={defaultAddressForm}
+        setAddressForm={vi.fn()}
+        nationalityForm={defaultNationalityForm}
+        setNationalityForm={vi.fn()}
+        genderForm={defaultGenderForm}
+        setGenderForm={vi.fn()}
+        professionalForm={defaultProfessionalForm}
+        setProfessionalForm={vi.fn()}
+        onlineForm={defaultOnlineForm}
+        setOnlineForm={vi.fn()}
+        dailyForm={defaultDailyForm}
+        setDailyForm={vi.fn()}
+        pseudonymForm={defaultPseudonymForm}
+        setPseudonymForm={setPseudonymForm}
+        credentialForm={defaultCredentialForm}
+        setCredentialForm={vi.fn()}
+        customForm={defaultCustomForm}
+        setCustomForm={vi.fn()}
+        nameHistoryForm={defaultNameHistoryForm}
+        setNameHistoryForm={vi.fn()}
+      />
+    )
+    await userEvent.click(screen.getByRole("checkbox", { name: "Active" }))
+    expect(setPseudonymForm).toHaveBeenCalledWith({ ...defaultPseudonymForm, is_active: false })
+  })
+
   it("renders the name history form", () => {
     renderModal({ modalType: "nameHistory" })
     expect(screen.getByText("Add New Name History Entry")).toBeInTheDocument()
@@ -187,6 +238,8 @@ describe("CrudModal", () => {
         setOnlineForm={vi.fn()}
         dailyForm={defaultDailyForm}
         setDailyForm={vi.fn()}
+        pseudonymForm={defaultPseudonymForm}
+        setPseudonymForm={vi.fn()}
         credentialForm={defaultCredentialForm}
         setCredentialForm={vi.fn()}
         customForm={defaultCustomForm}
