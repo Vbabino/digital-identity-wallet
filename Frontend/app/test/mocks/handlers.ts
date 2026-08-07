@@ -325,7 +325,7 @@ export const handlers = [
   ),
 
   http.get("http://localhost/api/wallet/access-logs/", () =>
-    HttpResponse.json([])
+    HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
   ),
 
   // ── Wallet export ────────────────────────────────────────────────────────

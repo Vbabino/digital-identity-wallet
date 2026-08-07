@@ -1,16 +1,20 @@
 import React, { memo } from "react"
-import { ActivityIcon } from "@hugeicons/core-free-icons"
+import { ActivityIcon, ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "~/components/ui/button"
 import { SectionCard } from "../components/SectionCard"
 import { EmptyState } from "../components/EmptyState"
 import type { DashboardState } from "../hooks/useDashboard"
+
+const LOGS_PAGE_SIZE = 10
 
 interface LogsTabProps {
   dashboard: DashboardState
 }
 
 export const LogsTab = memo(function LogsTab({ dashboard }: LogsTabProps) {
-  const { accessLogs, fetchAllData } = dashboard
+  const { accessLogs, fetchAllData, logsPage, logsCount, logsHasNext, logsHasPrevious, fetchLogsPage } = dashboard
+  const totalPages = Math.max(1, Math.ceil(logsCount / LOGS_PAGE_SIZE))
 
   return (
     <div className="space-y-8">
@@ -85,6 +89,34 @@ export const LogsTab = memo(function LogsTab({ dashboard }: LogsTabProps) {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {logsCount > LOGS_PAGE_SIZE && (
+          <div className="mt-6 flex items-center justify-between border-t border-zinc-800/80 pt-4">
+            <span className="text-[10px] font-semibold tracking-wider text-zinc-500 uppercase">
+              Page {logsPage} of {totalPages}
+            </span>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="dark-action"
+                disabled={!logsHasPrevious}
+                onClick={() => fetchLogsPage(logsPage - 1)}
+                className="cursor-pointer rounded-xl px-3 py-1.5 text-xs disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <HugeiconsIcon icon={ArrowLeft01Icon} className="h-3.5 w-3.5" />
+                Prev
+              </Button>
+              <Button
+                variant="dark-action"
+                disabled={!logsHasNext}
+                onClick={() => fetchLogsPage(logsPage + 1)}
+                className="cursor-pointer rounded-xl px-3 py-1.5 text-xs disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Next
+                <HugeiconsIcon icon={ArrowRight01Icon} className="h-3.5 w-3.5" />
+              </Button>
+            </div>
           </div>
         )}
       </SectionCard>

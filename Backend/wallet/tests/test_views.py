@@ -324,12 +324,14 @@ class TestAccessLogView:
         AccessLogFactory()  # different user
         response = auth_client.get(_ACCESS_LOGS_URL)
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 2
+        assert response.data["count"] == 2
+        assert len(response.data["results"]) == 2
 
     def test_list_empty_when_no_logs(self, auth_client):
         response = auth_client.get(_ACCESS_LOGS_URL)
         assert response.status_code == status.HTTP_200_OK
-        assert response.data == []
+        assert response.data["count"] == 0
+        assert response.data["results"] == []
 
     def test_list_ordered_by_access_time_descending(self, auth_client):
         now = timezone.now()
@@ -341,7 +343,26 @@ class TestAccessLogView:
         newer.save()
         response = auth_client.get(_ACCESS_LOGS_URL)
         assert response.status_code == status.HTTP_200_OK
-        assert response.data[0]["relying_party"] == newer.relying_party
+        assert response.data["results"][0]["relying_party"] == newer.relying_party
+
+    def test_list_is_paginated_at_page_size_10(self, auth_client):
+        for _ in range(15):
+            AccessLogFactory(user=auth_client.user)
+        response = auth_client.get(_ACCESS_LOGS_URL)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["count"] == 15
+        assert len(response.data["results"]) == 10
+        assert response.data["next"] is not None
+        assert response.data["previous"] is None
+
+    def test_list_second_page_returns_remainder(self, auth_client):
+        for _ in range(15):
+            AccessLogFactory(user=auth_client.user)
+        response = auth_client.get(_ACCESS_LOGS_URL, {"page": 2})
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data["results"]) == 5
+        assert response.data["next"] is None
+        assert response.data["previous"] is not None
 
     def test_retrieve_own_log_returns_200(self, auth_client):
         log = AccessLogFactory(user=auth_client.user)

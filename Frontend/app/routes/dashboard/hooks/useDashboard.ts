@@ -73,6 +73,10 @@ export function useDashboard(initialData: DashboardLoaderData) {
   const [credentials, setCredentials] = useState<Credential[]>(initialData.credentials)
   const [customObjects, setCustomObjects] = useState<CustomObject[]>(initialData.customObjects)
   const [accessLogs, setAccessLogs] = useState<AccessLog[]>(initialData.accessLogs)
+  const [logsPage, setLogsPage] = useState(1)
+  const [logsCount, setLogsCount] = useState(initialData.accessLogsCount)
+  const [logsHasNext, setLogsHasNext] = useState(initialData.accessLogsHasNext)
+  const [logsHasPrevious, setLogsHasPrevious] = useState(initialData.accessLogsHasPrevious)
 
   // --- SINGLETON EDIT STATE ---
   const [isEditingLegal, setIsEditingLegal] = useState(false)
@@ -204,7 +208,11 @@ export function useDashboard(initialData: DashboardLoaderData) {
       setDailyUses(dailyRes.data)
       setCredentials(credRes.data)
       setCustomObjects(customRes.data)
-      setAccessLogs(logsRes.data)
+      setAccessLogs(logsRes.data.results)
+      setLogsPage(1)
+      setLogsCount(logsRes.data.count)
+      setLogsHasNext(Boolean(logsRes.data.next))
+      setLogsHasPrevious(Boolean(logsRes.data.previous))
     } catch (error: unknown) {
       if ((error as { response?: { status?: number } }).response?.status === 401) {
         showToast("Session expired. Please sign in again.", "error")
@@ -216,6 +224,31 @@ export function useDashboard(initialData: DashboardLoaderData) {
       setLoading(false)
     }
   }, [navigate, showToast])
+
+  // --- LOGS PAGINATION ---
+  const fetchLogsPage = useCallback(
+    async (page: number) => {
+      setLoading(true)
+      try {
+        const res = await api.get("/api/wallet/access-logs/", { params: { page } })
+        setAccessLogs(res.data.results)
+        setLogsPage(page)
+        setLogsCount(res.data.count)
+        setLogsHasNext(Boolean(res.data.next))
+        setLogsHasPrevious(Boolean(res.data.previous))
+      } catch (error: unknown) {
+        if ((error as { response?: { status?: number } }).response?.status === 401) {
+          showToast("Session expired. Please sign in again.", "error")
+          navigate("/login")
+        } else {
+          showToast("Failed to load access logs.", "error")
+        }
+      } finally {
+        setLoading(false)
+      }
+    },
+    [navigate, showToast]
+  )
 
   // --- LOGOUT ---
   const handleLogout = useCallback(async () => {
@@ -497,6 +530,11 @@ export function useDashboard(initialData: DashboardLoaderData) {
     customObjects,
     setCustomObjects,
     accessLogs,
+    logsPage,
+    logsCount,
+    logsHasNext,
+    logsHasPrevious,
+    fetchLogsPage,
     // Modal
     modalType,
     modalAction,

@@ -33,6 +33,9 @@ const emptyData: DashboardLoaderData = {
   credentials: [],
   customObjects: [],
   accessLogs: [],
+  accessLogsCount: 0,
+  accessLogsHasNext: false,
+  accessLogsHasPrevious: false,
 }
 
 const mockEvent = () => ({ preventDefault: vi.fn() }) as unknown as React.FormEvent
@@ -360,6 +363,55 @@ describe("useDashboard — fetchAllData", () => {
     const { result } = renderHook(() => useDashboard(emptyData), { wrapper })
     await act(async () => {
       await result.current.fetchAllData()
+    })
+    expect(mockNavigate).toHaveBeenCalledWith("/login")
+  })
+})
+
+describe("useDashboard — fetchLogsPage", () => {
+  beforeEach(() => mockNavigate.mockClear())
+
+  it("fetches a page of access logs and updates pagination state", async () => {
+    server.use(
+      http.get("http://localhost/api/wallet/access-logs/", ({ request }) => {
+        const page = new URL(request.url).searchParams.get("page")
+        expect(page).toBe("2")
+        return HttpResponse.json({
+          count: 15,
+          next: null,
+          previous: "http://localhost/api/wallet/access-logs/?page=1",
+          results: [
+            {
+              id: "log-1",
+              relying_party: "Acme",
+              scopes_accessed: ["openid"],
+              claims_returned: ["sub"],
+              access_time: "2026-01-01T00:00:00Z",
+            },
+          ],
+        })
+      })
+    )
+    const { result } = renderHook(() => useDashboard(emptyData), { wrapper })
+    await act(async () => {
+      await result.current.fetchLogsPage(2)
+    })
+    expect(result.current.accessLogs).toHaveLength(1)
+    expect(result.current.logsPage).toBe(2)
+    expect(result.current.logsCount).toBe(15)
+    expect(result.current.logsHasNext).toBe(false)
+    expect(result.current.logsHasPrevious).toBe(true)
+  })
+
+  it("navigates to /login when the access-logs endpoint returns 401", async () => {
+    server.use(
+      http.get("http://localhost/api/wallet/access-logs/", () =>
+        new HttpResponse(null, { status: 401 })
+      )
+    )
+    const { result } = renderHook(() => useDashboard(emptyData), { wrapper })
+    await act(async () => {
+      await result.current.fetchLogsPage(2)
     })
     expect(mockNavigate).toHaveBeenCalledWith("/login")
   })

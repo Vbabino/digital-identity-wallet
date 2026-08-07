@@ -63,7 +63,10 @@ export async function clientLoader(): Promise<DashboardLoaderData> {
       dailyUses: dailyRes.data,
       credentials: credRes.data,
       customObjects: customRes.data,
-      accessLogs: logsRes.data,
+      accessLogs: logsRes.data.results,
+      accessLogsCount: logsRes.data.count,
+      accessLogsHasNext: Boolean(logsRes.data.next),
+      accessLogsHasPrevious: Boolean(logsRes.data.previous),
     }
   } catch {
     throw redirect("/login")

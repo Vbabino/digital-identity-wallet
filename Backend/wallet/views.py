@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework.pagination import PageNumberPagination
 
 from .export_service import WalletExportError, export_wallet_data_to_json
 from .models import (
@@ -220,9 +221,16 @@ class NameHistoryView(UserScopedModelViewSet):
         return NameHistory.objects.filter(user=self.request.user)
 
 
+class AccessLogPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "size"
+    max_page_size = 10
+
+
 class AccessLogView(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = AccessLogSerializer
+    pagination_class = AccessLogPagination
 
     def get_queryset(self):
         return AccessLog.objects.filter(user=self.request.user).order_by("-access_time")

@@ -97,6 +97,13 @@ export interface AccessLog {
   access_time: string
 }
 
+export interface PaginatedResponse<T> {
+  count: number
+  next: string | null
+  previous: string | null
+  results: T[]
+}
+
 export const countries = [
   { code: "US", name: "United States", flag: "🇺🇸" },
   { code: "GB", name: "United Kingdom", flag: "🇬🇧" },
@@ -224,4 +231,7 @@ export interface DashboardLoaderData {
   credentials: Credential[]
   customObjects: CustomObject[]
   accessLogs: AccessLog[]
+  accessLogsCount: number
+  accessLogsHasNext: boolean
+  accessLogsHasPrevious: boolean
 }
