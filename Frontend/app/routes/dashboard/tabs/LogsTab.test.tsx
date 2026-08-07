@@ -24,6 +24,10 @@ const emptyData: DashboardLoaderData = {
   accessLogsCount: 0,
   accessLogsHasNext: false,
   accessLogsHasPrevious: false,
+  nameHistories: [],
+  nameHistoriesCount: 0,
+  nameHistoriesHasNext: false,
+  nameHistoriesHasPrevious: false,
 }
 
 function LogsTabHarness({ initialData }: { initialData: DashboardLoaderData }) {

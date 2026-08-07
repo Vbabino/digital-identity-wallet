@@ -334,6 +334,35 @@ export const handlers = [
     HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
   ),
 
+  http.get("http://localhost/api/wallet/name-histories/", () =>
+    HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
+  ),
+  http.post("http://localhost/api/wallet/name-histories/", () =>
+    HttpResponse.json({
+      id: "nh-1",
+      family_name: "Smith",
+      middle_name: "",
+      given_name: "Alice",
+      valid_from: "2020-01-01",
+      valid_until: "2024-01-01",
+      visibility: "private",
+    })
+  ),
+  http.patch("http://localhost/api/wallet/name-histories/:id/", () =>
+    HttpResponse.json({
+      id: "nh-1",
+      family_name: "Jones",
+      middle_name: "",
+      given_name: "Alice",
+      valid_from: "2020-01-01",
+      valid_until: "2024-01-01",
+      visibility: "private",
+    })
+  ),
+  http.delete("http://localhost/api/wallet/name-histories/:id/", () =>
+    new HttpResponse(null, { status: 204 })
+  ),
+
   // ── Wallet export ────────────────────────────────────────────────────────
   http.get(
     "http://localhost/api/wallet/export/",

@@ -214,11 +214,18 @@ class CustomObjectView(UserScopedModelViewSet):
         return CustomObject.objects.filter(user=self.request.user)
 
 
+class NameHistoryPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "size"
+    max_page_size = 10
+
+
 class NameHistoryView(UserScopedModelViewSet):
     serializer_class = NameHistorySerializer
+    pagination_class = NameHistoryPagination
 
     def get_queryset(self):
-        return NameHistory.objects.filter(user=self.request.user)
+        return NameHistory.objects.filter(user=self.request.user).order_by("-valid_from")
 
 
 class AccessLogPagination(PageNumberPagination):

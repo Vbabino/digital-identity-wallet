@@ -137,7 +137,7 @@ class TestDateOfBirthSerializer:
     def test_serializes_expected_fields(self):
         age = AgeFactory(birth_date=date(1985, 3, 20))
         data = DateOfBirthSerializer(age).data
-        assert set(data.keys()) == {"user", "birth_date", "visibility"}
+        assert set(data.keys()) == {"id", "user", "birth_date", "visibility"}
         assert data["birth_date"] == "1985-03-20"
 
     def test_deserialize_valid_data(self):
@@ -172,6 +172,7 @@ class TestPlaceOfBirthSerializer:
         )
         data = PlaceOfBirthSerializer(pob).data
         assert set(data.keys()) == {
+            "id",
             "user",
             "birth_city",
             "birth_state",
@@ -238,6 +239,7 @@ class TestLegalIdentitySerializer:
         li = LegalIdentityFactory(given_name="Jane", family_name="Doe")
         data = LegalIdentitySerializer(li).data
         expected = {
+            "id",
             "user",
             "family_name",
             "middle_name",
@@ -314,6 +316,7 @@ class TestAddressSerializer:
         addr = AddressFactory()
         data = AddressSerializer(addr).data
         expected = {
+            "id",
             "user",
             "address_type",
             "resident_country",
@@ -349,7 +352,7 @@ class TestGenderSerializer:
     def test_serializes_expected_fields(self):
         g = GenderFactory(gender="female")
         data = GenderSerializer(g).data
-        assert set(data.keys()) == {"user", "gender", "visibility"}
+        assert set(data.keys()) == {"id", "user", "gender", "visibility"}
         assert data["gender"] == "female"
 
     def test_deserialize_valid_data(self):
@@ -373,7 +376,7 @@ class TestNationalitySerializer:
     def test_serializes_expected_fields(self):
         nat = NationalityFactory(nationality="IT")
         data = NationalitySerializer(nat).data
-        assert set(data.keys()) == {"user", "nationality", "visibility"}
+        assert set(data.keys()) == {"id", "user", "nationality", "visibility"}
 
     def test_deserialize_valid_data(self):
         user = CustomUserFactory()
@@ -406,6 +409,7 @@ class TestCredentialSerializer:
         cred = CredentialFactory()
         data = CredentialSerializer(cred).data
         expected = {
+            "id",
             "user",
             "credential_id",
             "credential_type",
@@ -552,6 +556,7 @@ class TestProfessionalIdentitySerializer:
         pi = ProfessionalIdentityFactory(job_title="Engineer")
         data = ProfessionalIdentitySerializer(pi).data
         expected = {
+            "id",
             "user",
             "job_title",
             "role_description",
@@ -600,6 +605,7 @@ class TestOnlineProfileSerializer:
         op = OnlineProfileFactory(platform="github", username="octocat")
         data = OnlineProfileSerializer(op).data
         assert set(data.keys()) == {
+            "id",
             "user",
             "platform",
             "username",
@@ -649,6 +655,7 @@ class TestPseudonymSerializer:
         ps = PseudonymFactory(pseudonym_value="ghost_42")
         data = PseudonymSerializer(ps).data
         assert set(data.keys()) == {
+            "id",
             "user",
             "relying_party",
             "pseudonym_value",
@@ -693,7 +700,7 @@ class TestDailyUseSerializer:
     def test_serializes_expected_fields(self):
         du = DailyUseFactory(preferred_name="Joey", nickname="Joe")
         data = DailyUseSerializer(du).data
-        assert set(data.keys()) == {"user", "preferred_name", "nickname", "visibility"}
+        assert set(data.keys()) == {"id", "user", "preferred_name", "nickname", "visibility"}
         assert data["preferred_name"] == "Joey"
 
     def test_deserialize_valid_minimal_data(self):
@@ -727,7 +734,7 @@ class TestCustomObjectSerializer:
     def test_serializes_expected_fields(self):
         co = CustomObjectFactory(name_type="employee_id", name_value="EMP-001")
         data = CustomObjectSerializer(co).data
-        assert set(data.keys()) == {"user", "name_type", "name_value", "visibility"}
+        assert set(data.keys()) == {"id", "user", "name_type", "name_value", "visibility"}
         assert data["name_type"] == "employee_id"
 
     def test_deserialize_valid_data(self):
@@ -777,6 +784,7 @@ class TestNameHistorySerializer:
         nh = NameHistoryFactory(given_name="Alice", family_name="Smith")
         data = NameHistorySerializer(nh).data
         expected = {
+            "id",
             "user",
             "family_name",
             "middle_name",
@@ -836,6 +844,7 @@ class TestAccessLogSerializer:
         log = AccessLogFactory(relying_party="Acme", scopes_accessed=["openid"])
         data = AccessLogSerializer(log).data
         assert set(data.keys()) == {
+            "id",
             "user",
             "relying_party",
             "application",

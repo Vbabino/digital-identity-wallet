@@ -12,6 +12,7 @@ import type {
   DailyForm,
   CredentialForm,
   CustomForm,
+  NameHistoryForm,
 } from "../types"
 
 interface CrudModalProps {
@@ -35,6 +36,8 @@ interface CrudModalProps {
   setCredentialForm: React.Dispatch<React.SetStateAction<CredentialForm>>
   customForm: CustomForm
   setCustomForm: React.Dispatch<React.SetStateAction<CustomForm>>
+  nameHistoryForm: NameHistoryForm
+  setNameHistoryForm: React.Dispatch<React.SetStateAction<NameHistoryForm>>
 }
 
 const inputCls =
@@ -64,6 +67,8 @@ export function CrudModal({
   setCredentialForm,
   customForm,
   setCustomForm,
+  nameHistoryForm,
+  setNameHistoryForm,
 }: CrudModalProps) {
   if (!modalType) return null
 
@@ -76,6 +81,7 @@ export function CrudModal({
     daily: "Preferred Alias",
     credential: "Verified Document",
     custom: "Custom Attribute",
+    nameHistory: "Name History Entry",
   }[modalType]
 
   return (
@@ -517,6 +523,78 @@ export function CrudModal({
                 <select
                   value={customForm.visibility}
                   onChange={(e) => setCustomForm({ ...customForm, visibility: e.target.value as "public" | "private" })}
+                  className={selectCls}
+                >
+                  <option value="public">Public</option>
+                  <option value="private">Private</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {modalType === "nameHistory" && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className={labelCls}>Given Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={nameHistoryForm.given_name}
+                    onChange={(e) => setNameHistoryForm({ ...nameHistoryForm, given_name: e.target.value })}
+                    placeholder="Alice"
+                    className={inputCls}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Family Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={nameHistoryForm.family_name}
+                    onChange={(e) => setNameHistoryForm({ ...nameHistoryForm, family_name: e.target.value })}
+                    placeholder="Smith"
+                    className={inputCls}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className={labelCls}>Middle Name (Optional)</label>
+                <input
+                  type="text"
+                  value={nameHistoryForm.middle_name}
+                  onChange={(e) => setNameHistoryForm({ ...nameHistoryForm, middle_name: e.target.value })}
+                  placeholder="Jane"
+                  className={inputCls}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className={labelCls}>Valid From</label>
+                  <input
+                    type="date"
+                    required
+                    value={nameHistoryForm.valid_from}
+                    onChange={(e) => setNameHistoryForm({ ...nameHistoryForm, valid_from: e.target.value })}
+                    className={selectCls}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Valid Until</label>
+                  <input
+                    type="date"
+                    required
+                    value={nameHistoryForm.valid_until}
+                    onChange={(e) => setNameHistoryForm({ ...nameHistoryForm, valid_until: e.target.value })}
+                    className={selectCls}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className={labelCls}>Visibility</label>
+                <select
+                  value={nameHistoryForm.visibility}
+                  onChange={(e) => setNameHistoryForm({ ...nameHistoryForm, visibility: e.target.value as "public" | "private" })}
                   className={selectCls}
                 >
                   <option value="public">Public</option>

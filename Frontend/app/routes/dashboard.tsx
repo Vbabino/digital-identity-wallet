@@ -13,6 +13,7 @@ import { BirthTab } from "./dashboard/tabs/BirthTab"
 import { ContactTab } from "./dashboard/tabs/ContactTab"
 import { ProfessionalTab } from "./dashboard/tabs/ProfessionalTab"
 import { CredentialsTab } from "./dashboard/tabs/CredentialsTab"
+import { NameHistoryTab } from "./dashboard/tabs/NameHistoryTab"
 import { LogsTab } from "./dashboard/tabs/LogsTab"
 import { SecurityTab } from "./dashboard/tabs/SecurityTab"
 import { SettingsTab } from "./dashboard/tabs/SettingsTab"
@@ -38,6 +39,7 @@ export async function clientLoader(): Promise<DashboardLoaderData> {
       credRes,
       customRes,
       logsRes,
+      nameHistoriesRes,
     ] = await Promise.all([
       api.get("/api/wallet/addresses/"),
       api.get("/api/wallet/nationalities/"),
@@ -48,6 +50,7 @@ export async function clientLoader(): Promise<DashboardLoaderData> {
       api.get("/api/wallet/credentials/"),
       api.get("/api/wallet/custom-objects/"),
       api.get("/api/wallet/access-logs/"),
+      api.get("/api/wallet/name-histories/"),
     ])
 
     return {
@@ -67,6 +70,10 @@ export async function clientLoader(): Promise<DashboardLoaderData> {
       accessLogsCount: logsRes.data.count,
       accessLogsHasNext: Boolean(logsRes.data.next),
       accessLogsHasPrevious: Boolean(logsRes.data.previous),
+      nameHistories: nameHistoriesRes.data.results,
+      nameHistoriesCount: nameHistoriesRes.data.count,
+      nameHistoriesHasNext: Boolean(nameHistoriesRes.data.next),
+      nameHistoriesHasPrevious: Boolean(nameHistoriesRes.data.previous),
     }
   } catch {
     throw redirect("/login")
@@ -93,6 +100,10 @@ const tabHeaders: Record<string, { title: string; subtitle: string }> = {
   credentials: {
     title: "Verified Identity Credentials",
     subtitle: "Official verified document credentials issued by third-party authorities.",
+  },
+  "name-history": {
+    title: "Chronological Name History",
+    subtitle: "Track legal name changes over time.",
   },
   logs: {
     title: "Identity Security Access Log",
@@ -164,6 +175,7 @@ export default function Dashboard() {
           {activeTab === "contact" && <ContactTab dashboard={dashboard} />}
           {activeTab === "professional" && <ProfessionalTab dashboard={dashboard} />}
           {activeTab === "credentials" && <CredentialsTab dashboard={dashboard} />}
+          {activeTab === "name-history" && <NameHistoryTab dashboard={dashboard} />}
           {activeTab === "logs" && <LogsTab dashboard={dashboard} />}
           {activeTab === "security" && <SecurityTab />}
           {activeTab === "settings" && <SettingsTab />}
@@ -191,6 +203,8 @@ export default function Dashboard() {
         setCredentialForm={dashboard.setCredentialForm}
         customForm={dashboard.customForm}
         setCustomForm={dashboard.setCustomForm}
+        nameHistoryForm={dashboard.nameHistoryForm}
+        setNameHistoryForm={dashboard.setNameHistoryForm}
       />
 
       <ConfirmDialog

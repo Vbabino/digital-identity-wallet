@@ -45,14 +45,14 @@ class PrivacyMetadataMixin(serializers.ModelSerializer):
 class DateOfBirthSerializer(PrivacyMetadataMixin):
     class Meta:
         model = Age
-        fields = ["user", "birth_date", "visibility"]
+        fields = ["id", "user", "birth_date", "visibility"]
         read_only_fields = ["user"]
 
 
 class PlaceOfBirthSerializer(PrivacyMetadataMixin):
     class Meta:
         model = PlaceOfBirth
-        fields = ["user", "birth_city", "birth_state", "birth_country", "visibility"]
+        fields = ["id", "user", "birth_city", "birth_state", "birth_country", "visibility"]
         read_only_fields = ["user"]
 
 
@@ -60,6 +60,7 @@ class LegalIdentitySerializer(PrivacyMetadataMixin):
     class Meta:
         model = LegalIdentity
         fields = [
+            "id",
             "user",
             "family_name",
             "middle_name",
@@ -75,6 +76,7 @@ class AddressSerializer(PrivacyMetadataMixin):
     class Meta:
         model = Address
         fields = [
+            "id",
             "user",
             "address_type",
             "resident_country",
@@ -91,14 +93,14 @@ class AddressSerializer(PrivacyMetadataMixin):
 class GenderSerializer(PrivacyMetadataMixin):
     class Meta:
         model = Gender
-        fields = ["user", "gender", "visibility"]
+        fields = ["id", "user", "gender", "visibility"]
         read_only_fields = ["user"]
 
 
 class NationalitySerializer(PrivacyMetadataMixin):
     class Meta:
         model = Nationality
-        fields = ["user", "nationality", "visibility"]
+        fields = ["id", "user", "nationality", "visibility"]
         read_only_fields = ["user"]
 
 
@@ -106,6 +108,7 @@ class CredentialSerializer(PrivacyMetadataMixin):
     class Meta:
         model = Credential
         fields = [
+            "id",
             "user",
             "credential_id",
             "credential_type",
@@ -140,6 +143,7 @@ class ProfessionalIdentitySerializer(PrivacyMetadataMixin):
     class Meta:
         model = ProfessionalIdentity
         fields = [
+            "id",
             "user",
             "job_title",
             "role_description",
@@ -153,6 +157,7 @@ class OnlineProfileSerializer(PrivacyMetadataMixin):
     class Meta:
         model = OnlineProfile
         fields = [
+            "id",
             "user",
             "platform",
             "username",
@@ -166,6 +171,7 @@ class PseudonymSerializer(PrivacyMetadataMixin):
     class Meta:
         model = Pseudonym
         fields = [
+            "id",
             "user",
             "relying_party",
             "pseudonym_value",
@@ -179,6 +185,7 @@ class DailyUseSerializer(PrivacyMetadataMixin):
     class Meta:
         model = DailyUse
         fields = [
+            "id",
             "user",
             "preferred_name",
             "nickname",
@@ -191,6 +198,7 @@ class CustomObjectSerializer(PrivacyMetadataMixin):
     class Meta:
         model = CustomObject
         fields = [
+            "id",
             "user",
             "name_type",
             "name_value",
@@ -203,6 +211,7 @@ class NameHistorySerializer(PrivacyMetadataMixin):
     class Meta:
         model = NameHistory
         fields = [
+            "id",
             "user",
             "family_name",
             "middle_name",
@@ -218,6 +227,7 @@ class AccessLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = AccessLog
         fields = [
+            "id",
             "user",
             "relying_party",
             "application",
@@ -226,6 +236,7 @@ class AccessLogSerializer(serializers.ModelSerializer):
             "access_time",
         ]
         read_only_fields = [
+            "id",
             "user",
             "relying_party",
             "application",

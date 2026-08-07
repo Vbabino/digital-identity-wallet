@@ -14,6 +14,7 @@ import type {
   Credential,
   CustomObject,
   AccessLog,
+  NameHistory,
   ModalType,
   MultiRecord,
   FormPayload,
@@ -26,6 +27,7 @@ import type {
   DailyForm,
   CredentialForm,
   CustomForm,
+  NameHistoryForm,
   DashboardLoaderData,
 } from "../types"
 
@@ -77,6 +79,13 @@ export function useDashboard(initialData: DashboardLoaderData) {
   const [logsCount, setLogsCount] = useState(initialData.accessLogsCount)
   const [logsHasNext, setLogsHasNext] = useState(initialData.accessLogsHasNext)
   const [logsHasPrevious, setLogsHasPrevious] = useState(initialData.accessLogsHasPrevious)
+  const [nameHistories, setNameHistories] = useState<NameHistory[]>(initialData.nameHistories)
+  const [nameHistoriesPage, setNameHistoriesPage] = useState(1)
+  const [nameHistoriesCount, setNameHistoriesCount] = useState(initialData.nameHistoriesCount)
+  const [nameHistoriesHasNext, setNameHistoriesHasNext] = useState(initialData.nameHistoriesHasNext)
+  const [nameHistoriesHasPrevious, setNameHistoriesHasPrevious] = useState(
+    initialData.nameHistoriesHasPrevious
+  )
 
   // --- SINGLETON EDIT STATE ---
   const [isEditingLegal, setIsEditingLegal] = useState(false)
@@ -163,6 +172,14 @@ export function useDashboard(initialData: DashboardLoaderData) {
     name_value: "",
     visibility: "private",
   })
+  const [nameHistoryForm, setNameHistoryForm] = useState<NameHistoryForm>({
+    family_name: "",
+    middle_name: "",
+    given_name: "",
+    valid_from: "",
+    valid_until: "",
+    visibility: "private",
+  })
 
   // --- DATA FETCHING (manual refresh only — initial data comes from clientLoader) ---
   const fetchAllData = useCallback(async () => {
@@ -188,6 +205,7 @@ export function useDashboard(initialData: DashboardLoaderData) {
         credRes,
         customRes,
         logsRes,
+        nameHistoriesRes,
       ] = await Promise.all([
         api.get("/api/wallet/addresses/"),
         api.get("/api/wallet/nationalities/"),
@@ -198,6 +216,7 @@ export function useDashboard(initialData: DashboardLoaderData) {
         api.get("/api/wallet/credentials/"),
         api.get("/api/wallet/custom-objects/"),
         api.get("/api/wallet/access-logs/"),
+        api.get("/api/wallet/name-histories/"),
       ])
 
       setAddresses(addressesRes.data)
@@ -213,6 +232,11 @@ export function useDashboard(initialData: DashboardLoaderData) {
       setLogsCount(logsRes.data.count)
       setLogsHasNext(Boolean(logsRes.data.next))
       setLogsHasPrevious(Boolean(logsRes.data.previous))
+      setNameHistories(nameHistoriesRes.data.results)
+      setNameHistoriesPage(1)
+      setNameHistoriesCount(nameHistoriesRes.data.count)
+      setNameHistoriesHasNext(Boolean(nameHistoriesRes.data.next))
+      setNameHistoriesHasPrevious(Boolean(nameHistoriesRes.data.previous))
     } catch (error: unknown) {
       if ((error as { response?: { status?: number } }).response?.status === 401) {
         showToast("Session expired. Please sign in again.", "error")
@@ -242,6 +266,31 @@ export function useDashboard(initialData: DashboardLoaderData) {
           navigate("/login")
         } else {
           showToast("Failed to load access logs.", "error")
+        }
+      } finally {
+        setLoading(false)
+      }
+    },
+    [navigate, showToast]
+  )
+
+  // --- NAME HISTORY PAGINATION ---
+  const fetchNameHistoriesPage = useCallback(
+    async (page: number) => {
+      setLoading(true)
+      try {
+        const res = await api.get("/api/wallet/name-histories/", { params: { page } })
+        setNameHistories(res.data.results)
+        setNameHistoriesPage(page)
+        setNameHistoriesCount(res.data.count)
+        setNameHistoriesHasNext(Boolean(res.data.next))
+        setNameHistoriesHasPrevious(Boolean(res.data.previous))
+      } catch (error: unknown) {
+        if ((error as { response?: { status?: number } }).response?.status === 401) {
+          showToast("Session expired. Please sign in again.", "error")
+          navigate("/login")
+        } else {
+          showToast("Failed to load name history.", "error")
         }
       } finally {
         setLoading(false)
@@ -364,6 +413,7 @@ export function useDashboard(initialData: DashboardLoaderData) {
         if (type === "daily") setDailyForm({ ...(item as DailyUse) })
         if (type === "credential") setCredentialForm({ ...(item as Credential) })
         if (type === "custom") setCustomForm({ ...(item as CustomObject) })
+        if (type === "nameHistory") setNameHistoryForm({ ...(item as NameHistory) })
       } else {
         setActiveItemId(null)
         if (type === "address")
@@ -397,6 +447,15 @@ export function useDashboard(initialData: DashboardLoaderData) {
             visibility: "private",
           })
         if (type === "custom") setCustomForm({ name_type: "", name_value: "", visibility: "private" })
+        if (type === "nameHistory")
+          setNameHistoryForm({
+            family_name: "",
+            middle_name: "",
+            given_name: "",
+            valid_from: "",
+            valid_until: "",
+            visibility: "private",
+          })
       }
     },
     []
@@ -411,6 +470,29 @@ export function useDashboard(initialData: DashboardLoaderData) {
   const handleMultiRecordSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault()
+
+      // Name history is paginated, so it can't reuse the local unshift/replace
+      // pattern below without desyncing nameHistoriesCount/hasNext from the
+      // server — refetch the relevant page instead.
+      if (modalType === "nameHistory") {
+        try {
+          if (modalAction === "create") {
+            await api.post("/api/wallet/name-histories/", nameHistoryForm)
+            await fetchNameHistoriesPage(1)
+            showToast("Record added successfully!")
+          } else {
+            await api.patch(`/api/wallet/name-histories/${activeItemId}/`, nameHistoryForm)
+            await fetchNameHistoriesPage(nameHistoriesPage)
+            showToast("Record updated successfully!")
+          }
+          closeModal()
+        } catch (err: unknown) {
+          const detail = (err as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          showToast(detail || "Failed to save record.", "error")
+        }
+        return
+      }
+
       let endpoint = ""
       let payload!: FormPayload
       let listSetter: React.Dispatch<React.SetStateAction<MultiRecord[]>> | null = null
@@ -455,9 +537,10 @@ export function useDashboard(initialData: DashboardLoaderData) {
     [
       modalType, modalAction, activeItemId,
       addressForm, nationalityForm, genderForm, professionalForm,
-      onlineForm, dailyForm, credentialForm, customForm,
+      onlineForm, dailyForm, credentialForm, customForm, nameHistoryForm,
       addresses, nationalities, genders, professionals,
       onlineProfiles, dailyUses, credentials, customObjects,
+      nameHistoriesPage, fetchNameHistoriesPage,
       showToast, closeModal,
     ]
   )
@@ -535,6 +618,13 @@ export function useDashboard(initialData: DashboardLoaderData) {
     logsHasNext,
     logsHasPrevious,
     fetchLogsPage,
+    nameHistories,
+    setNameHistories,
+    nameHistoriesPage,
+    nameHistoriesCount,
+    nameHistoriesHasNext,
+    nameHistoriesHasPrevious,
+    fetchNameHistoriesPage,
     // Modal
     modalType,
     modalAction,
@@ -556,6 +646,8 @@ export function useDashboard(initialData: DashboardLoaderData) {
     setCredentialForm,
     customForm,
     setCustomForm,
+    nameHistoryForm,
+    setNameHistoryForm,
     // Delete confirm
     deleteConfirm,
     setDeleteConfirm,

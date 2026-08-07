@@ -739,11 +739,50 @@ class TestNameHistoryView:
         NameHistoryFactory(user=auth_client.user)
         NameHistoryFactory()
         response = auth_client.get(_NAME_HISTORIES_URL)
-        assert len(response.data) == 1
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["count"] == 1
+        assert len(response.data["results"]) == 1
+
+    def test_list_empty_when_no_records(self, auth_client):
+        response = auth_client.get(_NAME_HISTORIES_URL)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["count"] == 0
+        assert response.data["results"] == []
 
     def test_list_unauthenticated_returns_401(self, api_client):
         response = api_client.get(_NAME_HISTORIES_URL)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_list_ordered_by_valid_from_descending(self, auth_client):
+        now = timezone.now()
+        older = NameHistoryFactory(user=auth_client.user)
+        older.valid_from = now - timedelta(days=730)
+        older.save()
+        newer = NameHistoryFactory(user=auth_client.user)
+        newer.valid_from = now - timedelta(days=30)
+        newer.save()
+        response = auth_client.get(_NAME_HISTORIES_URL)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["results"][0]["given_name"] == newer.given_name
+
+    def test_list_is_paginated_at_page_size_10(self, auth_client):
+        for _ in range(15):
+            NameHistoryFactory(user=auth_client.user)
+        response = auth_client.get(_NAME_HISTORIES_URL)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["count"] == 15
+        assert len(response.data["results"]) == 10
+        assert response.data["next"] is not None
+        assert response.data["previous"] is None
+
+    def test_list_second_page_returns_remainder(self, auth_client):
+        for _ in range(15):
+            NameHistoryFactory(user=auth_client.user)
+        response = auth_client.get(_NAME_HISTORIES_URL, {"page": 2})
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data["results"]) == 5
+        assert response.data["next"] is None
+        assert response.data["previous"] is not None
 
     def test_retrieve_other_users_record_returns_404(self, auth_client):
         other = NameHistoryFactory()

@@ -97,6 +97,16 @@ export interface AccessLog {
   access_time: string
 }
 
+export interface NameHistory {
+  id: string
+  family_name: string
+  middle_name: string
+  given_name: string
+  valid_from: string
+  valid_until: string
+  visibility: "public" | "private"
+}
+
 export interface PaginatedResponse<T> {
   count: number
   next: string | null
@@ -131,6 +141,7 @@ export type MultiRecord =
   | DailyUse
   | Credential
   | CustomObject
+  | NameHistory
 
 export type FormPayload =
   | AddressForm
@@ -141,6 +152,7 @@ export type FormPayload =
   | DailyForm
   | CredentialForm
   | CustomForm
+  | NameHistoryForm
 
 export type ModalType =
   | "address"
@@ -151,6 +163,7 @@ export type ModalType =
   | "daily"
   | "credential"
   | "custom"
+  | "nameHistory"
 
 export interface DeleteConfirmState {
   endpoint: string
@@ -217,6 +230,15 @@ export interface CustomForm {
   visibility: "public" | "private"
 }
 
+export interface NameHistoryForm {
+  family_name: string
+  middle_name: string
+  given_name: string
+  valid_from: string
+  valid_until: string
+  visibility: "public" | "private"
+}
+
 export interface DashboardLoaderData {
   userEmail: string
   legalIdentity: LegalIdentity | null
@@ -234,4 +256,8 @@ export interface DashboardLoaderData {
   accessLogsCount: number
   accessLogsHasNext: boolean
   accessLogsHasPrevious: boolean
+  nameHistories: NameHistory[]
+  nameHistoriesCount: number
+  nameHistoriesHasNext: boolean
+  nameHistoriesHasPrevious: boolean
 }

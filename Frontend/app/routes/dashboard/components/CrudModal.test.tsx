@@ -12,6 +12,7 @@ import type {
   DailyForm,
   CredentialForm,
   CustomForm,
+  NameHistoryForm,
 } from "~/routes/dashboard/types"
 
 const defaultAddressForm: AddressForm = {
@@ -51,6 +52,14 @@ const defaultCredentialForm: CredentialForm = {
   visibility: "private",
 }
 const defaultCustomForm: CustomForm = { name_type: "", name_value: "", visibility: "private" }
+const defaultNameHistoryForm: NameHistoryForm = {
+  family_name: "",
+  middle_name: "",
+  given_name: "",
+  valid_from: "",
+  valid_until: "",
+  visibility: "private",
+}
 
 interface RenderOptions {
   modalType: ModalType | null
@@ -87,6 +96,8 @@ function renderModal({
       setCredentialForm={vi.fn()}
       customForm={defaultCustomForm}
       setCustomForm={vi.fn()}
+      nameHistoryForm={defaultNameHistoryForm}
+      setNameHistoryForm={vi.fn()}
     />
   )
 }
@@ -149,6 +160,13 @@ describe("CrudModal", () => {
     expect(screen.getByText("Add New Online Profile Platform")).toBeInTheDocument()
   })
 
+  it("renders the name history form", () => {
+    renderModal({ modalType: "nameHistory" })
+    expect(screen.getByText("Add New Name History Entry")).toBeInTheDocument()
+    expect(screen.getByText("Given Name")).toBeInTheDocument()
+    expect(screen.getByText("Valid From")).toBeInTheDocument()
+  })
+
   it("calls setAddressForm with a spread of the current form when an input changes", async () => {
     const setAddressForm = vi.fn()
     render(
@@ -173,6 +191,8 @@ describe("CrudModal", () => {
         setCredentialForm={vi.fn()}
         customForm={defaultCustomForm}
         setCustomForm={vi.fn()}
+        nameHistoryForm={defaultNameHistoryForm}
+        setNameHistoryForm={vi.fn()}
       />
     )
     // Type a character into the address_type field — verifies the onChange is

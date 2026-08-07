@@ -36,6 +36,10 @@ const emptyData: DashboardLoaderData = {
   accessLogsCount: 0,
   accessLogsHasNext: false,
   accessLogsHasPrevious: false,
+  nameHistories: [],
+  nameHistoriesCount: 0,
+  nameHistoriesHasNext: false,
+  nameHistoriesHasPrevious: false,
 }
 
 const mockEvent = () => ({ preventDefault: vi.fn() }) as unknown as React.FormEvent
@@ -226,6 +230,75 @@ describe("useDashboard — multi-record CRUD", () => {
   })
 })
 
+describe("useDashboard — name history CRUD", () => {
+  it("POSTs and refetches page 1 when modalAction is 'create'", async () => {
+    server.use(
+      http.get("http://localhost/api/wallet/name-histories/", ({ request }) => {
+        const page = new URL(request.url).searchParams.get("page")
+        expect(page).toBe("1")
+        return HttpResponse.json({
+          count: 1,
+          next: null,
+          previous: null,
+          results: [
+            {
+              id: "nh-1",
+              family_name: "Smith",
+              middle_name: "",
+              given_name: "Alice",
+              valid_from: "2020-01-01",
+              valid_until: "2024-01-01",
+              visibility: "private",
+            },
+          ],
+        })
+      })
+    )
+    const { result } = renderHook(() => useDashboard(emptyData), { wrapper })
+    act(() => result.current.openModal("nameHistory", "create"))
+    await act(async () => {
+      await result.current.handleMultiRecordSubmit(mockEvent())
+    })
+    expect(result.current.nameHistories[0]).toMatchObject({ given_name: "Alice" })
+    expect(result.current.nameHistoriesPage).toBe(1)
+    expect(result.current.nameHistoriesCount).toBe(1)
+    expect(result.current.modalType).toBeNull()
+  })
+
+  it("PATCHes and refetches the current page when modalAction is 'edit'", async () => {
+    const existingEntry = {
+      id: "nh-1",
+      family_name: "Smith",
+      middle_name: "",
+      given_name: "Alice",
+      valid_from: "2020-01-01",
+      valid_until: "2024-01-01",
+      visibility: "private" as const,
+    }
+    const dataWithHistory: DashboardLoaderData = {
+      ...emptyData,
+      nameHistories: [existingEntry],
+      nameHistoriesCount: 1,
+    }
+    server.use(
+      http.get("http://localhost/api/wallet/name-histories/", () =>
+        HttpResponse.json({
+          count: 1,
+          next: null,
+          previous: null,
+          results: [{ ...existingEntry, family_name: "Jones" }],
+        })
+      )
+    )
+    const { result } = renderHook(() => useDashboard(dataWithHistory), { wrapper })
+    act(() => result.current.openModal("nameHistory", "edit", existingEntry))
+    await act(async () => {
+      await result.current.handleMultiRecordSubmit(mockEvent())
+    })
+    expect(result.current.nameHistories[0]).toMatchObject({ family_name: "Jones" })
+  })
+})
+
 describe("useDashboard — visibility toggle", () => {
   it("PATCHes with the toggled visibility value", async () => {
     let requestBody: unknown = null
@@ -412,6 +485,57 @@ describe("useDashboard — fetchLogsPage", () => {
     const { result } = renderHook(() => useDashboard(emptyData), { wrapper })
     await act(async () => {
       await result.current.fetchLogsPage(2)
+    })
+    expect(mockNavigate).toHaveBeenCalledWith("/login")
+  })
+})
+
+describe("useDashboard — fetchNameHistoriesPage", () => {
+  beforeEach(() => mockNavigate.mockClear())
+
+  it("fetches a page of name history entries and updates pagination state", async () => {
+    server.use(
+      http.get("http://localhost/api/wallet/name-histories/", ({ request }) => {
+        const page = new URL(request.url).searchParams.get("page")
+        expect(page).toBe("2")
+        return HttpResponse.json({
+          count: 15,
+          next: null,
+          previous: "http://localhost/api/wallet/name-histories/?page=1",
+          results: [
+            {
+              id: "nh-1",
+              family_name: "Smith",
+              middle_name: "",
+              given_name: "Alice",
+              valid_from: "2020-01-01",
+              valid_until: "2024-01-01",
+              visibility: "private",
+            },
+          ],
+        })
+      })
+    )
+    const { result } = renderHook(() => useDashboard(emptyData), { wrapper })
+    await act(async () => {
+      await result.current.fetchNameHistoriesPage(2)
+    })
+    expect(result.current.nameHistories).toHaveLength(1)
+    expect(result.current.nameHistoriesPage).toBe(2)
+    expect(result.current.nameHistoriesCount).toBe(15)
+    expect(result.current.nameHistoriesHasNext).toBe(false)
+    expect(result.current.nameHistoriesHasPrevious).toBe(true)
+  })
+
+  it("navigates to /login when the name-histories endpoint returns 401", async () => {
+    server.use(
+      http.get("http://localhost/api/wallet/name-histories/", () =>
+        new HttpResponse(null, { status: 401 })
+      )
+    )
+    const { result } = renderHook(() => useDashboard(emptyData), { wrapper })
+    await act(async () => {
+      await result.current.fetchNameHistoriesPage(2)
     })
     expect(mockNavigate).toHaveBeenCalledWith("/login")
   })
