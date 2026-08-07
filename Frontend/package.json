@@ -35,7 +35,8 @@
   "overrides": {
     "hono": "4.12.25",
     "form-data": "4.0.6",
-    "fast-uri": "3.1.5"
+    "fast-uri": "3.1.5",
+    "js-yaml": "4.3.1"
   },
   "devDependencies": {
     "@react-router/dev": "^7.18.0",
