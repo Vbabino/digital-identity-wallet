@@ -39,6 +39,12 @@ export const handlers = [
   http.get("http://localhost/api/auth/user/", () =>
     HttpResponse.json({ email: "test@example.com" })
   ),
+  // Default: no valid refresh token, matching a test's usual "never logged
+  // in" state — individual tests override this with server.use(...) to
+  // exercise the silent-refresh success path.
+  http.post("http://localhost/api/auth/token/refresh/", () =>
+    new HttpResponse(null, { status: 401 })
+  ),
 
   // ── MFA ──────────────────────────────────────────────────────────────────
   http.get("http://localhost/api/auth/mfa/", () => HttpResponse.json([])),
