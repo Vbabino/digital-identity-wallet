@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django_countries import countries as django_countries
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -255,3 +256,10 @@ class WalletExportView(APIView):
         response = HttpResponse(json_string, content_type="application/json")
         response["Content-Disposition"] = 'attachment; filename="wallet_export.json"'
         return response
+
+
+class CountriesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response([{"code": code, "name": str(name)} for code, name in django_countries])

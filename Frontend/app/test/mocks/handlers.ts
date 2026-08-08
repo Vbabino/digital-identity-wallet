@@ -355,6 +355,14 @@ export const handlers = [
     new HttpResponse(null, { status: 204 })
   ),
 
+  http.get("http://localhost/api/wallet/countries/", () =>
+    HttpResponse.json([
+      { code: "US", name: "United States" },
+      { code: "GB", name: "United Kingdom" },
+      { code: "PT", name: "Portugal" },
+    ])
+  ),
+
   http.get("http://localhost/api/wallet/access-logs/", () =>
     HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
   ),

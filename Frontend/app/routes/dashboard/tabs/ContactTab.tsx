@@ -31,6 +31,7 @@ export const ContactTab = memo(function ContactTab({ dashboard }: ContactTabProp
     openModal,
     handleDeleteRecord,
     toggleVisibility,
+    countries,
   } = dashboard
 
   return (
@@ -71,7 +72,7 @@ export const ContactTab = memo(function ContactTab({ dashboard }: ContactTabProp
                   <p className="text-sm text-zinc-400">
                     {addr.resident_city}, {addr.resident_state} {addr.resident_postal_code}
                   </p>
-                  <p className="text-xs font-medium text-zinc-500">{getCountryName(addr.resident_country)}</p>
+                  <p className="text-xs font-medium text-zinc-500">{getCountryName(addr.resident_country, countries)}</p>
                 </div>
                 <div className="flex w-full items-center justify-end space-x-4 border-t border-zinc-800/40 pt-3 sm:w-auto sm:border-t-0 sm:pt-0">
                   <PrivacyBadge
@@ -127,7 +128,7 @@ export const ContactTab = memo(function ContactTab({ dashboard }: ContactTabProp
                   key={nat.id}
                   className="flex items-center justify-between rounded-xl border border-zinc-800/50 bg-zinc-950/30 p-3"
                 >
-                  <span className="text-sm font-medium text-zinc-300">{getCountryName(nat.nationality)}</span>
+                  <span className="text-sm font-medium text-zinc-300">{getCountryName(nat.nationality, countries)}</span>
                   <div className="flex items-center space-x-3">
                     <PrivacyBadge
                       visibility={nat.visibility}

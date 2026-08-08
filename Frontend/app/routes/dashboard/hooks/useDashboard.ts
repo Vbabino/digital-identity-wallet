@@ -16,6 +16,7 @@ import type {
   CustomObject,
   AccessLog,
   NameHistory,
+  Country,
   ModalType,
   MultiRecord,
   FormPayload,
@@ -77,6 +78,7 @@ export function useDashboard(initialData: DashboardLoaderData) {
   const [pseudonyms, setPseudonyms] = useState<Pseudonym[]>(initialData.pseudonyms)
   const [credentials, setCredentials] = useState<Credential[]>(initialData.credentials)
   const [customObjects, setCustomObjects] = useState<CustomObject[]>(initialData.customObjects)
+  const [countries] = useState<Country[]>(initialData.countries)
   const [accessLogs, setAccessLogs] = useState<AccessLog[]>(initialData.accessLogs)
   const [logsPage, setLogsPage] = useState(1)
   const [logsCount, setLogsCount] = useState(initialData.accessLogsCount)
@@ -636,6 +638,7 @@ export function useDashboard(initialData: DashboardLoaderData) {
     setCredentials,
     customObjects,
     setCustomObjects,
+    countries,
     accessLogs,
     logsPage,
     logsCount,

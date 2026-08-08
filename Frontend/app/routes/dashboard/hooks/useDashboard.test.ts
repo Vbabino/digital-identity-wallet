@@ -33,6 +33,10 @@ const emptyData: DashboardLoaderData = {
   pseudonyms: [],
   credentials: [],
   customObjects: [],
+  countries: [
+    { code: "US", name: "United States" },
+    { code: "GB", name: "United Kingdom" },
+  ],
   accessLogs: [],
   accessLogsCount: 0,
   accessLogsHasNext: false,

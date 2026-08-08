@@ -4,6 +4,7 @@ import { vi } from "vitest"
 import { CrudModal } from "~/routes/dashboard/components/CrudModal"
 import type {
   ModalType,
+  Country,
   AddressForm,
   NationalityForm,
   GenderForm,
@@ -15,6 +16,11 @@ import type {
   CustomForm,
   NameHistoryForm,
 } from "~/routes/dashboard/types"
+
+const defaultCountries: Country[] = [
+  { code: "US", name: "United States" },
+  { code: "GB", name: "United Kingdom" },
+]
 
 const defaultAddressForm: AddressForm = {
   address_type: "home",
@@ -87,6 +93,7 @@ function renderModal({
       modalAction={modalAction}
       onSubmit={onSubmit}
       onClose={onClose}
+      countries={defaultCountries}
       addressForm={defaultAddressForm}
       setAddressForm={vi.fn()}
       nationalityForm={defaultNationalityForm}
@@ -185,6 +192,7 @@ describe("CrudModal", () => {
         modalAction="create"
         onSubmit={vi.fn()}
         onClose={vi.fn()}
+        countries={defaultCountries}
         addressForm={defaultAddressForm}
         setAddressForm={vi.fn()}
         nationalityForm={defaultNationalityForm}
@@ -226,6 +234,7 @@ describe("CrudModal", () => {
         modalAction="create"
         onSubmit={vi.fn()}
         onClose={vi.fn()}
+        countries={defaultCountries}
         addressForm={defaultAddressForm}
         setAddressForm={setAddressForm}
         nationalityForm={defaultNationalityForm}

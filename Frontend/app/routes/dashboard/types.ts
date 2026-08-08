@@ -122,22 +122,19 @@ export interface PaginatedResponse<T> {
   results: T[]
 }
 
-export const countries = [
-  { code: "US", name: "United States", flag: "🇺🇸" },
-  { code: "GB", name: "United Kingdom", flag: "🇬🇧" },
-  { code: "PT", name: "Portugal", flag: "🇵🇹" },
-  { code: "BR", name: "Brazil", flag: "🇧🇷" },
-  { code: "DE", name: "Germany", flag: "🇩🇪" },
-  { code: "ES", name: "Spain", flag: "🇪🇸" },
-  { code: "FR", name: "France", flag: "🇫🇷" },
-  { code: "IT", name: "Italy", flag: "🇮🇹" },
-  { code: "CA", name: "Canada", flag: "🇨🇦" },
-  { code: "AU", name: "Australia", flag: "🇦🇺" },
-]
+export interface Country {
+  code: string
+  name: string
+}
 
-export const getCountryName = (code: string) => {
+export const countryCodeToFlag = (code: string) =>
+  code
+    .toUpperCase()
+    .replace(/./g, (char) => String.fromCodePoint(127397 + char.charCodeAt(0)))
+
+export const getCountryName = (code: string, countries: Country[]) => {
   const c = countries.find((item) => item.code.toUpperCase() === code.toUpperCase())
-  return c ? `${c.flag} ${c.name}` : code
+  return c ? `${countryCodeToFlag(c.code)} ${c.name}` : code
 }
 
 export type MultiRecord =
@@ -271,6 +268,7 @@ export interface DashboardLoaderData {
   pseudonyms: Pseudonym[]
   credentials: Credential[]
   customObjects: CustomObject[]
+  countries: Country[]
   accessLogs: AccessLog[]
   accessLogsCount: number
   accessLogsHasNext: boolean

@@ -11,6 +11,7 @@ describe("dashboard clientLoader", () => {
     expect(result.addresses).toEqual([])
     expect(result.credentials).toEqual([])
     expect(result.accessLogs).toEqual([])
+    expect(result.countries.length).toBeGreaterThan(0)
   })
 
   it("sets singleton fields to null when their endpoints return 404", async () => {

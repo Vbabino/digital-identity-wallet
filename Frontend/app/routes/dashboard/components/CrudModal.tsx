@@ -1,9 +1,10 @@
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Cancel01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "~/components/ui/button"
-import { countries } from "../types"
+import { countryCodeToFlag } from "../types"
 import type {
   ModalType,
+  Country,
   AddressForm,
   NationalityForm,
   GenderForm,
@@ -21,6 +22,7 @@ interface CrudModalProps {
   modalAction: "create" | "edit"
   onSubmit: (e: React.FormEvent) => void
   onClose: () => void
+  countries: Country[]
   addressForm: AddressForm
   setAddressForm: React.Dispatch<React.SetStateAction<AddressForm>>
   nationalityForm: NationalityForm
@@ -54,6 +56,7 @@ export function CrudModal({
   modalAction,
   onSubmit,
   onClose,
+  countries,
   addressForm,
   setAddressForm,
   nationalityForm,
@@ -182,7 +185,7 @@ export function CrudModal({
                     className={selectCls}
                   >
                     {countries.map((c) => (
-                      <option key={c.code} value={c.code}>{c.flag} {c.name}</option>
+                      <option key={c.code} value={c.code}>{countryCodeToFlag(c.code)} {c.name}</option>
                     ))}
                   </select>
                 </div>
@@ -211,7 +214,7 @@ export function CrudModal({
                   className={selectCls}
                 >
                   {countries.map((c) => (
-                    <option key={c.code} value={c.code}>{c.flag} {c.name}</option>
+                    <option key={c.code} value={c.code}>{countryCodeToFlag(c.code)} {c.name}</option>
                   ))}
                 </select>
               </div>

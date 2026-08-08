@@ -39,6 +39,7 @@ export async function clientLoader(): Promise<DashboardLoaderData> {
       pseudonymsRes,
       credRes,
       customRes,
+      countriesRes,
       logsRes,
       nameHistoriesRes,
     ] = await Promise.all([
@@ -51,6 +52,7 @@ export async function clientLoader(): Promise<DashboardLoaderData> {
       api.get("/api/wallet/pseudonyms/"),
       api.get("/api/wallet/credentials/"),
       api.get("/api/wallet/custom-objects/"),
+      api.get("/api/wallet/countries/"),
       api.get("/api/wallet/access-logs/"),
       api.get("/api/wallet/name-histories/"),
     ])
@@ -69,6 +71,7 @@ export async function clientLoader(): Promise<DashboardLoaderData> {
       pseudonyms: pseudonymsRes.data,
       credentials: credRes.data,
       customObjects: customRes.data,
+      countries: countriesRes.data,
       accessLogs: logsRes.data.results,
       accessLogsCount: logsRes.data.count,
       accessLogsHasNext: Boolean(logsRes.data.next),
@@ -190,6 +193,7 @@ export default function Dashboard() {
         modalAction={dashboard.modalAction}
         onSubmit={dashboard.handleMultiRecordSubmit}
         onClose={dashboard.closeModal}
+        countries={dashboard.countries}
         addressForm={dashboard.addressForm}
         setAddressForm={dashboard.setAddressForm}
         nationalityForm={dashboard.nationalityForm}

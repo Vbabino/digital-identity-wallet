@@ -4,7 +4,7 @@ import { Calendar01Icon, Location01Icon, PencilEdit01Icon } from "@hugeicons/cor
 import { Button } from "~/components/ui/button"
 import { SectionCard } from "../components/SectionCard"
 import { PrivacyBadge } from "../components/PrivacyBadge"
-import { countries, getCountryName } from "../types"
+import { getCountryName, countryCodeToFlag } from "../types"
 import type { Age, PlaceOfBirth } from "../types"
 import type { DashboardState } from "../hooks/useDashboard"
 
@@ -29,6 +29,7 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
     setEditBirthPlaceForm,
     saveBirthPlace,
     toggleVisibility,
+    countries,
   } = dashboard
 
   return (
@@ -180,7 +181,7 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
                 className="mt-2 block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-sm text-zinc-200 outline-none"
               >
                 {countries.map((c) => (
-                  <option key={c.code} value={c.code}>{c.flag} {c.name}</option>
+                  <option key={c.code} value={c.code}>{countryCodeToFlag(c.code)} {c.name}</option>
                 ))}
               </select>
             </div>
@@ -226,7 +227,7 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
             <div>
               <p className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase">Country</p>
               <p className="mt-1 text-sm font-semibold text-zinc-100">
-                {getCountryName(placeOfBirth.birth_country)}
+                {getCountryName(placeOfBirth.birth_country, countries)}
               </p>
             </div>
           </div>

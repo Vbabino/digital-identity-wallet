@@ -58,6 +58,7 @@ _CUSTOM_OBJECTS_URL = "/api/wallet/custom-objects/"
 _NAME_HISTORIES_URL = "/api/wallet/name-histories/"
 _ACCESS_LOGS_URL = "/api/wallet/access-logs/"
 _EXPORT_URL = "/api/wallet/export/"
+_COUNTRIES_URL = "/api/wallet/countries/"
 
 _ADDRESS_PAYLOAD = {
     "address_type": "home",
@@ -836,3 +837,24 @@ class TestWalletExportView:
             response = auth_client.get(_EXPORT_URL)
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
         assert response.data["detail"] == "boom"
+
+
+class TestCountriesView:
+    def test_get_unauthenticated_returns_401(self, api_client):
+        response = api_client.get(_COUNTRIES_URL)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_get_returns_full_iso_3166_1_country_list(self, auth_client):
+        from django_countries import countries as django_countries
+
+        response = auth_client.get(_COUNTRIES_URL)
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == len(django_countries)
+
+    def test_get_entries_have_code_and_name(self, auth_client):
+        response = auth_client.get(_COUNTRIES_URL)
+        codes = {entry["code"] for entry in response.data}
+        assert "US" in codes
+        assert "PT" in codes
+        entry = next(e for e in response.data if e["code"] == "PT")
+        assert entry["name"] == "Portugal"

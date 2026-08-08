@@ -21,6 +21,7 @@ const emptyData: DashboardLoaderData = {
   pseudonyms: [],
   credentials: [],
   customObjects: [],
+  countries: [],
   accessLogs: [],
   accessLogsCount: 0,
   accessLogsHasNext: false,
