@@ -533,7 +533,7 @@ export function useDashboard(initialData: DashboardLoaderData) {
       } else if (modalType === "pseudonym") {
         endpoint = "pseudonyms"; payload = pseudonymForm; listSetter = setPseudonyms as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = pseudonyms
       } else if (modalType === "credential") {
-        endpoint = "credentials"; payload = credentialForm; listSetter = setCredentials as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = credentials
+        endpoint = "credentials"; payload = { ...credentialForm, expiry_date: credentialForm.expiry_date || null } as unknown as FormPayload; listSetter = setCredentials as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = credentials
       } else if (modalType === "custom") {
         endpoint = "custom-objects"; payload = customForm; listSetter = setCustomObjects as unknown as React.Dispatch<React.SetStateAction<MultiRecord[]>>; listData = customObjects
       }

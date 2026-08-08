@@ -505,10 +505,9 @@ export function CrudModal({
                   />
                 </div>
                 <div>
-                  <label className={labelCls}>Expiry Date</label>
+                  <label className={labelCls}>Expiry Date (Optional)</label>
                   <input
                     type="date"
-                    required
                     value={credentialForm.expiry_date}
                     onChange={(e) => setCredentialForm({ ...credentialForm, expiry_date: e.target.value })}
                     className={selectCls}
