@@ -166,7 +166,6 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
                 <label className="text-xs font-semibold text-zinc-400">State / Province</label>
                 <input
                   type="text"
-                  required
                   value={editBirthPlaceForm.birth_state}
                   onChange={(e) => setEditBirthPlaceForm({ ...editBirthPlaceForm, birth_state: e.target.value })}
                   className="mt-2 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-sm text-zinc-200 outline-none focus:border-blue-500"
@@ -221,7 +220,7 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
             <div>
               <p className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase">City &amp; State</p>
               <p className="mt-1 text-sm font-semibold text-zinc-100">
-                {placeOfBirth.birth_city}, {placeOfBirth.birth_state}
+                {[placeOfBirth.birth_city, placeOfBirth.birth_state].filter(Boolean).join(", ")}
               </p>
             </div>
             <div>
