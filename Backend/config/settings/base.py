@@ -171,6 +171,8 @@ OAUTH2_PROVIDER = {
     "OIDC_ENABLED": True,
     "OIDC_RSA_PRIVATE_KEY": os.getenv("OIDC_RSA_PRIVATE_KEY"),
     "SCOPES_BACKEND_CLASS": "wallet.scopes_backend.DynamicScopesBackend",
+    "OIDC_RP_INITIATED_LOGOUT_ENABLED": True,
+    "OIDC_RP_INITIATED_LOGOUT_ALWAYS_PROMPT": False,
 }
 
 LOGIN_URL = "/accounts/login/"

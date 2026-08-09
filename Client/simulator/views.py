@@ -61,7 +61,12 @@ def _fetch_dynamic_scopes():
 
 def home(request):
     return render(
-        request, "simulator/home.html", {"scopes": SCOPES + _fetch_dynamic_scopes()}
+        request,
+        "simulator/home.html",
+        {
+            "scopes": SCOPES + _fetch_dynamic_scopes(),
+            "logged_in": bool(request.session.get("id_token")),
+        },
     )
 
 
@@ -161,6 +166,8 @@ def callback(request):
     token_data = token_response.json()
     access_token = token_data.get("access_token")
 
+    request.session["id_token"] = token_data.get("id_token")
+
     # Fetch userinfo with the access token
     try:
         userinfo_response = http_requests.get(
@@ -200,5 +207,22 @@ def result(request):
         {
             "userinfo": json.dumps(userinfo, indent=2),
             "scopes_granted": scopes_granted,
+            "logged_in": bool(request.session.get("id_token")),
         },
     )
+
+
+def logout_view(request):
+    # OIDC RP-Initiated Logout (https://openid.net/specs/openid-connect-rpinitiated-1_0.html),
+    # served by django-oauth-toolkit at /o/logout/
+    id_token_hint = request.session.pop("id_token", None)
+    request.session.flush()
+
+    params = {"client_id": settings.WALLET_CLIENT_ID}
+    if id_token_hint:
+        params["id_token_hint"] = id_token_hint
+    if settings.CLIENT_POST_LOGOUT_REDIRECT_URI:
+        params["post_logout_redirect_uri"] = settings.CLIENT_POST_LOGOUT_REDIRECT_URI
+
+    logout_url = f"{settings.WALLET_BASE_URL}/o/logout/?{urlencode(params)}"
+    return redirect(logout_url)

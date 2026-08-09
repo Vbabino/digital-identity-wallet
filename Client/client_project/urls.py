@@ -6,4 +6,5 @@ urlpatterns = [
     path("authorize/", views.authorize, name="authorize"),
     path("callback/", views.callback, name="callback"),
     path("result/", views.result, name="result"),
+    path("logout/", views.logout_view, name="logout"),
 ]

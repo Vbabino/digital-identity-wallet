@@ -78,6 +78,9 @@ WALLET_BASE_URL = os.getenv("WALLET_BASE_URL", "http://localhost:8000")
 CLIENT_REDIRECT_URI = os.getenv(
     "CLIENT_REDIRECT_URI", "http://localhost:8001/callback/"
 )
+CLIENT_POST_LOGOUT_REDIRECT_URI = os.getenv(
+    "CLIENT_POST_LOGOUT_REDIRECT_URI", "http://localhost:8001/"
+)
 
 STATIC_URL = "/static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

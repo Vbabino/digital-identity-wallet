@@ -119,6 +119,9 @@
 
     <div class="actions">
       <a class="btn" href="{% url 'home' %}">New Request</a>
+      {% if logged_in %}
+        <a class="btn secondary" href="{% url 'logout' %}">Logout</a>
+      {% endif %}
     </div>
   </div>
 </body>
