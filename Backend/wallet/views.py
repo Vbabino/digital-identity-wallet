@@ -6,7 +6,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.pagination import PageNumberPagination
+from auth_kit.cookie_profiles import resolve_cookie_profile
+from auth_kit.jwt_auth import unset_jwt_cookies
 
+from .account_deletion_service import AccountDeletionError, delete_wallet_account
 from .export_service import WalletExportError, export_wallet_data_to_json
 from .models import (
     Age,
@@ -255,6 +258,20 @@ class WalletExportView(APIView):
             return Response({"detail": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         response = HttpResponse(json_string, content_type="application/json")
         response["Content-Disposition"] = 'attachment; filename="wallet_export.json"'
+        return response
+
+
+class DeleteAccountView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(responses={204: None})
+    def delete(self, request):
+        try:
+            delete_wallet_account(request.user)
+        except AccountDeletionError as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        response = Response(status=status.HTTP_204_NO_CONTENT)
+        unset_jwt_cookies(response, resolve_cookie_profile(request))
         return response
 
 

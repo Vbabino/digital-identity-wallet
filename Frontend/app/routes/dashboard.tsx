@@ -217,7 +217,7 @@ export default function Dashboard() {
       />
 
       <ConfirmDialog
-        deleteConfirm={dashboard.deleteConfirm}
+        open={!!dashboard.deleteConfirm}
         onCancel={() => dashboard.setDeleteConfirm(null)}
         onConfirm={dashboard.confirmDelete}
       />

@@ -6,6 +6,7 @@ import pytest
 from django.utils import timezone
 from rest_framework import status
 
+from wallet.account_deletion_service import AccountDeletionError
 from wallet.export_service import WalletExportError
 from wallet.factories import (
     AccessLogFactory,
@@ -28,6 +29,7 @@ from wallet.models import (
     Age,
     Credential,
     CustomObject,
+    CustomUser,
     DailyUse,
     Gender,
     LegalIdentity,
@@ -58,6 +60,7 @@ _CUSTOM_OBJECTS_URL = "/api/wallet/custom-objects/"
 _NAME_HISTORIES_URL = "/api/wallet/name-histories/"
 _ACCESS_LOGS_URL = "/api/wallet/access-logs/"
 _EXPORT_URL = "/api/wallet/export/"
+_DELETE_ACCOUNT_URL = "/api/wallet/delete-account/"
 _COUNTRIES_URL = "/api/wallet/countries/"
 
 _ADDRESS_PAYLOAD = {
@@ -837,6 +840,40 @@ class TestWalletExportView:
             response = auth_client.get(_EXPORT_URL)
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
         assert response.data["detail"] == "boom"
+
+
+@pytest.mark.django_db
+class TestDeleteAccountView:
+    def test_delete_unauthenticated_returns_401(self, api_client):
+        response = api_client.delete(_DELETE_ACCOUNT_URL)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_delete_returns_204_and_removes_the_user(self, auth_client):
+        user_id = auth_client.user.id
+        response = auth_client.delete(_DELETE_ACCOUNT_URL)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not CustomUser.objects.filter(pk=user_id).exists()
+
+    def test_delete_removes_related_wallet_data(self, auth_client):
+        address = AddressFactory(user=auth_client.user)
+        response = auth_client.delete(_DELETE_ACCOUNT_URL)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Address.objects.filter(pk=address.pk).exists()
+
+    def test_delete_clears_auth_cookies(self, auth_client):
+        response = auth_client.delete(_DELETE_ACCOUNT_URL)
+        assert response.cookies["auth-jwt"].value == ""
+        assert response.cookies["auth-refresh-jwt"].value == ""
+
+    def test_delete_returns_500_when_deletion_fails(self, auth_client):
+        with patch(
+            "wallet.views.delete_wallet_account",
+            side_effect=AccountDeletionError("boom"),
+        ):
+            response = auth_client.delete(_DELETE_ACCOUNT_URL)
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        assert response.data["detail"] == "boom"
+        assert CustomUser.objects.filter(pk=auth_client.user.id).exists()
 
 
 class TestCountriesView:
