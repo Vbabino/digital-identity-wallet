@@ -1,4 +1,5 @@
 import pytest
+from django.core.cache import cache
 
 from wallet.factories import CustomObjectFactory, CustomUserFactory
 from wallet.scopes_backend import STATIC_SCOPES, DynamicScopesBackend
@@ -7,6 +8,13 @@ from wallet.scopes_backend import STATIC_SCOPES, DynamicScopesBackend
 @pytest.fixture
 def backend():
     return DynamicScopesBackend()
+
+
+@pytest.fixture(autouse=True)
+def clear_scopes_cache():
+    cache.clear()
+    yield
+    cache.clear()
 
 
 @pytest.mark.django_db
@@ -62,3 +70,31 @@ class TestDynamicScopesBackend:
 
     def test_get_default_scopes_returns_openid_only(self, backend):
         assert backend.get_default_scopes() == ["openid"]
+
+    def test_get_all_scopes_second_call_does_not_hit_db(
+        self, backend, django_assert_num_queries
+    ):
+        CustomObjectFactory(name_type="employee_id")
+        backend.get_all_scopes()
+        with django_assert_num_queries(0):
+            scopes = backend.get_all_scopes()
+        assert "custom_name:employee_id" in scopes
+
+    def test_get_all_scopes_cache_invalidated_on_create(self, backend):
+        scopes = backend.get_all_scopes()
+        assert "custom_name:passport_number" not in scopes
+
+        CustomObjectFactory(name_type="passport_number")
+
+        scopes = backend.get_all_scopes()
+        assert "custom_name:passport_number" in scopes
+
+    def test_get_all_scopes_cache_invalidated_on_delete(self, backend):
+        obj = CustomObjectFactory(name_type="loyalty_id")
+        scopes = backend.get_all_scopes()
+        assert "custom_name:loyalty_id" in scopes
+
+        obj.delete()
+
+        scopes = backend.get_all_scopes()
+        assert "custom_name:loyalty_id" not in scopes
