@@ -6,7 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.pagination import PageNumberPagination
-from auth_kit.cookie_profiles import resolve_cookie_profile
 from auth_kit.jwt_auth import unset_jwt_cookies
 
 from .account_deletion_service import AccountDeletionError, delete_wallet_account
@@ -271,7 +270,7 @@ class DeleteAccountView(APIView):
         except AccountDeletionError as exc:
             return Response({"detail": str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         response = Response(status=status.HTTP_204_NO_CONTENT)
-        unset_jwt_cookies(response, resolve_cookie_profile(request))
+        unset_jwt_cookies(response)
         return response
 
 
