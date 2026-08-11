@@ -84,7 +84,7 @@ export default function AuthCallback() {
               <p className="text-sm leading-relaxed text-zinc-400">{error}</p>
             </div>
             <Button
-              variant="dark-action"
+              variant="secondary"
               onClick={() => navigate(backTo ?? "/login")}
               className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3 font-semibold"
             >

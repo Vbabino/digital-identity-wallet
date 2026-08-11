@@ -116,7 +116,7 @@ export function SocialAccountsManager() {
         <button
           disabled={connectLoading}
           onClick={handleConnect}
-          className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-xs font-semibold text-zinc-200 transition hover:border-zinc-600 hover:bg-zinc-700 disabled:opacity-50"
+          className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-input bg-secondary px-3 py-1.5 text-xs font-semibold text-secondary-foreground transition hover:bg-secondary/80 disabled:opacity-50"
         >
           <GoogleIcon className="h-3.5 w-3.5" />
           {connectLoading ? "Redirecting…" : "Connect Google"}
@@ -143,25 +143,25 @@ export function SocialAccountsManager() {
         )}
 
         {loading ? (
-          <p className="text-xs text-zinc-500">Loading…</p>
+          <p className="text-xs text-muted-foreground">Loading…</p>
         ) : error ? (
           <p className="text-xs text-red-400">{error}</p>
         ) : accounts.length === 0 ? (
-          <p className="text-xs text-zinc-500">No social accounts connected.</p>
+          <p className="text-xs text-muted-foreground">No social accounts connected.</p>
         ) : (
           <div className="space-y-3">
             {accounts.map((account) => (
-              <div key={account.id} className="rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4">
+              <div key={account.id} className="rounded-2xl border border-border bg-muted/40 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-800">
-                      <HugeiconsIcon icon={GlobeIcon} className="h-4 w-4 text-zinc-300" />
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted">
+                      <HugeiconsIcon icon={GlobeIcon} className="h-4 w-4 text-muted-foreground" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-zinc-100">
+                      <p className="text-sm font-semibold text-foreground">
                         {providerLabel(account.provider)}
                       </p>
-                      <p className="mt-0.5 text-[11px] text-zinc-500">
+                      <p className="mt-0.5 text-[11px] text-muted-foreground">
                         Connected {formatDate(account.date_joined)}
                         {account.last_login && ` · Last used ${formatDate(account.last_login)}`}
                       </p>
@@ -171,7 +171,7 @@ export function SocialAccountsManager() {
                   <button
                     disabled={disconnecting.has(account.id)}
                     onClick={() => setConfirmId(account.id)}
-                    className="shrink-0 rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1 text-[11px] font-medium text-zinc-400 transition hover:border-red-500/30 hover:text-red-400 disabled:opacity-50"
+                    className="shrink-0 rounded-lg border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition hover:border-red-500/30 hover:text-red-400 disabled:opacity-50"
                   >
                     {disconnecting.has(account.id) ? "Disconnecting…" : "Disconnect"}
                   </button>
@@ -195,7 +195,7 @@ export function SocialAccountsManager() {
                         variant="ghost"
                         size="xs"
                         onClick={() => setConfirmId(null)}
-                        className="text-zinc-400 hover:text-zinc-200"
+                        className="text-muted-foreground hover:text-foreground"
                       >
                         Cancel
                       </Button>

@@ -3,7 +3,16 @@ import userEvent from "@testing-library/user-event"
 import { http, HttpResponse, delay } from "msw"
 import { vi } from "vitest"
 import { SettingsTab } from "./SettingsTab"
+import { ThemeProvider } from "~/hooks/useTheme"
 import { server } from "~/test/mocks/server"
+
+function renderSettingsTab() {
+  return render(
+    <ThemeProvider>
+      <SettingsTab />
+    </ThemeProvider>
+  )
+}
 
 // Mock useNavigate so navigation calls can be asserted without needing a
 // full router that tracks location state changes.
@@ -23,9 +32,20 @@ describe("SettingsTab", () => {
   })
 
   it("renders the export section and download button", () => {
-    render(<SettingsTab />)
+    renderSettingsTab()
     expect(screen.getByText("Export Wallet Data")).toBeInTheDocument()
     expect(screen.getByRole("button", { name: "Download Export" })).toBeInTheDocument()
+  })
+
+  it("renders the Appearance section with a working theme toggle", async () => {
+    document.documentElement.classList.remove("dark")
+    renderSettingsTab()
+    expect(screen.getByText("Appearance")).toBeInTheDocument()
+
+    const toggle = screen.getByRole("button", { name: /switch to (dark|light) mode/i })
+    const wasDark = document.documentElement.classList.contains("dark")
+    await userEvent.click(toggle)
+    expect(document.documentElement.classList.contains("dark")).toBe(!wasDark)
   })
 
   it("downloads the export file when clicked", async () => {
@@ -37,7 +57,7 @@ describe("SettingsTab", () => {
       .spyOn(HTMLAnchorElement.prototype, "click")
       .mockImplementation(() => {})
 
-    render(<SettingsTab />)
+    renderSettingsTab()
     await userEvent.click(screen.getByRole("button", { name: "Download Export" }))
 
     await waitFor(() => expect(createObjectURLSpy).toHaveBeenCalled())
@@ -60,7 +80,7 @@ describe("SettingsTab", () => {
     vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {})
     vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {})
 
-    render(<SettingsTab />)
+    renderSettingsTab()
     await userEvent.click(screen.getByRole("button", { name: "Download Export" }))
 
     expect(screen.getByRole("button", { name: "Preparing…" })).toBeInTheDocument()
@@ -83,7 +103,7 @@ describe("SettingsTab", () => {
       )
     )
 
-    render(<SettingsTab />)
+    renderSettingsTab()
     await userEvent.click(screen.getByRole("button", { name: "Download Export" }))
 
     await waitFor(() => expect(screen.getByText("Export failed.")).toBeInTheDocument())
@@ -101,7 +121,7 @@ describe("SettingsTab", () => {
       )
     )
 
-    render(<SettingsTab />)
+    renderSettingsTab()
     await userEvent.click(screen.getByRole("button", { name: "Download Export" }))
 
     await waitFor(() =>
@@ -112,13 +132,13 @@ describe("SettingsTab", () => {
   })
 
   it("renders the delete-account section with the delete button disabled", () => {
-    render(<SettingsTab />)
+    renderSettingsTab()
     expect(screen.getByText("Delete Account")).toBeInTheDocument()
     expect(screen.getByRole("button", { name: "Delete My Account" })).toBeDisabled()
   })
 
   it("keeps the delete button disabled until the confirmation text matches exactly", async () => {
-    render(<SettingsTab />)
+    renderSettingsTab()
     await userEvent.type(screen.getByLabelText(/type/i), "delete")
     expect(screen.getByRole("button", { name: "Delete My Account" })).toBeDisabled()
 
@@ -128,7 +148,7 @@ describe("SettingsTab", () => {
   })
 
   it("opens a final confirmation dialog and does nothing on cancel", async () => {
-    render(<SettingsTab />)
+    renderSettingsTab()
     await typeDeleteConfirmation()
     await userEvent.click(screen.getByRole("button", { name: "Delete My Account" }))
 
@@ -142,7 +162,7 @@ describe("SettingsTab", () => {
   })
 
   it("deletes the account and navigates to /login with a notice on confirm", async () => {
-    render(<SettingsTab />)
+    renderSettingsTab()
     await typeDeleteConfirmation()
     await userEvent.click(screen.getByRole("button", { name: "Delete My Account" }))
     await userEvent.click(screen.getByRole("button", { name: "Delete Account" }))
@@ -166,7 +186,7 @@ describe("SettingsTab", () => {
       )
     )
 
-    render(<SettingsTab />)
+    renderSettingsTab()
     await typeDeleteConfirmation()
     await userEvent.click(screen.getByRole("button", { name: "Delete My Account" }))
     await userEvent.click(screen.getByRole("button", { name: "Delete Account" }))

@@ -1,7 +1,8 @@
 import { useState } from "react"
 import { useNavigate } from "react-router"
-import { Delete02Icon, FileDownloadIcon } from "@hugeicons/core-free-icons"
+import { Delete02Icon, FileDownloadIcon, PaintBoardIcon } from "@hugeicons/core-free-icons"
 import { Button } from "~/components/ui/button"
+import { ThemeToggle } from "~/components/ThemeToggle"
 import { SectionCard } from "../components/SectionCard"
 import { ConfirmDialog } from "../components/ConfirmDialog"
 import { api } from "~/services/api"
@@ -74,6 +75,14 @@ export function SettingsTab() {
   return (
     <div className="space-y-8">
       <SectionCard
+        icon={PaintBoardIcon}
+        title="Appearance"
+        subtitle="Switch between light and dark mode."
+      >
+        <ThemeToggle showLabel />
+      </SectionCard>
+
+      <SectionCard
         icon={FileDownloadIcon}
         title="Export Wallet Data"
         subtitle="Download a complete copy of your wallet data — all identity records, credentials, and access logs — as a JSON file."
@@ -103,7 +112,7 @@ export function SettingsTab() {
             {deleteError}
           </div>
         )}
-        <label htmlFor="delete-account-confirm" className="mb-2 block text-xs text-zinc-400">
+        <label htmlFor="delete-account-confirm" className="mb-2 block text-xs text-muted-foreground">
           Type <span className="font-semibold text-red-400">{DELETE_CONFIRM_PHRASE}</span> to
           confirm.
         </label>
@@ -112,7 +121,7 @@ export function SettingsTab() {
           type="text"
           value={confirmText}
           onChange={(e) => setConfirmText(e.target.value)}
-          className="mb-4 w-full max-w-xs rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm text-white outline-none focus:border-red-500/50"
+          className="mb-4 w-full max-w-xs rounded-xl border border-border bg-input/30 px-3 py-2 text-sm text-foreground outline-none focus:border-red-500/50"
           autoComplete="off"
         />
         <div>

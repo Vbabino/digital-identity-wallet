@@ -66,7 +66,7 @@ export function SecurityTab() {
           )}
 
           <div>
-            <label className="text-xs font-semibold text-zinc-400">Current Password</label>
+            <label className="text-xs font-semibold text-muted-foreground">Current Password</label>
             <input
               type="password"
               required
@@ -74,12 +74,12 @@ export function SecurityTab() {
               value={oldPassword}
               onChange={(e) => setOldPassword(e.target.value)}
               placeholder="••••••••"
-              className="mt-2 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="mt-2 w-full rounded-xl border border-input bg-input/30 px-3 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition focus:border-ring focus:ring-1 focus:ring-ring"
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-zinc-400">New Password</label>
+            <label className="text-xs font-semibold text-muted-foreground">New Password</label>
             <input
               type="password"
               required
@@ -87,12 +87,12 @@ export function SecurityTab() {
               value={newPassword1}
               onChange={(e) => setNewPassword1(e.target.value)}
               placeholder="••••••••"
-              className="mt-2 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="mt-2 w-full rounded-xl border border-input bg-input/30 px-3 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition focus:border-ring focus:ring-1 focus:ring-ring"
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-zinc-400">Confirm New Password</label>
+            <label className="text-xs font-semibold text-muted-foreground">Confirm New Password</label>
             <input
               type="password"
               required
@@ -100,7 +100,7 @@ export function SecurityTab() {
               value={newPassword2}
               onChange={(e) => setNewPassword2(e.target.value)}
               placeholder="••••••••"
-              className="mt-2 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="mt-2 w-full rounded-xl border border-input bg-input/30 px-3 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition focus:border-ring focus:ring-1 focus:ring-ring"
             />
           </div>
 
@@ -108,7 +108,7 @@ export function SecurityTab() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="cursor-pointer rounded-xl bg-zinc-100 px-5 py-2 text-xs font-semibold text-zinc-950 hover:bg-zinc-200"
+              className="cursor-pointer rounded-xl bg-foreground px-5 py-2 text-xs font-semibold text-background hover:bg-foreground/90"
             >
               {isLoading ? "Updating…" : "Update Password"}
             </Button>

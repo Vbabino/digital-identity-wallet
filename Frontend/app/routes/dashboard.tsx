@@ -134,7 +134,7 @@ export default function Dashboard() {
   const header = tabHeaders[activeTab]
 
   return (
-    <div className="flex min-h-svh overflow-hidden bg-zinc-950 font-sans text-zinc-100">
+    <div className="flex min-h-svh overflow-hidden bg-background font-sans text-foreground">
       <Sidebar
         activeTab={activeTab}
         userEmail={dashboard.userEmail}
@@ -145,17 +145,17 @@ export default function Dashboard() {
       <main className="flex min-w-0 flex-1 flex-col overflow-y-auto">
         {/* Global Toast */}
         {toast && (
-          <div className="fixed top-6 right-6 z-50 flex animate-bounce items-center space-x-2 rounded-2xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-xs font-semibold shadow-2xl backdrop-blur-md">
+          <div className="fixed top-6 right-6 z-50 flex animate-bounce items-center space-x-2 rounded-2xl border border-border bg-card px-4 py-3 text-xs font-semibold shadow-2xl backdrop-blur-md">
             <HugeiconsIcon
               icon={toast.type === "success" ? Tick01Icon : Cancel01Icon}
               className={toast.type === "success" ? "h-4 w-4 text-green-400" : "h-4 w-4 text-red-400"}
             />
-            <span className="text-zinc-200">{toast.message}</span>
+            <span className="text-foreground">{toast.message}</span>
           </div>
         )}
 
         {/* Header */}
-        <header className="flex items-center justify-between border-b border-zinc-800/80 bg-zinc-900/10 px-8 py-5">
+        <header className="flex items-center justify-between border-b border-border/80 bg-card/10 px-8 py-5">
           <div className="flex items-center gap-4">
             <MobileNav
               activeTab={activeTab}
@@ -164,13 +164,13 @@ export default function Dashboard() {
               onLogout={dashboard.handleLogout}
             />
             <div>
-              <h2 className="font-heading text-2xl font-bold tracking-tight text-white">{header.title}</h2>
-              <p className="mt-1 text-xs text-zinc-500">{header.subtitle}</p>
+              <h2 className="font-heading text-2xl font-bold tracking-tight text-foreground">{header.title}</h2>
+              <p className="mt-1 text-xs text-muted-foreground">{header.subtitle}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-3 rounded-full border border-zinc-800 bg-zinc-900/60 px-4 py-2 text-xs">
+          <div className="flex items-center space-x-3 rounded-full border border-border bg-card/60 px-4 py-2 text-xs">
             <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-            <span className="font-semibold text-zinc-400">Vault Secure</span>
+            <span className="font-semibold text-muted-foreground">Vault Secure</span>
           </div>
         </header>
 

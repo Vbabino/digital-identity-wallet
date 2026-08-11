@@ -44,7 +44,7 @@ export const CredentialsTab = memo(function CredentialsTab({ dashboard }: Creden
             {credentials.map((cred) => (
               <div
                 key={cred.id}
-                className="relative flex flex-col justify-between overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/10 p-6"
+                className="relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card/10 p-6"
               >
                 <div className="absolute top-0 right-0 h-2 w-full bg-gradient-to-r from-blue-500 to-violet-600" />
 
@@ -54,26 +54,26 @@ export const CredentialsTab = memo(function CredentialsTab({ dashboard }: Creden
                       <span className="rounded-md border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-xs font-bold text-blue-400 uppercase">
                         {cred.credential_type}
                       </span>
-                      <h4 className="text-lg font-extrabold text-zinc-100">{cred.credential_name}</h4>
+                      <h4 className="text-lg font-extrabold text-foreground">{cred.credential_name}</h4>
                     </div>
                     {cred.credential_description && (
-                      <p className="line-clamp-2 max-w-xl text-sm text-zinc-400">{cred.credential_description}</p>
+                      <p className="line-clamp-2 max-w-xl text-sm text-muted-foreground">{cred.credential_description}</p>
                     )}
-                    <div className="grid grid-cols-2 gap-x-6 gap-y-2 pt-3 text-xs text-zinc-500 sm:grid-cols-4">
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-2 pt-3 text-xs text-muted-foreground sm:grid-cols-4">
                       <div>
-                        <p className="font-bold tracking-wider text-zinc-600 uppercase">Document ID</p>
-                        <p className="mt-0.5 font-semibold text-zinc-300">{cred.credential_id}</p>
+                        <p className="font-bold tracking-wider text-muted-foreground uppercase">Document ID</p>
+                        <p className="mt-0.5 font-semibold text-foreground">{cred.credential_id}</p>
                       </div>
                       <div>
-                        <p className="font-bold tracking-wider text-zinc-600 uppercase">Issuer</p>
-                        <p className="mt-0.5 font-semibold text-zinc-300">{cred.issuing_authority}</p>
+                        <p className="font-bold tracking-wider text-muted-foreground uppercase">Issuer</p>
+                        <p className="mt-0.5 font-semibold text-foreground">{cred.issuing_authority}</p>
                       </div>
                       <div>
-                        <p className="font-bold tracking-wider text-zinc-600 uppercase">Issue Date</p>
-                        <p className="mt-0.5 font-semibold text-zinc-300">{cred.issuance_date}</p>
+                        <p className="font-bold tracking-wider text-muted-foreground uppercase">Issue Date</p>
+                        <p className="mt-0.5 font-semibold text-foreground">{cred.issuance_date}</p>
                       </div>
                       <div>
-                        <p className="font-bold tracking-wider text-zinc-600 uppercase">Expiry Date</p>
+                        <p className="font-bold tracking-wider text-muted-foreground uppercase">Expiry Date</p>
                         <p className="mt-0.5 font-semibold text-red-400/80">{cred.expiry_date}</p>
                       </div>
                     </div>
@@ -102,14 +102,14 @@ export const CredentialsTab = memo(function CredentialsTab({ dashboard }: Creden
                   </div>
                 </div>
 
-                <div className="mt-5 flex items-center justify-end space-x-3 border-t border-zinc-800/40 pt-4">
+                <div className="mt-5 flex items-center justify-end space-x-3 border-t border-border/40 pt-4">
                   <button
                     onClick={() => openModal("credential", "edit", cred)}
-                    className="flex cursor-pointer items-center gap-0.5 text-xs font-semibold text-zinc-400 hover:text-zinc-200"
+                    className="flex cursor-pointer items-center gap-0.5 text-xs font-semibold text-muted-foreground hover:text-foreground"
                   >
                     <HugeiconsIcon icon={PencilEdit01Icon} className="h-3 w-3" /> Modify Attributes
                   </button>
-                  <span className="text-zinc-800">|</span>
+                  <span className="text-border">|</span>
                   <button
                     onClick={() => handleDeleteRecord("credentials", cred.id, () => setCredentials(prev => prev.filter(c => c.id !== cred.id)))}
                     className="flex cursor-pointer items-center gap-0.5 text-xs font-semibold text-red-400/80 hover:text-red-400"

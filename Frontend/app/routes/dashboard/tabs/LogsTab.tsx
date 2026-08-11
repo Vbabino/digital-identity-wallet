@@ -24,7 +24,7 @@ export const LogsTab = memo(function LogsTab({ dashboard }: LogsTabProps) {
         subtitle="Chronological immutable audit log of authentication handshakes."
         action={
           <Button
-            variant="dark-action"
+            variant="secondary"
             onClick={fetchAllData}
             className="cursor-pointer rounded-xl px-3 py-1.5 text-xs"
           >
@@ -35,25 +35,25 @@ export const LogsTab = memo(function LogsTab({ dashboard }: LogsTabProps) {
         {accessLogs.length === 0 ? (
           <EmptyState message="No authorization events logged in this session." />
         ) : (
-          <div className="relative ml-4 space-y-6 border-l border-zinc-800/80 pl-6">
+          <div className="relative ml-4 space-y-6 border-l border-border/80 pl-6">
             {accessLogs.map((log) => (
               <div key={log.id} className="relative space-y-2">
-                <div className="absolute top-1.5 -left-[31px] h-3.5 w-3.5 rounded-full border border-blue-500 bg-zinc-950 ring-4 ring-zinc-900/50" />
+                <div className="absolute top-1.5 -left-[31px] h-3.5 w-3.5 rounded-full border border-ring bg-background ring-4 ring-card/50" />
 
                 <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
-                  <h4 className="text-sm font-bold text-zinc-200">
+                  <h4 className="text-sm font-bold text-foreground">
                     🔑 Grant Session Issued:{" "}
                     <span className="text-blue-400">{log.relying_party}</span>
                   </h4>
-                  <span className="rounded-md border border-zinc-800 bg-zinc-950/60 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-zinc-500 uppercase">
+                  <span className="rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
                     {new Date(log.access_time).toLocaleString()}
                   </span>
                 </div>
 
-                <div className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-950/40 p-4">
+                <div className="space-y-3 rounded-xl border border-border bg-muted/40 p-4">
                   {log.scopes_accessed && log.scopes_accessed.length > 0 && (
                     <div>
-                      <p className="mb-1.5 text-[10px] font-bold tracking-wider text-zinc-500 uppercase">
+                      <p className="mb-1.5 text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
                         Scopes Requested
                       </p>
                       <div className="flex flex-wrap gap-1.5">
@@ -71,7 +71,7 @@ export const LogsTab = memo(function LogsTab({ dashboard }: LogsTabProps) {
 
                   {log.claims_returned && log.claims_returned.length > 0 && (
                     <div>
-                      <p className="mb-1.5 text-[10px] font-bold tracking-wider text-zinc-500 uppercase">
+                      <p className="mb-1.5 text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
                         Returned Assertions (Claims)
                       </p>
                       <div className="flex flex-wrap gap-1.5">
@@ -93,13 +93,13 @@ export const LogsTab = memo(function LogsTab({ dashboard }: LogsTabProps) {
         )}
 
         {logsCount > LOGS_PAGE_SIZE && (
-          <div className="mt-6 flex items-center justify-between border-t border-zinc-800/80 pt-4">
-            <span className="text-[10px] font-semibold tracking-wider text-zinc-500 uppercase">
+          <div className="mt-6 flex items-center justify-between border-t border-border/80 pt-4">
+            <span className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
               Page {logsPage} of {totalPages}
             </span>
             <div className="flex items-center gap-2">
               <Button
-                variant="dark-action"
+                variant="secondary"
                 disabled={!logsHasPrevious}
                 onClick={() => fetchLogsPage(logsPage - 1)}
                 className="cursor-pointer rounded-xl px-3 py-1.5 text-xs disabled:cursor-not-allowed disabled:opacity-40"
@@ -108,7 +108,7 @@ export const LogsTab = memo(function LogsTab({ dashboard }: LogsTabProps) {
                 Prev
               </Button>
               <Button
-                variant="dark-action"
+                variant="secondary"
                 disabled={!logsHasNext}
                 onClick={() => fetchLogsPage(logsPage + 1)}
                 className="cursor-pointer rounded-xl px-3 py-1.5 text-xs disabled:cursor-not-allowed disabled:opacity-40"

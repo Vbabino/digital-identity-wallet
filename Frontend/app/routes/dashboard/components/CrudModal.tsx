@@ -46,10 +46,10 @@ interface CrudModalProps {
 }
 
 const inputCls =
-  "mt-2 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-sm text-zinc-200 outline-none focus:border-blue-500"
+  "mt-2 w-full rounded-xl border border-border bg-input/30 px-3 py-2 text-sm text-foreground outline-none focus:border-ring"
 const selectCls =
-  "mt-2 block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-sm text-zinc-200 outline-none"
-const labelCls = "text-xs font-semibold text-zinc-400"
+  "mt-2 block w-full rounded-xl border border-border bg-input/30 px-3 py-2 text-sm text-foreground outline-none"
+const labelCls = "text-xs font-semibold text-muted-foreground"
 
 export function CrudModal({
   modalType,
@@ -94,16 +94,16 @@ export function CrudModal({
   }[modalType]
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-zinc-950/80 p-4 backdrop-blur-sm">
-      <div className="animate-fade-in relative my-8 w-full max-w-lg rounded-3xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-background/80 p-4 backdrop-blur-sm">
+      <div className="animate-fade-in relative my-8 w-full max-w-lg rounded-3xl border border-border bg-popover p-6 shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-zinc-800 text-zinc-500 hover:text-zinc-200"
+          className="absolute top-4 right-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-border text-muted-foreground hover:text-foreground"
         >
           <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
         </button>
 
-        <h3 className="font-heading text-xl font-bold tracking-tight text-white">
+        <h3 className="font-heading text-xl font-bold tracking-tight text-popover-foreground">
           {modalAction === "create" ? "Add New " : "Modify "}
           {modalTitle}
         </h3>
@@ -425,7 +425,7 @@ export function CrudModal({
                   type="checkbox"
                   checked={pseudonymForm.is_active}
                   onChange={(e) => setPseudonymForm({ ...pseudonymForm, is_active: e.target.checked })}
-                  className="h-4 w-4 rounded border-zinc-800 bg-zinc-950/50 accent-blue-500"
+                  className="h-4 w-4 rounded border-border bg-input/30 accent-primary"
                 />
                 <label htmlFor="pseudonym-is-active" className={labelCls}>
                   Active
@@ -662,15 +662,15 @@ export function CrudModal({
             </div>
           )}
 
-          <div className="flex items-center space-x-3 border-t border-zinc-800/60 pt-4">
+          <div className="flex items-center space-x-3 border-t border-border/60 pt-4">
             <Button
               type="submit"
-              className="cursor-pointer rounded-xl bg-zinc-100 px-4 py-2.5 text-xs font-bold text-zinc-950 hover:bg-zinc-200"
+              className="cursor-pointer rounded-xl bg-foreground px-4 py-2.5 text-xs font-bold text-background hover:bg-foreground/90"
             >
               {modalAction === "create" ? "Add Record" : "Save Changes"}
             </Button>
             <Button
-              variant="dark-action"
+              variant="secondary"
               type="button"
               onClick={onClose}
               className="cursor-pointer rounded-xl px-4 py-2.5 text-xs"

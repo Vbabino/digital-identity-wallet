@@ -22,19 +22,19 @@ export function MfaBackupCodes({
         />
         <div>
           <p className="text-sm font-semibold text-emerald-300">Method activated!</p>
-          <p className="mt-0.5 text-xs text-zinc-400">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             Save these backup codes somewhere safe. Each code can only be used once and lets you
             access your account if you lose access to your MFA device.
           </p>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4">
+      <div className="rounded-2xl border border-border bg-muted/60 p-4">
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {backupCodes.map((code, i) => (
             <div
               key={i}
-              className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-center font-mono text-xs tracking-wider text-zinc-200"
+              className="rounded-lg border border-border bg-card px-3 py-2 text-center font-mono text-xs tracking-wider text-foreground"
             >
               {code}
             </div>
@@ -46,7 +46,7 @@ export function MfaBackupCodes({
         <button
           type="button"
           onClick={onCopy}
-          className="flex items-center gap-1.5 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2 text-xs font-medium text-zinc-300 transition hover:border-zinc-700 hover:text-zinc-100"
+          className="flex items-center gap-1.5 rounded-xl border border-border bg-card px-4 py-2 text-xs font-medium text-muted-foreground transition hover:border-input hover:text-foreground"
         >
           <HugeiconsIcon
             icon={copied ? CheckmarkCircle01Icon : Copy01Icon}
@@ -57,7 +57,7 @@ export function MfaBackupCodes({
         <Button
           type="button"
           onClick={onDone}
-          className="cursor-pointer rounded-xl bg-zinc-100 px-5 py-2 text-xs font-semibold text-zinc-950 hover:bg-zinc-200"
+          className="cursor-pointer rounded-xl bg-foreground px-5 py-2 text-xs font-semibold text-background hover:bg-foreground/90"
         >
           Done
         </Button>

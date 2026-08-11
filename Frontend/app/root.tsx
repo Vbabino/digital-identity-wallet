@@ -9,11 +9,20 @@ import {
 
 import type { Route } from "./+types/root"
 import "./app.css"
+import { ThemeProvider } from "~/hooks/useTheme"
+import { THEME_STORAGE_KEY } from "~/lib/theme"
+
+// Sets the `.dark` class on <html> before first paint, so there's no flash of
+// the wrong theme while the ThemeProvider's own client-side render catches up.
+const THEME_INIT_SCRIPT = `(function(){try{var k=${JSON.stringify(
+  THEME_STORAGE_KEY
+)};var t=localStorage.getItem(k);if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}if(t==="dark")document.documentElement.classList.add("dark");}catch(e){}})();`
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta
@@ -33,7 +42,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />
+  return (
+    <ThemeProvider>
+      <Outlet />
+    </ThemeProvider>
+  )
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

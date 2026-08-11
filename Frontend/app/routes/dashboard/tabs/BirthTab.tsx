@@ -51,7 +51,7 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
                   setEditAgeForm({ ...age })
                   setIsEditingAge(true)
                 }}
-                className="flex cursor-pointer items-center gap-1 rounded-xl border border-zinc-700/50 bg-zinc-800 px-3 py-1.5 text-xs text-zinc-200 hover:bg-zinc-700"
+                className="flex cursor-pointer items-center gap-1 rounded-xl border border-input bg-secondary px-3 py-1.5 text-xs text-secondary-foreground hover:bg-secondary/80"
               >
                 <HugeiconsIcon icon={PencilEdit01Icon} className="h-3 w-3" /> Edit Field
               </Button>
@@ -67,23 +67,23 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
               </div>
             )}
             <div>
-              <label className="text-xs font-semibold text-zinc-400">Birth Date</label>
+              <label className="text-xs font-semibold text-muted-foreground">Birth Date</label>
               <input
                 type="date"
                 required
                 value={editAgeForm.birth_date}
                 onChange={(e) => setEditAgeForm({ ...editAgeForm, birth_date: e.target.value })}
-                className="mt-2 block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-sm text-zinc-200 outline-none"
+                className="mt-2 block w-full rounded-xl border border-border bg-input/30 px-3 py-2 text-sm text-foreground outline-none"
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-zinc-400">Default Visibility</label>
+              <label className="text-xs font-semibold text-muted-foreground">Default Visibility</label>
               <select
                 value={editAgeForm.visibility}
                 onChange={(e) =>
                   setEditAgeForm({ ...editAgeForm, visibility: e.target.value as "public" | "private" })
                 }
-                className="mt-2 block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-sm text-zinc-200 outline-none"
+                className="mt-2 block w-full rounded-xl border border-border bg-input/30 px-3 py-2 text-sm text-foreground outline-none"
               >
                 <option value="public">Public (Shared via Scope)</option>
                 <option value="private">Private (Restricted)</option>
@@ -92,7 +92,7 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
             <div className="flex items-center space-x-3 pt-2">
               <Button
                 type="submit"
-                className="cursor-pointer rounded-xl bg-zinc-100 px-4 py-2 text-xs font-semibold text-zinc-950 hover:bg-zinc-200"
+                className="cursor-pointer rounded-xl bg-foreground px-4 py-2 text-xs font-semibold text-background hover:bg-foreground/90"
               >
                 Save Date of Birth
               </Button>
@@ -100,7 +100,7 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
                 <Button
                   type="button"
                   onClick={() => setIsEditingAge(false)}
-                  className="cursor-pointer rounded-xl border border-zinc-700/50 bg-zinc-800 px-4 py-2 text-xs text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200"
+                  className="cursor-pointer rounded-xl border border-input bg-secondary px-4 py-2 text-xs text-secondary-foreground hover:bg-secondary/80"
                 >
                   Cancel
                 </Button>
@@ -108,10 +108,10 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
             </div>
           </form>
         ) : (
-          <div className="rounded-2xl border border-zinc-800/40 bg-zinc-950/30 p-5">
-            <p className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase">Birth Date</p>
-            <p className="mt-1 text-lg font-bold text-zinc-100">{age.birth_date}</p>
-            <p className="mt-2 text-xs text-zinc-500">
+          <div className="rounded-2xl border border-border/40 bg-muted/30 p-5">
+            <p className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">Birth Date</p>
+            <p className="mt-1 text-lg font-bold text-foreground">{age.birth_date}</p>
+            <p className="mt-2 text-xs text-muted-foreground">
               Calculated age group and age-based assertions can be generated dynamically for verified relying parties.
             </p>
           </div>
@@ -137,7 +137,7 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
                   setEditBirthPlaceForm({ ...placeOfBirth })
                   setIsEditingBirthPlace(true)
                 }}
-                className="flex cursor-pointer items-center gap-1 rounded-xl border border-zinc-700/50 bg-zinc-800 px-3 py-1.5 text-xs text-zinc-200 hover:bg-zinc-700"
+                className="flex cursor-pointer items-center gap-1 rounded-xl border border-input bg-secondary px-3 py-1.5 text-xs text-secondary-foreground hover:bg-secondary/80"
               >
                 <HugeiconsIcon icon={PencilEdit01Icon} className="h-3 w-3" /> Edit Fields
               </Button>
@@ -154,31 +154,31 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
             )}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="text-xs font-semibold text-zinc-400">City</label>
+                <label className="text-xs font-semibold text-muted-foreground">City</label>
                 <input
                   type="text"
                   required
                   value={editBirthPlaceForm.birth_city}
                   onChange={(e) => setEditBirthPlaceForm({ ...editBirthPlaceForm, birth_city: e.target.value })}
-                  className="mt-2 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-sm text-zinc-200 outline-none focus:border-blue-500"
+                  className="mt-2 w-full rounded-xl border border-border bg-input/30 px-3 py-2 text-sm text-foreground outline-none focus:border-ring"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-zinc-400">State / Province</label>
+                <label className="text-xs font-semibold text-muted-foreground">State / Province</label>
                 <input
                   type="text"
                   value={editBirthPlaceForm.birth_state}
                   onChange={(e) => setEditBirthPlaceForm({ ...editBirthPlaceForm, birth_state: e.target.value })}
-                  className="mt-2 w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-sm text-zinc-200 outline-none focus:border-blue-500"
+                  className="mt-2 w-full rounded-xl border border-border bg-input/30 px-3 py-2 text-sm text-foreground outline-none focus:border-ring"
                 />
               </div>
             </div>
             <div>
-              <label className="text-xs font-semibold text-zinc-400">Country of Birth</label>
+              <label className="text-xs font-semibold text-muted-foreground">Country of Birth</label>
               <select
                 value={editBirthPlaceForm.birth_country}
                 onChange={(e) => setEditBirthPlaceForm({ ...editBirthPlaceForm, birth_country: e.target.value })}
-                className="mt-2 block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-sm text-zinc-200 outline-none"
+                className="mt-2 block w-full rounded-xl border border-border bg-input/30 px-3 py-2 text-sm text-foreground outline-none"
               >
                 {countries.map((c) => (
                   <option key={c.code} value={c.code}>{countryCodeToFlag(c.code)} {c.name}</option>
@@ -186,13 +186,13 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
               </select>
             </div>
             <div>
-              <label className="text-xs font-semibold text-zinc-400">Default Visibility</label>
+              <label className="text-xs font-semibold text-muted-foreground">Default Visibility</label>
               <select
                 value={editBirthPlaceForm.visibility}
                 onChange={(e) =>
                   setEditBirthPlaceForm({ ...editBirthPlaceForm, visibility: e.target.value as "public" | "private" })
                 }
-                className="mt-2 block w-full rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-sm text-zinc-200 outline-none"
+                className="mt-2 block w-full rounded-xl border border-border bg-input/30 px-3 py-2 text-sm text-foreground outline-none"
               >
                 <option value="public">Public (Shared via Scope)</option>
                 <option value="private">Private (Restricted)</option>
@@ -201,7 +201,7 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
             <div className="flex items-center space-x-3 pt-2">
               <Button
                 type="submit"
-                className="cursor-pointer rounded-xl bg-zinc-100 px-4 py-2 text-xs font-semibold text-zinc-950 hover:bg-zinc-200"
+                className="cursor-pointer rounded-xl bg-foreground px-4 py-2 text-xs font-semibold text-background hover:bg-foreground/90"
               >
                 Save Place of Birth
               </Button>
@@ -209,7 +209,7 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
                 <Button
                   type="button"
                   onClick={() => setIsEditingBirthPlace(false)}
-                  className="cursor-pointer rounded-xl border border-zinc-700/50 bg-zinc-800 px-4 py-2 text-xs text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200"
+                  className="cursor-pointer rounded-xl border border-input bg-secondary px-4 py-2 text-xs text-secondary-foreground hover:bg-secondary/80"
                 >
                   Cancel
                 </Button>
@@ -217,16 +217,16 @@ export const BirthTab = memo(function BirthTab({ dashboard }: BirthTabProps) {
             </div>
           </form>
         ) : (
-          <div className="grid grid-cols-1 gap-4 rounded-2xl border border-zinc-800/40 bg-zinc-950/30 p-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 rounded-2xl border border-border/40 bg-muted/30 p-5 sm:grid-cols-2">
             <div>
-              <p className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase">City &amp; State</p>
-              <p className="mt-1 text-sm font-semibold text-zinc-100">
+              <p className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">City &amp; State</p>
+              <p className="mt-1 text-sm font-semibold text-foreground">
                 {[placeOfBirth.birth_city, placeOfBirth.birth_state].filter(Boolean).join(", ")}
               </p>
             </div>
             <div>
-              <p className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase">Country</p>
-              <p className="mt-1 text-sm font-semibold text-zinc-100">
+              <p className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">Country</p>
+              <p className="mt-1 text-sm font-semibold text-foreground">
                 {getCountryName(placeOfBirth.birth_country, countries)}
               </p>
             </div>

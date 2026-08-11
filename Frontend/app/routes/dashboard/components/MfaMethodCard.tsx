@@ -23,21 +23,21 @@ export function MfaMethodCard({
   const Icon = method.name === "app" ? SmartPhone01Icon : Mail01Icon
 
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4">
+    <div className="rounded-2xl border border-border bg-muted/40 p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-800">
-            <HugeiconsIcon icon={Icon} className="h-4 w-4 text-zinc-300" />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted">
+            <HugeiconsIcon icon={Icon} className="h-4 w-4 text-muted-foreground" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-zinc-100">{label}</p>
+            <p className="text-sm font-semibold text-foreground">{label}</p>
             <div className="mt-0.5 flex items-center gap-1.5">
               {method.is_active ? (
                 <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
                   Active
                 </span>
               ) : (
-                <span className="rounded-full bg-zinc-800 px-2 py-0.5 text-[10px] font-semibold text-zinc-500">
+                <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
                   Inactive
                 </span>
               )}
@@ -55,7 +55,7 @@ export function MfaMethodCard({
             <button
               disabled={isLoading("primary")}
               onClick={() => onAction("primary")}
-              className="rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1 text-[11px] font-medium text-zinc-300 transition hover:border-zinc-700 hover:text-zinc-100 disabled:opacity-50"
+              className="rounded-lg border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition hover:border-input hover:text-foreground disabled:opacity-50"
             >
               Set Primary
             </button>
@@ -64,7 +64,7 @@ export function MfaMethodCard({
             <button
               disabled={isLoading("send")}
               onClick={() => onAction("send")}
-              className="rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1 text-[11px] font-medium text-zinc-300 transition hover:border-zinc-700 hover:text-zinc-100 disabled:opacity-50"
+              className="rounded-lg border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition hover:border-input hover:text-foreground disabled:opacity-50"
             >
               Send Code
             </button>
@@ -73,7 +73,7 @@ export function MfaMethodCard({
             <button
               disabled={isLoading("deactivate")}
               onClick={() => setConfirmDeactivate(true)}
-              className="rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1 text-[11px] font-medium text-zinc-400 transition hover:border-amber-500/30 hover:text-amber-400 disabled:opacity-50"
+              className="rounded-lg border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition hover:border-amber-500/30 hover:text-amber-400 disabled:opacity-50"
             >
               Deactivate
             </button>
@@ -81,7 +81,7 @@ export function MfaMethodCard({
           <button
             disabled={isLoading("delete")}
             onClick={() => setConfirmDelete(true)}
-            className="rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1 text-[11px] font-medium text-zinc-400 transition hover:border-red-500/30 hover:text-red-400 disabled:opacity-50"
+            className="rounded-lg border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition hover:border-red-500/30 hover:text-red-400 disabled:opacity-50"
           >
             Delete
           </button>
@@ -101,7 +101,7 @@ export function MfaMethodCard({
             value={confirmDeactivateCode}
             onChange={(e) => setConfirmDeactivateCode(e.target.value.replace(/\D/g, "").slice(0, 12))}
             placeholder="Enter verification code"
-            className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-1.5 text-xs font-mono text-zinc-100 placeholder-zinc-600 outline-none focus:border-amber-500"
+            className="mt-2 w-full rounded-lg border border-input bg-input/30 px-3 py-1.5 text-xs font-mono text-foreground placeholder-muted-foreground outline-none focus:border-amber-500"
           />
           <div className="mt-2 flex gap-2">
             <button
@@ -121,7 +121,7 @@ export function MfaMethodCard({
                 setConfirmDeactivate(false)
                 setConfirmDeactivateCode("")
               }}
-              className="rounded-lg px-3 py-1 text-xs font-medium text-zinc-400 transition hover:text-zinc-200"
+              className="rounded-lg px-3 py-1 text-xs font-medium text-muted-foreground transition hover:text-foreground"
             >
               Cancel
             </button>
@@ -143,7 +143,7 @@ export function MfaMethodCard({
               value={confirmDeleteCode}
               onChange={(e) => setConfirmDeleteCode(e.target.value.replace(/\D/g, "").slice(0, 12))}
               placeholder="Enter verification code"
-              className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-1.5 text-xs font-mono text-zinc-100 placeholder-zinc-600 outline-none focus:border-red-500"
+              className="mt-2 w-full rounded-lg border border-input bg-input/30 px-3 py-1.5 text-xs font-mono text-foreground placeholder-muted-foreground outline-none focus:border-red-500"
             />
           )}
           <div className="mt-2 flex gap-2">
@@ -164,7 +164,7 @@ export function MfaMethodCard({
                 setConfirmDelete(false)
                 setConfirmDeleteCode("")
               }}
-              className="rounded-lg px-3 py-1 text-xs font-medium text-zinc-400 transition hover:text-zinc-200"
+              className="rounded-lg px-3 py-1 text-xs font-medium text-muted-foreground transition hover:text-foreground"
             >
               Cancel
             </button>

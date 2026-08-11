@@ -41,7 +41,7 @@ export function MfaManager() {
           <Button
             type="button"
             onClick={() => setView("setup-choose")}
-            className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-xs font-semibold text-zinc-200 transition hover:border-zinc-600 hover:bg-zinc-700"
+            className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-input bg-secondary px-3 py-1.5 text-xs font-semibold text-secondary-foreground transition hover:bg-secondary/80"
           >
             <HugeiconsIcon icon={PlusSignIcon} className="h-3.5 w-3.5" />
             Add method
@@ -63,13 +63,13 @@ export function MfaManager() {
             </div>
           )}
           {listLoading ? (
-            <p className="text-xs text-zinc-500">Loading…</p>
+            <p className="text-xs text-muted-foreground">Loading…</p>
           ) : listError ? (
             <p className="text-xs text-red-400">{listError}</p>
           ) : methods.length === 0 ? (
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-muted-foreground">
               No MFA methods configured. Click{" "}
-              <strong className="text-zinc-300">Add method</strong> to get started.
+              <strong className="text-foreground">Add method</strong> to get started.
             </p>
           ) : (
             <div className="space-y-3">

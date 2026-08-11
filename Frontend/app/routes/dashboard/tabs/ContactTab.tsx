@@ -58,23 +58,23 @@ export const ContactTab = memo(function ContactTab({ dashboard }: ContactTabProp
             {addresses.map((addr) => (
               <div
                 key={addr.id}
-                className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-zinc-800 bg-zinc-950/30 p-5 sm:flex-row sm:items-center"
+                className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-border bg-muted/30 p-5 sm:flex-row sm:items-center"
               >
                 <div className="space-y-1">
                   <div className="flex items-center space-x-2">
-                    <span className="rounded-md border border-zinc-700 bg-zinc-800 px-2 py-0.5 text-[10px] font-bold tracking-wider text-zinc-300 uppercase">
+                    <span className="rounded-md border border-input bg-secondary px-2 py-0.5 text-[10px] font-bold tracking-wider text-secondary-foreground uppercase">
                       {addr.address_type}
                     </span>
-                    <span className="text-sm font-bold text-zinc-200">
+                    <span className="text-sm font-bold text-foreground">
                       {addr.resident_house_number} {addr.resident_street}
                     </span>
                   </div>
-                  <p className="text-sm text-zinc-400">
+                  <p className="text-sm text-muted-foreground">
                     {addr.resident_city}, {addr.resident_state} {addr.resident_postal_code}
                   </p>
-                  <p className="text-xs font-medium text-zinc-500">{getCountryName(addr.resident_country, countries)}</p>
+                  <p className="text-xs font-medium text-muted-foreground">{getCountryName(addr.resident_country, countries)}</p>
                 </div>
-                <div className="flex w-full items-center justify-end space-x-4 border-t border-zinc-800/40 pt-3 sm:w-auto sm:border-t-0 sm:pt-0">
+                <div className="flex w-full items-center justify-end space-x-4 border-t border-border/40 pt-3 sm:w-auto sm:border-t-0 sm:pt-0">
                   <PrivacyBadge
                     visibility={addr.visibility}
                     size="sm"
@@ -86,11 +86,11 @@ export const ContactTab = memo(function ContactTab({ dashboard }: ContactTabProp
                   />
                   <button
                     onClick={() => openModal("address", "edit", addr)}
-                    className="flex cursor-pointer items-center gap-0.5 text-xs font-medium text-zinc-400 hover:text-zinc-200"
+                    className="flex cursor-pointer items-center gap-0.5 text-xs font-medium text-muted-foreground hover:text-foreground"
                   >
                     <HugeiconsIcon icon={PencilEdit01Icon} className="h-3 w-3" /> Edit
                   </button>
-                  <span className="hidden text-zinc-700 sm:inline">|</span>
+                  <span className="hidden text-border sm:inline">|</span>
                   <button
                     onClick={() => handleDeleteRecord("addresses", addr.id, () => setAddresses(prev => prev.filter(a => a.id !== addr.id)))}
                     className="flex cursor-pointer items-center gap-0.5 text-xs font-medium text-red-400/80 hover:text-red-400"
@@ -111,7 +111,7 @@ export const ContactTab = memo(function ContactTab({ dashboard }: ContactTabProp
           title="Nationalities"
           action={
             <Button
-              variant="dark-action"
+              variant="secondary"
               onClick={() => openModal("nationality", "create")}
               className="flex cursor-pointer items-center gap-1 rounded-xl px-2.5 py-1 text-xs"
             >
@@ -126,9 +126,9 @@ export const ContactTab = memo(function ContactTab({ dashboard }: ContactTabProp
               {nationalities.map((nat) => (
                 <div
                   key={nat.id}
-                  className="flex items-center justify-between rounded-xl border border-zinc-800/50 bg-zinc-950/30 p-3"
+                  className="flex items-center justify-between rounded-xl border border-border/50 bg-muted/30 p-3"
                 >
-                  <span className="text-sm font-medium text-zinc-300">{getCountryName(nat.nationality, countries)}</span>
+                  <span className="text-sm font-medium text-muted-foreground">{getCountryName(nat.nationality, countries)}</span>
                   <div className="flex items-center space-x-3">
                     <PrivacyBadge
                       visibility={nat.visibility}
@@ -157,7 +157,7 @@ export const ContactTab = memo(function ContactTab({ dashboard }: ContactTabProp
           title="Gender Info"
           action={
             <Button
-              variant="dark-action"
+              variant="secondary"
               onClick={() => openModal("gender", "create")}
               className="flex cursor-pointer items-center gap-1 rounded-xl px-2.5 py-1 text-xs"
             >
@@ -172,9 +172,9 @@ export const ContactTab = memo(function ContactTab({ dashboard }: ContactTabProp
               {genders.map((gen) => (
                 <div
                   key={gen.id}
-                  className="flex items-center justify-between rounded-xl border border-zinc-800/50 bg-zinc-950/30 p-3"
+                  className="flex items-center justify-between rounded-xl border border-border/50 bg-muted/30 p-3"
                 >
-                  <span className="text-sm font-medium text-zinc-300 capitalize">{gen.gender}</span>
+                  <span className="text-sm font-medium text-muted-foreground capitalize">{gen.gender}</span>
                   <div className="flex items-center space-x-3">
                     <PrivacyBadge
                       visibility={gen.visibility}

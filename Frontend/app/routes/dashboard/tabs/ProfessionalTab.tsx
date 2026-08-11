@@ -59,18 +59,18 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
             {professionals.map((prof) => (
               <div
                 key={prof.id}
-                className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-zinc-800 bg-zinc-950/30 p-5 sm:flex-row sm:items-center"
+                className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-border bg-muted/30 p-5 sm:flex-row sm:items-center"
               >
                 <div className="space-y-1">
-                  <h4 className="text-base font-bold text-zinc-200">{prof.job_title}</h4>
+                  <h4 className="text-base font-bold text-foreground">{prof.job_title}</h4>
                   {prof.employee_number && (
-                    <p className="text-xs font-semibold tracking-wider text-zinc-400 uppercase">
+                    <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                       ID: {prof.employee_number}
                     </p>
                   )}
-                  <p className="mt-1 text-sm font-medium text-zinc-500">{prof.role_description}</p>
+                  <p className="mt-1 text-sm font-medium text-muted-foreground">{prof.role_description}</p>
                 </div>
-                <div className="flex w-full items-center justify-end space-x-4 border-t border-zinc-800/40 pt-3 sm:w-auto sm:border-t-0 sm:pt-0">
+                <div className="flex w-full items-center justify-end space-x-4 border-t border-border/40 pt-3 sm:w-auto sm:border-t-0 sm:pt-0">
                   <PrivacyBadge
                     visibility={prof.visibility}
                     size="sm"
@@ -82,11 +82,11 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
                   />
                   <button
                     onClick={() => openModal("professional", "edit", prof)}
-                    className="flex cursor-pointer items-center gap-0.5 text-xs font-medium text-zinc-400 hover:text-zinc-200"
+                    className="flex cursor-pointer items-center gap-0.5 text-xs font-medium text-muted-foreground hover:text-foreground"
                   >
                     <HugeiconsIcon icon={PencilEdit01Icon} className="h-3 w-3" /> Edit
                   </button>
-                  <span className="hidden text-zinc-700 sm:inline">|</span>
+                  <span className="hidden text-border sm:inline">|</span>
                   <button
                     onClick={() => handleDeleteRecord("professionals", prof.id, () => setProfessionals(prev => prev.filter(p => p.id !== prof.id)))}
                     className="flex cursor-pointer items-center gap-0.5 text-xs font-medium text-red-400/80 hover:text-red-400"
@@ -107,7 +107,7 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
           title="Online Profiles"
           action={
             <Button
-              variant="dark-action"
+              variant="secondary"
               onClick={() => openModal("online", "create")}
               className="flex cursor-pointer items-center gap-1 rounded-xl px-2.5 py-1 text-xs"
             >
@@ -122,14 +122,14 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
               {onlineProfiles.map((p) => (
                 <div
                   key={p.id}
-                  className="flex flex-col justify-between space-y-3 rounded-xl border border-zinc-800/50 bg-zinc-950/30 p-4"
+                  className="flex flex-col justify-between space-y-3 rounded-xl border border-border/50 bg-muted/30 p-4"
                 >
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs font-bold tracking-wider text-blue-400 uppercase">{p.platform}</p>
-                      <p className="mt-1 text-sm font-semibold text-zinc-200">@{p.username}</p>
+                      <p className="mt-1 text-sm font-semibold text-foreground">@{p.username}</p>
                       {p.display_name && (
-                        <p className="text-xs font-medium text-zinc-500">{p.display_name}</p>
+                        <p className="text-xs font-medium text-muted-foreground">{p.display_name}</p>
                       )}
                     </div>
                     <PrivacyBadge
@@ -142,14 +142,14 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
                       }
                     />
                   </div>
-                  <div className="flex items-center justify-end space-x-2 border-t border-zinc-900/50 pt-2">
+                  <div className="flex items-center justify-end space-x-2 border-t border-border/50 pt-2">
                     <button
                       onClick={() => openModal("online", "edit", p)}
-                      className="flex cursor-pointer items-center gap-0.5 text-[10px] font-semibold text-zinc-400 hover:text-zinc-200"
+                      className="flex cursor-pointer items-center gap-0.5 text-[10px] font-semibold text-muted-foreground hover:text-foreground"
                     >
                       <HugeiconsIcon icon={PencilEdit01Icon} className="h-2.5 w-2.5" /> Edit
                     </button>
-                    <span className="text-zinc-800">|</span>
+                    <span className="text-border">|</span>
                     <button
                       onClick={() => handleDeleteRecord("online-profiles", p.id, () => setOnlineProfiles(prev => prev.filter(item => item.id !== p.id)))}
                       className="flex cursor-pointer items-center gap-0.5 text-[10px] font-semibold text-red-400/80 hover:text-red-400"
@@ -168,7 +168,7 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
           title="Daily Aliases"
           action={
             <Button
-              variant="dark-action"
+              variant="secondary"
               onClick={() => openModal("daily", "create")}
               className="flex cursor-pointer items-center gap-1 rounded-xl px-2.5 py-1 text-xs"
             >
@@ -183,14 +183,14 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
               {dailyUses.map((d) => (
                 <div
                   key={d.id}
-                  className="flex flex-col justify-between space-y-3 rounded-xl border border-zinc-800/50 bg-zinc-950/30 p-4"
+                  className="flex flex-col justify-between space-y-3 rounded-xl border border-border/50 bg-muted/30 p-4"
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-semibold tracking-wider text-zinc-500 uppercase">Preferred Name</p>
-                      <p className="mt-1 text-sm font-semibold text-zinc-200">{d.preferred_name || "—"}</p>
-                      <p className="mt-2 text-xs font-semibold tracking-wider text-zinc-500 uppercase">Nickname</p>
-                      <p className="mt-1 text-sm font-semibold text-zinc-200">"{d.nickname || "—"}"</p>
+                      <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">Preferred Name</p>
+                      <p className="mt-1 text-sm font-semibold text-foreground">{d.preferred_name || "—"}</p>
+                      <p className="mt-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">Nickname</p>
+                      <p className="mt-1 text-sm font-semibold text-foreground">"{d.nickname || "—"}"</p>
                     </div>
                     <PrivacyBadge
                       visibility={d.visibility}
@@ -202,14 +202,14 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
                       }
                     />
                   </div>
-                  <div className="flex items-center justify-end space-x-2 border-t border-zinc-900/50 pt-2">
+                  <div className="flex items-center justify-end space-x-2 border-t border-border/50 pt-2">
                     <button
                       onClick={() => openModal("daily", "edit", d)}
-                      className="flex cursor-pointer items-center gap-0.5 text-[10px] font-semibold text-zinc-400 hover:text-zinc-200"
+                      className="flex cursor-pointer items-center gap-0.5 text-[10px] font-semibold text-muted-foreground hover:text-foreground"
                     >
                       <HugeiconsIcon icon={PencilEdit01Icon} className="h-2.5 w-2.5" /> Edit
                     </button>
-                    <span className="text-zinc-800">|</span>
+                    <span className="text-border">|</span>
                     <button
                       onClick={() => handleDeleteRecord("daily-uses", d.id, () => setDailyUses(prev => prev.filter(item => item.id !== d.id)))}
                       className="flex cursor-pointer items-center gap-0.5 text-[10px] font-semibold text-red-400/80 hover:text-red-400"
@@ -246,20 +246,20 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
             {pseudonyms.map((p) => (
               <div
                 key={p.id}
-                className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-zinc-800 bg-zinc-950/30 p-5 sm:flex-row sm:items-center"
+                className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-border bg-muted/30 p-5 sm:flex-row sm:items-center"
               >
                 <div className="space-y-1">
-                  <h4 className="text-base font-bold text-zinc-200">{p.relying_party}</h4>
-                  <p className="mt-1 text-sm font-medium text-zinc-500">{p.pseudonym_value}</p>
+                  <h4 className="text-base font-bold text-foreground">{p.relying_party}</h4>
+                  <p className="mt-1 text-sm font-medium text-muted-foreground">{p.pseudonym_value}</p>
                   <p
                     className={`text-xs font-semibold tracking-wider uppercase ${
-                      p.is_active ? "text-emerald-400" : "text-zinc-600"
+                      p.is_active ? "text-emerald-400" : "text-muted-foreground"
                     }`}
                   >
                     {p.is_active ? "Active" : "Inactive"}
                   </p>
                 </div>
-                <div className="flex w-full items-center justify-end space-x-4 border-t border-zinc-800/40 pt-3 sm:w-auto sm:border-t-0 sm:pt-0">
+                <div className="flex w-full items-center justify-end space-x-4 border-t border-border/40 pt-3 sm:w-auto sm:border-t-0 sm:pt-0">
                   <PrivacyBadge
                     visibility={p.visibility}
                     size="sm"
@@ -271,11 +271,11 @@ export const ProfessionalTab = memo(function ProfessionalTab({ dashboard }: Prof
                   />
                   <button
                     onClick={() => openModal("pseudonym", "edit", p)}
-                    className="flex cursor-pointer items-center gap-0.5 text-xs font-medium text-zinc-400 hover:text-zinc-200"
+                    className="flex cursor-pointer items-center gap-0.5 text-xs font-medium text-muted-foreground hover:text-foreground"
                   >
                     <HugeiconsIcon icon={PencilEdit01Icon} className="h-3 w-3" /> Edit
                   </button>
-                  <span className="hidden text-zinc-700 sm:inline">|</span>
+                  <span className="hidden text-border sm:inline">|</span>
                   <button
                     onClick={() => handleDeleteRecord("pseudonyms", p.id, () => setPseudonyms(prev => prev.filter(item => item.id !== p.id)))}
                     className="flex cursor-pointer items-center gap-0.5 text-xs font-medium text-red-400/80 hover:text-red-400"

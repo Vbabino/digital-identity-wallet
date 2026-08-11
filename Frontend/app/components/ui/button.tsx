@@ -19,12 +19,10 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
-        "dark-action":
-          "border-zinc-700/50 bg-zinc-800 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-100",
         danger:
-          "border-transparent bg-red-600 text-white hover:bg-red-500",
+          "border-transparent bg-destructive text-white hover:bg-destructive/90",
         "gradient-primary":
-          "border-transparent bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-md hover:from-blue-500 hover:to-violet-500",
+          "border-transparent bg-gradient-to-r from-primary to-primary/60 text-primary-foreground shadow-md hover:from-primary/90 hover:to-primary/50",
       },
       size: {
         default:
