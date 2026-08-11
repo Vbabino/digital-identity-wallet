@@ -53,7 +53,9 @@ class UserSingletonAPIView(APIView):
 
     def _get_instance(self, user):
         try:
-            return getattr(user, self.related_name)
+            return self.model_class.objects.select_related("privacy_metadata").get(
+                user=user
+            )
         except self.model_class.DoesNotExist:
             return None
 
@@ -158,63 +160,63 @@ class AddressView(UserScopedModelViewSet):
     serializer_class = AddressSerializer
 
     def get_queryset(self):
-        return Address.objects.filter(user=self.request.user)
+        return Address.objects.filter(user=self.request.user).select_related("privacy_metadata")
 
 
 class GenderView(UserScopedModelViewSet):
     serializer_class = GenderSerializer
 
     def get_queryset(self):
-        return Gender.objects.filter(user=self.request.user)
+        return Gender.objects.filter(user=self.request.user).select_related("privacy_metadata")
 
 
 class NationalityView(UserScopedModelViewSet):
     serializer_class = NationalitySerializer
 
     def get_queryset(self):
-        return Nationality.objects.filter(user=self.request.user)
+        return Nationality.objects.filter(user=self.request.user).select_related("privacy_metadata")
 
 
 class CredentialView(UserScopedModelViewSet):
     serializer_class = CredentialSerializer
 
     def get_queryset(self):
-        return Credential.objects.filter(user=self.request.user)
+        return Credential.objects.filter(user=self.request.user).select_related("privacy_metadata")
 
 
 class ProfessionalIdentityView(UserScopedModelViewSet):
     serializer_class = ProfessionalIdentitySerializer
 
     def get_queryset(self):
-        return ProfessionalIdentity.objects.filter(user=self.request.user)
+        return ProfessionalIdentity.objects.filter(user=self.request.user).select_related("privacy_metadata")
 
 
 class OnlineProfileView(UserScopedModelViewSet):
     serializer_class = OnlineProfileSerializer
 
     def get_queryset(self):
-        return OnlineProfile.objects.filter(user=self.request.user)
+        return OnlineProfile.objects.filter(user=self.request.user).select_related("privacy_metadata")
 
 
 class PseudonymView(UserScopedModelViewSet):
     serializer_class = PseudonymSerializer
 
     def get_queryset(self):
-        return Pseudonym.objects.filter(user=self.request.user)
+        return Pseudonym.objects.filter(user=self.request.user).select_related("privacy_metadata")
 
 
 class DailyUseView(UserScopedModelViewSet):
     serializer_class = DailyUseSerializer
 
     def get_queryset(self):
-        return DailyUse.objects.filter(user=self.request.user)
+        return DailyUse.objects.filter(user=self.request.user).select_related("privacy_metadata")
 
 
 class CustomObjectView(UserScopedModelViewSet):
     serializer_class = CustomObjectSerializer
 
     def get_queryset(self):
-        return CustomObject.objects.filter(user=self.request.user)
+        return CustomObject.objects.filter(user=self.request.user).select_related("privacy_metadata")
 
 
 class NameHistoryPagination(PageNumberPagination):
@@ -228,7 +230,7 @@ class NameHistoryView(UserScopedModelViewSet):
     pagination_class = NameHistoryPagination
 
     def get_queryset(self):
-        return NameHistory.objects.filter(user=self.request.user).order_by("-valid_from")
+        return NameHistory.objects.filter(user=self.request.user).select_related("privacy_metadata").order_by("-valid_from")
 
 
 class AccessLogPagination(PageNumberPagination):
