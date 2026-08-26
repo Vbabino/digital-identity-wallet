@@ -206,8 +206,8 @@ class CustomOAuth2Validator(OAuth2Validator):
             if scope in request.scopes:
                 try:
                     value = handler(request)
-                    # None signals the record is private; omit the claim entirely
-                    if value is not None:
+
+                    if value is not None and value != []:
                         claims[scope] = value
                 except AttributeError:
                     logger.warning(
